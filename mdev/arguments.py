@@ -2,7 +2,7 @@ import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser(prog='mdev')
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(title="commands", dest="command")
 
     # global optionals
     parser.add_argument('--as-user', '-u',
