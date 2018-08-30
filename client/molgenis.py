@@ -9,34 +9,34 @@ except ImportError:
     from urllib import quote_plus
 
 
-class Session():
-    '''Representation of a session with the MOLGENIS REST API.
+class Session:
+    """Representation of a session with the MOLGENIS REST API.
 
     Usage:
     >>> session = client.Session('http://localhost:8080/api/')
     >>> session.login('user', 'password')
     >>> session.get('Person')
-    '''
+    """
 
     def __init__(self, url="http://localhost:8080/api/"):
-        '''Constructs a new Session.
+        """Constructs a new Session.
         Args:
         url -- URL of the REST API. Should be of form 'http[s]://<client server>[:port]/api/'
 
         Examples:
         >>> connection = client.Session('http://localhost:8080/api/')
-        '''
+        """
         self.url = url
 
         self.session = requests.Session()
 
     def login(self, username, password):
-        '''Logs in a user and stores the acquired session token in this Session object.
+        """Logs in a user and stores the acquired session token in this Session object.
 
         Args:
         username -- username for a registered client user
         password -- password for the user
-        '''
+        """
         self.session.cookies.clear()
         response = self.session.post(self.url + "v1/login",
                                      data=json.dumps({"username": username, "password": password}),
@@ -48,7 +48,7 @@ class Session():
         return response
 
     def logout(self):
-        '''Logs out the current session token.'''
+        """Logs out the current session token."""
         response = self.session.post(self.url + "v1/logout",
                                      headers=self._get_token_header())
         if response.status_code == 200:
@@ -58,7 +58,7 @@ class Session():
         return response
 
     def getById(self, entity, id, attributes=None, expand=None):
-        '''Retrieves a single entity row from an entity repository.
+        """Retrieves a single entity row from an entity repository.
 
         Args:
         entity -- fully qualified name of the entity
@@ -68,7 +68,7 @@ class Session():
 
         Examples:
         session.get('Person', 'John')
-        '''
+        """
         response = self.session.get(self.url + "v1/" + quote_plus(entity) + '/' + quote_plus(id),
                                     headers=self._get_token_header(),
                                     params={"attributes": attributes, "expand": expand})
@@ -78,7 +78,7 @@ class Session():
         return response
 
     def get(self, entity, q=None, attributes=None, expand=None, num=100, start=0, sortColumn=None, sortOrder=None):
-        '''Retrieves entity rows from an entity repository.
+        """Retrieves entity rows from an entity repository.
 
         Args:
         entity -- fully qualified name of the entity
@@ -92,7 +92,7 @@ class Session():
 
         Examples:
         session.get('Person')
-        '''
+        """
         if q:
             response = self.session.post(self.url + "v1/" + quote_plus(entity),
                                          headers=self._get_token_header_with_content_type(),
@@ -113,7 +113,7 @@ class Session():
         return response
 
     def add(self, entity, data={}, files={}, **kwargs):
-        '''Adds a single entity row to an entity repository.
+        """Adds a single entity row to an entity repository.
 
         Args:
         entity -- fully qualified name of the entity
@@ -133,7 +133,7 @@ class Session():
         >>> session.add('Plot', files={'image': ('expression.jpg', open('~/first-plot.jpg','rb')),
         'image2': ('expression-large.jpg', open('/Users/me/second-plot.jpg', 'rb'))},
         data={'name':'IBD-plot'})
-        '''
+        """
         response = self.session.post(self.url + "v1/" + quote_plus(entity),
                                      headers=self._get_token_header(),
                                      data=self._merge_two_dicts(data, kwargs),
@@ -144,7 +144,7 @@ class Session():
         return response
 
     def add_all(self, entity, entities):
-        '''Adds multiple entity rows to an entity repository.'''
+        """Adds multiple entity rows to an entity repository."""
         response = self.session.post(self.url + "v2/" + quote_plus(entity),
                                      headers=self._get_token_header_with_content_type(),
                                      data=json.dumps({"entities": entities}))
@@ -154,7 +154,7 @@ class Session():
         return response
 
     def update_one(self, entity, id, attr, value):
-        '''Updates one attribute of a given entity in a table with a given value'''
+        """Updates one attribute of a given entity in a table with a given value"""
         response = self.session.put(self.url + "v1/" + quote_plus(entity) + "/" + id + "/" + attr,
                                     headers=self._get_token_header_with_content_type(),
                                     data=json.dumps(value))
@@ -162,14 +162,14 @@ class Session():
         return response
 
     def delete(self, entity, id):
-        '''Deletes a single entity row from an entity repository.'''
+        """Deletes a single entity row from an entity repository."""
         response = self.session.delete(self.url + "v1/" + quote_plus(entity) + "/" + quote_plus(id), headers=
         self._get_token_header())
         response.raise_for_status()
         return response
 
     def delete_list(self, entity, entities):
-        '''Deletes multiple entity rows to an entity repository, given a list of id's.'''
+        """Deletes multiple entity rows to an entity repository, given a list of id's."""
         response = self.session.delete(self.url + "v2/" + quote_plus(entity),
                                        headers=self._get_token_header_with_content_type(),
                                        data=json.dumps({"entityIds": entities}))
@@ -177,21 +177,21 @@ class Session():
         return response
 
     def get_entity_meta_data(self, entity):
-        '''Retrieves the metadata for an entity repository.'''
+        """Retrieves the metadata for an entity repository."""
         response = self.session.get(self.url + "v1/" + quote_plus(entity) + "/meta?expand=attributes", headers=
         self._get_token_header())
         response.raise_for_status()
         return response.json()
 
     def get_attribute_meta_data(self, entity, attribute):
-        '''Retrieves the metadata for a single attribute of an entity repository.'''
+        """Retrieves the metadata for a single attribute of an entity repository."""
         response = self.session.get(self.url + "v1/" + quote_plus(entity) + "/meta/" + quote_plus(attribute), headers=
         self._get_token_header())
         response.raise_for_status()
         return response.json()
 
     def upload_zip(self, meta_data_zip):
-        '''Uploads a given zip with data and metadata'''
+        """Uploads a given zip with data and metadata"""
         header = self._get_token_header()
         files = {'file': open(os.path.abspath(meta_data_zip), 'rb')}
         url = self.url.strip('/api/') + '/plugin/importwizard/importFile'
@@ -202,21 +202,21 @@ class Session():
         return response
 
     def _get_token_header(self):
-        '''Creates an 'x-client-token' header for the current session.'''
+        """Creates an 'x-client-token' header for the current session."""
         try:
             return {"x-client-token": self.token}
         except AttributeError:
             return {}
 
     def _get_token_header_with_content_type(self):
-        '''Creates an 'x-client-token' header for the current session and a 'Content-Type: application/json' header'''
+        """Creates an 'x-client-token' header for the current session and a 'Content-Type: application/json' header"""
         headers = self._get_token_header()
         headers.update({"Content-Type": "application/json"})
         return headers
 
     @staticmethod
     def _merge_two_dicts(x, y):
-        '''Given two dicts, merge them into a new dict as a shallow copy.'''
+        """Given two dicts, merge them into a new dict as a shallow copy."""
         z = x.copy()
         z.update(y)
         return z
