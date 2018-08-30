@@ -1,4 +1,5 @@
 import argparse
+from .commands import import_, run, add, make
 
 def parse_args():
     parser = argparse.ArgumentParser(prog='mdev')
@@ -12,6 +13,7 @@ def parse_args():
 
     # create the parser for the "import" command
     p_import = subparsers.add_parser('import', help='import a file')
+    p_import.set_defaults(func=import_)
     p_import.add_argument('file',
                           help='the file to upload')
     p_import.add_argument('--wait', '-w',
@@ -20,6 +22,7 @@ def parse_args():
 
     # create the parser for the "make" command
     p_make = subparsers.add_parser('make', help='make a user member of a role')
+    p_make.set_defaults(func=make)
     p_make.add_argument('user',
                         type=str,
                         help='the user to make a member')
@@ -29,6 +32,7 @@ def parse_args():
 
     # create the parser for the "add" command
     p_add = subparsers.add_parser('add', help='add a user, group or token')
+    p_make.set_defaults(func=add)
     p_add.add_argument('type',
                        choices=['group', 'user', 'token'])
     p_add.add_argument('value',
@@ -37,5 +41,6 @@ def parse_args():
 
     # create the parser for the "run" command
     p_run = subparsers.add_parser('run', help='run an mdev script')
+    p_run.set_defaults(func=run)
 
     return parser.parse_args()
