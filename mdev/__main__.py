@@ -1,24 +1,16 @@
-from .arguments import parse_args
-from configparser import ConfigParser
-from pkg_resources import resource_string
+import logging
 
-import os
+from mdev.arguments import parse_args
+from mdev.configuration import get_config
 
 
 def main():
-    args = parse_args()
+    logging.basicConfig(format='%(message)s', level=logging.INFO)
 
-    filename = resource_string('config', 'config.ini')
-    if os.path.isfile(filename):
-        config_parser = ConfigParser()
-        config_parser.read(filename)
-        print(config_parser.sections())
-        username = config_parser.get('auth', 'username')
-        password = config_parser.get('auth', 'password')
-        print(username, password)
-        args.func(args)
-    else:
-        print("ini not found")
+    config = get_config()
+    args = parse_args()
+    args.func(args, config)
+
 
 if __name__ == '__main__':
     main()
