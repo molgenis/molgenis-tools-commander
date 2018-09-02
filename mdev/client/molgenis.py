@@ -1,6 +1,7 @@
-import requests
 import json
 import os
+
+import requests
 
 try:
     from urllib.parse import quote_plus
@@ -26,7 +27,8 @@ class Session:
         Examples:
         >>> connection = client.Session('http://localhost:8080/api/')
         """
-        self.url = url
+        # ensure url ends with /
+        self.url = url.strip('/') + '/'
 
         self.session = requests.Session()
 
@@ -202,14 +204,14 @@ class Session:
         return response
 
     def _get_token_header(self):
-        """Creates an 'x-client-token' header for the current session."""
+        """Creates an 'x-molgenis-token' header for the current session."""
         try:
-            return {"x-client-token": self.token}
+            return {"x-molgenis-token": self.token}
         except AttributeError:
             return {}
 
     def _get_token_header_with_content_type(self):
-        """Creates an 'x-client-token' header for the current session and a 'Content-Type: application/json' header"""
+        """Creates an 'x-molgenis-token' header for the current session and a 'Content-Type: application/json' header"""
         headers = self._get_token_header()
         headers.update({"Content-Type": "application/json"})
         return headers
