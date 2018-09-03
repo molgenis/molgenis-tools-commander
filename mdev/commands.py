@@ -8,6 +8,7 @@ from mdev.configuration import get_config
 
 log = logging.getLogger()
 config = get_config()
+token = ''
 
 
 def import_(args):
@@ -21,34 +22,25 @@ def make(args):
 
 
 def add(args):
-    token = _login()
+    _login()
 
     if args.type == 'user':
-        _add_user(args.value, token)
+        _add_user(args.value)
     elif args.type == 'group':
-        _add_group(args.value, token)
+        _add_group(args.value)
 
 
-def _add_user(username, token):
-    try:
-        response = requests.post(urljoin(config.get('api', 'host'), '/api/v1/sys_sec_User'),
-                                 headers={'Content-Type': 'application/json',
-                                          'x-molgenis-token': token},
-                                 data=json.dumps({'username': username,
-                                                  'password_': username,
-                                                  'Email': username + "@molgenis.org",
-                                                  'active': True}))
-        response.raise_for_status()
-    except requests.RequestException as e:
-        log.error(e)
-        exit(1)
+def _add_user(username):
+    _post(urljoin(config.get('api', 'host'), '/api/v1/sys_sec_User'),
+          {'username': username,
+           'password_': username,
+           'Email': username + "@molgenis.org",
+           'active': True})
 
 
-def _add_group(name, client):
+def _add_group(name):
     new_group_url = urljoin(config.get('api', 'host'), config.get('api', 'group'))
-    client.session.post(new_group_url,
-                        headers=client._get_token_header_with_content_type(),
-                        data=json.dumps({'name': name, 'label': name}))
+    _post(new_group_url, {'name': name, 'label': name})
 
 
 def run(args):
@@ -56,6 +48,8 @@ def run(args):
 
 
 def _login():
+    global token
+
     host = config.get('api', 'host')
     username = config.get('auth', 'username')
     password = config.get('auth', 'password')
@@ -65,7 +59,24 @@ def _login():
                                  data=json.dumps({"username": username, "password": password}),
                                  headers={"Content-Type": "application/json"})
         response.raise_for_status()
-        return response.json()['token']
+        token = response.json()['token']
+    except requests.RequestException as e:
+        log.error(e)
+        exit(1)
+
+
+def _post(url, data):
+    response = str()
+    try:
+        response = requests.post(url,
+                                 headers={'Content-Type': 'application/json',
+                                          'x-molgenis-token': token},
+                                 data=json.dumps(data))
+        response.raise_for_status()
+    except requests.HTTPError:
+        for error in response.json()['errors']:
+            log.error(error['message'])
+        exit(1)
     except requests.RequestException as e:
         log.error(e)
         exit(1)
