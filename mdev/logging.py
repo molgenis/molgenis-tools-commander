@@ -4,8 +4,7 @@ import sys
 from rainbow_logging_handler import RainbowLoggingHandler
 
 # setup `logging` module
-logger = logging.getLogger('test_logging')
-logger.setLevel(logging.INFO)
+logger = logging.getLogger()
 formatter = logging.Formatter("%(message)s")
 
 # setup `RainbowLoggingHandler`
@@ -16,3 +15,7 @@ logger.addHandler(handler)
 
 def get_logger():
     return logger
+
+
+def set_level(level):
+    logger.setLevel(level)

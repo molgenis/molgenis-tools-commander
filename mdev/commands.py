@@ -12,13 +12,11 @@ token = ''
 
 
 def import_(args):
-    print("importing", args)
+    log.info('Importing %s', args.file)
 
 
 def make(args):
-    print("make...", args)
-
-    pass
+    log.info('Making user %s a member of role %s', args.user, args.role)
 
 
 def add(args):
@@ -31,6 +29,7 @@ def add(args):
 
 
 def _add_user(username):
+    log.info('Adding user %s', username)
     _post(urljoin(config.get('api', 'host'), '/api/v1/sys_sec_User'),
           {'username': username,
            'password_': username,
@@ -39,6 +38,7 @@ def _add_user(username):
 
 
 def _add_group(name):
+    log.info('Adding group %s', name)
     new_group_url = urljoin(config.get('api', 'host'), config.get('api', 'group'))
     _post(new_group_url, {'name': name, 'label': name})
 
@@ -54,6 +54,7 @@ def _login():
     username = config.get('auth', 'username')
     password = config.get('auth', 'password')
 
+    log.debug('Logging in as user %s', username)
     try:
         response = requests.post(urljoin(host, 'api/v1/login'),
                                  data=json.dumps({"username": username, "password": password}),

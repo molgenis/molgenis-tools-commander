@@ -12,6 +12,9 @@ def parse_args():
                         default='admin',
                         nargs='?',
                         help='execute a command as a user (default: admin)')
+    parser.add_argument('--verbose', '-v',
+                        action='count',
+                        help='print verbose messages')
 
     # create the parser for the "import" command
     p_import = subparsers.add_parser('import', help='import a file')
