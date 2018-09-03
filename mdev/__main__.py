@@ -1,15 +1,15 @@
 import logging
 
 from mdev.arguments import parse_args
-from mdev.configuration import get_config
+from mdev.configuration import load_config
 
 
 def main():
     logging.basicConfig(format='%(message)s', level=logging.INFO)
 
-    config = get_config()
+    load_config()
     args = parse_args()
-    args.func(args, config)
+    args.func(args)
 
 
 if __name__ == '__main__':
