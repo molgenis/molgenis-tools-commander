@@ -8,5 +8,5 @@ setup(
         'console_scripts': [
             'mdev = mdev.__main__:main'
         ]
-    }, install_requires=['requests']
+    }, install_requires=['requests', 'rainbow_logging_handler']
 )

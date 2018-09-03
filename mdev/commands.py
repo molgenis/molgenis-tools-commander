@@ -1,12 +1,12 @@
 import json
-import logging
 from urllib.parse import urljoin
 
 import requests
 
 from mdev.configuration import get_config
+from mdev.logging import get_logger
 
-log = logging.getLogger()
+log = get_logger()
 config = get_config()
 token = ''
 
