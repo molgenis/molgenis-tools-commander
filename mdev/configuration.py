@@ -25,7 +25,7 @@ def _create_user_config():
 
 def _check_user_config():
     if not path.isfile(_USER_CONFIG):
-        log.warn("No user configuration file found. Creating it now...")
+        log.warn("No user configuration file found. Creating it now.")
         _create_user_config()
 
 

@@ -4,6 +4,7 @@ import requests
 
 from mdev.configuration import get_config
 from mdev.logging import get_logger
+from mdev.utils import lower_kebab
 
 log = get_logger()
 config = get_config()
@@ -23,7 +24,7 @@ def make(args):
     matches = dict()
     for group in groups.json()['items']:
         group_name = group['name']
-        if args.role.lower().replace('_', '-').startswith(group_name):
+        if lower_kebab(args.role).startswith(group_name):
             matches[len(group_name)] = group_name
 
     group_name = matches[max(matches, key=int)]
