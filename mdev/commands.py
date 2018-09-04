@@ -16,7 +16,23 @@ def import_(args):
 
 
 def make(args):
+    _login()
+
+    log.debug('Fetching groups')
+    api = urljoin(config.get('api', 'host'), config.get('api', 'rest2'))
+    groups = _get(urljoin(api, 'sys_sec_Group?attrs=name'))
+
+    matches = dict()
+    for group in groups.json()['items']:
+        group_name = group['name']
+        if args.role.lower().replace('_', '-').startswith(group_name):
+            matches[len(group_name)] = group_name
+
+    group_name = matches[max(matches, key=int)]
+
     log.info('Making user %s a member of role %s', args.user, args.role)
+    url = urljoin(config.get('api', 'host'), config.get('api', 'member') % group_name)
+    _post(url, {'username': args.user, 'roleName': args.role.upper()})
 
 
 def add(args):
@@ -26,6 +42,8 @@ def add(args):
         _add_user(args.value)
     elif args.type == 'group':
         _add_group(args.value)
+    else:
+        raise ValueError('invalid choice for add: %s', args.type)
 
 
 def _add_user(username):
@@ -50,17 +68,34 @@ def run(args):
 def _login():
     global token
 
-    host = config.get('api', 'host')
+    login_url = urljoin(config.get('api', 'host'), config.get('api', 'login'))
     username = config.get('auth', 'username')
     password = config.get('auth', 'password')
 
     log.debug('Logging in as user %s', username)
     try:
-        response = requests.post(urljoin(host, 'api/v1/login'),
+        response = requests.post(login_url,
                                  data=json.dumps({"username": username, "password": password}),
                                  headers={"Content-Type": "application/json"})
         response.raise_for_status()
         token = response.json()['token']
+    except requests.RequestException as e:
+        log.error(e)
+        exit(1)
+
+
+def _get(url):
+    response = str()
+    try:
+        response = requests.get(url,
+                                headers={'Content-Type': 'application/json',
+                                         'x-molgenis-token': token})
+        response.raise_for_status()
+        return response
+    except requests.HTTPError:
+        for error in response.json()['errors']:
+            log.error(error['message'])
+        exit(1)
     except requests.RequestException as e:
         log.error(e)
         exit(1)
