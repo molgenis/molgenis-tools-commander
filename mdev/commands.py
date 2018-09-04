@@ -1,5 +1,4 @@
 import json
-from urllib.parse import urljoin
 
 import requests
 
@@ -19,8 +18,7 @@ def make(args):
     _login()
 
     log.debug('Fetching groups')
-    api = urljoin(config.get('api', 'host'), config.get('api', 'rest2'))
-    groups = _get(urljoin(api, 'sys_sec_Group?attrs=name'))
+    groups = _get(config.get('api', 'rest2') + 'sys_sec_Group?attrs=name')
 
     matches = dict()
     for group in groups.json()['items']:
@@ -30,8 +28,8 @@ def make(args):
 
     group_name = matches[max(matches, key=int)]
 
-    log.info('Making user %s a member of role %s', args.user, args.role)
-    url = urljoin(config.get('api', 'host'), config.get('api', 'member') % group_name)
+    log.info('Making user %s a member of role %s', args.user, args.role.upper())
+    url = config.get('api', 'member') % group_name
     _post(url, {'username': args.user, 'roleName': args.role.upper()})
 
 
@@ -48,7 +46,7 @@ def add(args):
 
 def _add_user(username):
     log.info('Adding user %s', username)
-    _post(urljoin(config.get('api', 'host'), '/api/v1/sys_sec_User'),
+    _post(config.get('api', 'rest1') + 'sys_sec_User',
           {'username': username,
            'password_': username,
            'Email': username + "@molgenis.org",
@@ -57,8 +55,7 @@ def _add_user(username):
 
 def _add_group(name):
     log.info('Adding group %s', name)
-    new_group_url = urljoin(config.get('api', 'host'), config.get('api', 'group'))
-    _post(new_group_url, {'name': name, 'label': name})
+    _post(config.get('api', 'group'), {'name': name, 'label': name})
 
 
 def run(args):
@@ -68,7 +65,7 @@ def run(args):
 def _login():
     global token
 
-    login_url = urljoin(config.get('api', 'host'), config.get('api', 'login'))
+    login_url = config.get('api', 'login')
     username = config.get('auth', 'username')
     password = config.get('auth', 'password')
 
@@ -109,9 +106,13 @@ def _post(url, data):
                                           'x-molgenis-token': token},
                                  data=json.dumps(data))
         response.raise_for_status()
-    except requests.HTTPError:
-        for error in response.json()['errors']:
-            log.error(error['message'])
+    except requests.HTTPError as e:
+        if response.headers.get('Content-Type') == 'application/json':
+            if 'errors' in response.json():
+                for error in response.json()['errors']:
+                    log.error(error['message'])
+                exit(1)
+        log.error(e)
         exit(1)
     except requests.RequestException as e:
         log.error(e)
