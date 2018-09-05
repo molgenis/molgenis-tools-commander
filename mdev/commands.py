@@ -17,21 +17,27 @@ def import_(args):
 
 def make(args):
     _login()
+    group_name = _find_group(args.role)
 
+    log.info('Making user %s a member of role %s', args.user, args.role.upper())
+    url = config.get('api', 'member') % group_name
+    _post(url, {'username': args.user, 'roleName': args.role.upper()})
+
+
+def _find_group(role):
     log.debug('Fetching groups')
     groups = _get(config.get('api', 'rest2') + 'sys_sec_Group?attrs=name')
 
     matches = dict()
     for group in groups.json()['items']:
         group_name = group['name']
-        if lower_kebab(args.role).startswith(group_name):
+        if lower_kebab(role).startswith(group_name):
             matches[len(group_name)] = group_name
+    if not matches:
+        log.error('No group found for role %s', role.upper())
+        exit(1)
 
-    group_name = matches[max(matches, key=int)]
-
-    log.info('Making user %s a member of role %s', args.user, args.role.upper())
-    url = config.get('api', 'member') % group_name
-    _post(url, {'username': args.user, 'roleName': args.role.upper()})
+    return matches[max(matches, key=int)]
 
 
 def add(args):
@@ -108,7 +114,7 @@ def _post(url, data):
                                  data=json.dumps(data))
         response.raise_for_status()
     except requests.HTTPError as e:
-        if response.headers.get('Content-Type') == 'application/json':
+        if 'application/json' in response.headers.get('Content-Type'):
             if 'errors' in response.json():
                 for error in response.json()['errors']:
                     log.error(error['message'])
