@@ -26,15 +26,26 @@ def login():
 
 def get(url):
     return _handle_request(lambda: requests.get(url,
-                                                headers={'Content-Type': 'application/json',
-                                                         'x-molgenis-token': token}))
+                                                headers=_get_default_headers()))
 
 
 def post(url, data):
     return _handle_request(lambda: requests.post(url,
-                                                 headers={'Content-Type': 'application/json',
-                                                          'x-molgenis-token': token},
+                                                 headers=_get_default_headers(),
                                                  data=json.dumps(data)))
+
+
+def post_file(url, file_path):
+    return _handle_request(lambda: requests.post(url,
+                                                 headers={'x-molgenis-token': token},
+                                                 files={'file': open(file_path, 'rb')}))
+
+
+def _get_default_headers():
+    headers = {'Content-Type': 'application/json'}
+    if token:
+        headers['x-molgenis-token'] = token
+    return headers
 
 
 def _handle_request(request):

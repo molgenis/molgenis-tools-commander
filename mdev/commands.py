@@ -3,7 +3,7 @@ from os.path import splitext, join
 
 from mdev.configuration import get_config
 from mdev.logging import get_logger
-from mdev.requests import login, get, post
+from mdev.requests import login, get, post, post_file
 from mdev.utils import lower_kebab
 
 log = get_logger()
@@ -11,6 +11,8 @@ config = get_config()
 
 
 def import_(args):
+    login()
+
     if path.isfile(args.file):
         # TODO importing from an absolute path
         log.warn('Importing from an absolute path')
@@ -37,14 +39,9 @@ def import_(args):
                 file_name = splitext(file)[0]
                 files[file_name] = join(folder, file)
 
-        print(files)
-
         if splitext(args.file)[0] in files:
-            print(files[splitext(args.file)[0]])
-
-
-def _import_file(file_path):
-    pass
+            response = post_file(config.get('api', 'import'), files[splitext(args.file)[0]])
+            print(response.text)
 
 
 def make(args):
