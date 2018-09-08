@@ -1,10 +1,10 @@
-from os import path, listdir, getcwd
-from os.path import splitext, join
+from os import path, getcwd, listdir
+from os.path import join, splitext
 
 from mdev.configuration import get_config
 from mdev.logging import get_logger
 from mdev.requests import login, get, post, post_file
-from mdev.utils import lower_kebab
+from mdev.utils import lower_kebab, config_string_to_list
 
 log = get_logger()
 config = get_config()
@@ -22,26 +22,35 @@ def import_(args):
         log.warn('Importing from the current directory')
         exit(1)
     else:
-        # importing from quick-folders
-        if not config.has_option('datasets', 'git_root'):
-            log.warn('Molgenis git root not set. Edit the mdev.ini file to include the test datasets.')
-
-        paths_string = ''.join(config.get('datasets', 'git_paths').split())
-        paths = paths_string.split(',')
-        map(str.strip, paths)
+        folders = _get_molgenis_folders() + _get_quick_folders()
 
         files = dict()
-        for folder in paths:
+        for folder in folders:
             if not path.isdir(folder):
                 log.warn('Folder %s is not a valid folder, skipping it...', folder)
 
-            for file in listdir(folder):
-                file_name = splitext(file)[0]
-                files[file_name] = join(folder, file)
+                for file in listdir(folder):
+                    file_name = splitext(file)[0]
+                    files[file_name] = join(folder, file)
 
         if splitext(args.file)[0] in files:
             response = post_file(config.get('api', 'import'), files[splitext(args.file)[0]])
             print(response.text)
+
+
+def _get_molgenis_folders():
+    if not config.has_option('datasets', 'git_root') or not config.has_option('datasets', 'git_paths'):
+        log.warn('Molgenis git paths not configured. Edit the mdev.ini file to include the test datasets.')
+        return list()
+    else:
+        return config_string_to_list(config.get('datasets', 'git_paths'))
+
+
+def _get_quick_folders():
+    if not config.has_option('datasets', 'quick_folders'):
+        return list()
+    else:
+        return config_string_to_list(config.get('datasets', 'quick_folders'))
 
 
 def make(args):
