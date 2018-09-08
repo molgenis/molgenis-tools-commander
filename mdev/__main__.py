@@ -15,12 +15,10 @@ def main():
 def set_log_level(args):
     if args.verbose:
         verbosity = int(args.verbose)
-        if verbosity == 1:
-            set_level(logging.INFO)
-        elif verbosity > 1:
+        if verbosity > 0:
             set_level(logging.DEBUG)
     else:
-        set_level(logging.WARN)
+        set_level(logging.INFO)
 
 
 if __name__ == '__main__':
