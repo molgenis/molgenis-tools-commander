@@ -1,6 +1,6 @@
 import argparse
 
-from .commands import import_, add, make
+from .commands import import_, add, make, give
 
 
 def _create_parser():
@@ -53,6 +53,24 @@ def _create_parser():
     p_add.add_argument('value',
                        type=str,
                        help='The group name, user name or user token to add')
+
+    # create the parser for the "give" command
+    p_give = subparsers.add_parser('give',
+                                   help='Give permissions on resources to roles or users')
+    p_give.set_defaults(func=give)
+    p_give.add_argument('--user',
+                        action='store_true',
+                        help='Give the permission to a user instead of a role')
+    p_give.add_argument('receiver',
+                        type=str,
+                        help='The role (or user) to give the permission to')
+    p_give.add_argument('permission',
+                        choices=['none', 'writemeta', 'readmeta', 'write', 'read', 'count', 'n', 'wm', 'rm', 'w', 'r',
+                                 'c'],
+                        help='The permission type to give')
+    p_give.add_argument('resource',
+                        type=str,
+                        help='The resource to which permission is given')
 
     # create the parser for the "run" command
     p_run = subparsers.add_parser('run',

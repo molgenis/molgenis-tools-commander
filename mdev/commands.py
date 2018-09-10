@@ -139,3 +139,7 @@ def _add_user(username):
 
 def _add_group(name):
     post(config.get('api', 'group'), {'name': name, 'label': name})
+
+
+def give(args):
+    pass
