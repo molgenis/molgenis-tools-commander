@@ -20,7 +20,7 @@ def execute(args):
     try:
         spinner = Halo(spinner='dots')
         spinner.start()
-        args.command(args)
+        args.func(args)
     except MdevError as e:
         spinner.fail()
         log.error(str(e).strip('\"\''))
@@ -138,7 +138,3 @@ def _add_user(username):
 
 def _add_group(name):
     post(config.get('api', 'group'), {'name': name, 'label': name})
-
-
-def run(args):
-    print("run", args)

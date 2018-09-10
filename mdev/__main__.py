@@ -1,6 +1,7 @@
 import logging
+from pathlib import Path
 
-from mdev.arguments import parse_args
+from mdev.arguments import parse_args, parse_arg_string
 from mdev.commands import execute
 from mdev.configuration import load_config
 from mdev.logging import set_level
@@ -10,7 +11,21 @@ def main():
     load_config()
     args = parse_args()
     set_log_level(args)
-    execute(args)
+
+    if args.command == 'run':
+        run(args)
+    else:
+        execute(args)
+
+
+def run(args):
+    script = Path(args.script)
+    with open(script) as file:
+        lines = [line.rstrip('\n') for line in file]
+
+    for line in lines:
+        sub_args = parse_arg_string(line.split(' '))
+        execute(sub_args)
 
 
 def set_log_level(args):
