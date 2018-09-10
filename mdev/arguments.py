@@ -50,6 +50,9 @@ def _create_parser():
     p_run.add_argument('script',
                        type=str,
                        help='the .mdev script to run')
+    p_run.add_argument('--ignore-errors', '-i',
+                       action='store_true',
+                       help='let the script continue when one or more commands throw an error')
     return parser
 
 

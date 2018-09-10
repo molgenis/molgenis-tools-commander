@@ -15,7 +15,7 @@ def main():
     if args.command == 'run':
         run(args)
     else:
-        execute(args)
+        execute(args, exit_on_error=True)
 
 
 def run(args):
@@ -23,9 +23,11 @@ def run(args):
     with open(script) as file:
         lines = [line.rstrip('\n') for line in file]
 
+    exit_on_error = not args.ignore_errors
+
     for line in lines:
         sub_args = parse_arg_string(line.split(' '))
-        execute(sub_args)
+        execute(sub_args, exit_on_error)
 
 
 def set_log_level(args):

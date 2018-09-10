@@ -14,7 +14,7 @@ config = get_config()
 spinner = None
 
 
-def execute(args):
+def execute(args, exit_on_error):
     global spinner
 
     try:
@@ -24,7 +24,8 @@ def execute(args):
     except MdevError as e:
         spinner.fail()
         log.error(str(e).strip('\"\''))
-        exit(1)
+        if exit_on_error:
+            exit(1)
     else:
         spinner.succeed()
 
