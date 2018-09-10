@@ -7,10 +7,26 @@ from halo import Halo
 from mdev.configuration import get_config
 from mdev.logging import get_logger
 from mdev.requests import login, get, post, post_file
-from mdev.utils import lower_kebab, config_string_to_paths
+from mdev.utils import lower_kebab, config_string_to_paths, MdevError
 
 log = get_logger()
 config = get_config()
+spinner = None
+
+
+def execute(args):
+    global spinner
+
+    try:
+        spinner = Halo(spinner='dots')
+        spinner.start()
+        args.command(args)
+    except MdevError as e:
+        spinner.fail()
+        log.error(str(e))
+        exit(1)
+    else:
+        spinner.succeed()
 
 
 def import_(args):
@@ -31,16 +47,13 @@ def import_(args):
 
         if target_path.stem in files:
             file = files[target_path.stem]
-            spinner = Halo(text='Importing %s' % file.name, spinner='dots')
-            spinner.start()
+            spinner.text = 'Importing %s' % file.name
+            # spinner.start()
             response = post_file(config.get('api', 'import'), file, {'action': config.get('set', 'import_action')})
             import_run_url = urljoin(config.get('api', 'host'), response.text)
             status, message = _poll_for_completion(import_run_url)
             if status == 'FAILED':
-                spinner.fail()
-                log.error(message)
-            else:
-                spinner.succeed()
+                raise MdevError(message)
         else:
             log.error('No file found for %s', target_path.stem)
             exit(1)
@@ -82,9 +95,10 @@ def _get_quick_folders():
 
 def make(args):
     login()
+    spinner.text = 'Making user %s a member of role %s' % (args.user, args.role.upper())
+
     group_name = _find_group(args.role)
 
-    log.info('Making user %s a member of role %s', args.user, args.role.upper())
     url = config.get('api', 'member') % group_name
     post(url, {'username': args.user, 'roleName': args.role.upper()})
 
@@ -107,16 +121,16 @@ def add(args):
     login()
 
     if args.type == 'user':
+        spinner.text = 'Adding user %s' % args.value
         _add_user(args.value)
     elif args.type == 'group':
+        spinner.text = 'Adding group %s' % args.value
         _add_group(args.value)
     else:
         raise ValueError('invalid choice for add: %s', args.type)
 
 
 def _add_user(username):
-    log.info('Adding user %s', username)
-
     post(config.get('api', 'rest1') + 'sys_sec_User',
          {'username': username,
           'password_': username,
@@ -125,7 +139,6 @@ def _add_user(username):
 
 
 def _add_group(name):
-    log.info('Adding group %s', name)
     post(config.get('api', 'group'), {'name': name, 'label': name})
 
 

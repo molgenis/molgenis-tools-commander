@@ -1,6 +1,14 @@
 from pathlib import Path
 
 
+class MdevError(Exception):
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+
 def upper_snake(string):
     """
     Transforms a string to uppercase snake style.

@@ -1,6 +1,7 @@
 import logging
 
 from mdev.arguments import parse_args
+from mdev.commands import execute
 from mdev.configuration import load_config
 from mdev.logging import set_level
 
@@ -9,7 +10,7 @@ def main():
     load_config()
     args = parse_args()
     set_log_level(args)
-    args.func(args)
+    execute(args)
 
 
 def set_log_level(args):

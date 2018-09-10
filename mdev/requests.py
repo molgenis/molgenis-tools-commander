@@ -4,6 +4,7 @@ import requests
 
 from mdev.configuration import get_config
 from mdev.logging import get_logger
+from mdev.utils import MdevError
 
 config = get_config()
 log = get_logger()
@@ -59,10 +60,8 @@ def _handle_request(request):
         if 'application/json' in response.headers.get('Content-Type'):
             if 'errors' in response.json():
                 for error in response.json()['errors']:
-                    log.error(error['message'])
-                exit(1)
-        log.error(e)
-        exit(1)
+                    # TODO capture multiple error messages
+                    raise MdevError(error['message'])
+        raise MdevError(str(e))
     except requests.RequestException as e:
-        log.error(e)
-        exit(1)
+        raise MdevError(str(e))
