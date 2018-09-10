@@ -5,7 +5,7 @@ import polling
 from halo import Halo
 
 from mdev.configuration import get_config
-from mdev.logging import get_logger, key_word
+from mdev.logging import get_logger, highlight
 from mdev.requests import login, get, post, post_file
 from mdev.utils import lower_kebab, config_string_to_paths, MdevError, upper_snake
 
@@ -23,7 +23,7 @@ def execute(args):
         args.command(args)
     except MdevError as e:
         spinner.fail()
-        log.error(str(e))
+        log.error(str(e).strip('\"\''))
         exit(1)
     else:
         spinner.succeed()
@@ -32,31 +32,32 @@ def execute(args):
 def import_(args):
     login()
 
-    target_path = Path(args.file)
+    if args.from_path:
+        spinner.text = 'Importing from path %s' % highlight(args.file)
+        file = Path(args.file)
+        if not file.is_file():
+            raise MdevError("File %s doesn't exist" % str(file.resolve()))
 
-    if target_path.is_file():
-        # TODO importing from an absolute path
-        log.warn('Importing from an absolute path')
-        exit(1)
-    elif Path.cwd().joinpath(target_path).is_file():
-        # TODO importing from current directory
-        log.warn('Importing from the current directory')
-        exit(1)
+        _do_import(args.file)
     else:
+        file_name = args.file
+        spinner.text = 'Importing %s' % highlight(file_name)
+
         files = _scan_folders_for_files(_get_molgenis_folders() + _get_quick_folders())
 
-        if target_path.stem in files:
-            file = files[target_path.stem]
-            spinner.text = 'Importing %s' % key_word(file.name)
-            # spinner.start()
-            response = post_file(config.get('api', 'import'), file, {'action': config.get('set', 'import_action')})
-            import_run_url = urljoin(config.get('api', 'host'), response.text)
-            status, message = _poll_for_completion(import_run_url)
-            if status == 'FAILED':
-                raise MdevError(message)
+        if file_name in files:
+            file = files[file_name]
+            _do_import(file)
         else:
-            log.error('No file found for %s', target_path.stem)
-            exit(1)
+            raise MdevError('No file found for %s' % file_name)
+
+
+def _do_import(file_path):
+    response = post_file(config.get('api', 'import'), file_path, {'action': config.get('set', 'import_action')})
+    import_run_url = urljoin(config.get('api', 'host'), response.text)
+    status, message = _poll_for_completion(import_run_url)
+    if status == 'FAILED':
+        raise MdevError(message)
 
 
 def _poll_for_completion(url):
@@ -95,7 +96,7 @@ def _get_quick_folders():
 
 def make(args):
     login()
-    spinner.text = 'Making user %s a member of role %s' % (key_word(args.user), key_word(args.role.upper()))
+    spinner.text = 'Making user %s a member of role %s' % (highlight(args.user), highlight(args.role.upper()))
 
     group_name = _find_group(args.role)
 
@@ -120,10 +121,10 @@ def add(args):
     login()
 
     if args.type == 'user':
-        spinner.text = 'Adding user %s' % key_word(args.value)
+        spinner.text = 'Adding user %s' % highlight(args.value)
         _add_user(args.value)
     elif args.type == 'group':
-        spinner.text = 'Adding group %s' % key_word(args.value)
+        spinner.text = 'Adding group %s' % highlight(args.value)
         _add_group(args.value)
 
 

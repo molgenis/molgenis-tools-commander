@@ -22,5 +22,5 @@ def set_level(level):
     logger.setLevel(level)
 
 
-def key_word(string):
+def highlight(string):
     return Fore.BLUE + string + Fore.RESET

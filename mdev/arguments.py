@@ -21,9 +21,10 @@ def parse_args():
     p_import.set_defaults(command=import_)
     p_import.add_argument('file',
                           help='the file to upload')
-    p_import.add_argument('--wait', '-w',
-                          action='store_true',
-                          help='wait for the import to finish before returning')
+    p_import_source = p_import.add_mutually_exclusive_group()
+    p_import_source.add_argument('--from-path', '-p',
+                                 action='store_true',
+                                 help='select a file by path instead of by looking in quick folders')
 
     # create the parser for the "make" command
     p_make = subparsers.add_parser('make', help='make a user member of a role')
