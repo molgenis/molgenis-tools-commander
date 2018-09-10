@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 def upper_snake(string):
     """
     Transforms a string to uppercase snake style.
@@ -14,9 +17,9 @@ def lower_kebab(string):
     return string.lower().replace('_', '-')
 
 
-def config_string_to_list(config_string):
-    """Strips and splits comma separated, multi-line configuration variables."""
+def config_string_to_paths(config_string):
+    """Strips and splits comma separated, multi-line configuration variables and converts them to Paths objects."""
     clean_string = ''.join(config_string.split())
-    strings = clean_string.split(',')
-    map(str.strip, strings)
-    return strings
+    paths = clean_string.split(',')
+    paths = map(lambda string: Path(string), paths)
+    return list(paths)

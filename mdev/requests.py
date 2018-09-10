@@ -35,10 +35,11 @@ def post(url, data):
                                                  data=json.dumps(data)))
 
 
-def post_file(url, file_path):
+def post_file(url, file_path, params):
     return _handle_request(lambda: requests.post(url,
                                                  headers={'x-molgenis-token': token},
-                                                 files={'file': open(file_path, 'rb')}))
+                                                 files={'file': open(file_path, 'rb')},
+                                                 params=params))
 
 
 def _get_default_headers():
