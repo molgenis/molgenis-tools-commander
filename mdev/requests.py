@@ -13,7 +13,6 @@ token = ''
 
 def login(args):
     global token
-
     if args.as_user is None:
         username = config.get('auth', 'username')
     else:

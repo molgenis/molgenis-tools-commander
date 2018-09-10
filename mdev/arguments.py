@@ -9,7 +9,6 @@ def _create_parser():
 
     # global optionals
     parser.add_argument('--as-user', '--user', '-u',
-                        default='admin',
                         nargs=1,
                         type=str,
                         help="Execute a command as a user. (The default user is set in the mdev.ini file). Assumes that "

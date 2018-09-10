@@ -27,6 +27,13 @@ def run(args):
 
     for line in lines:
         sub_args = parse_arg_string(line.split(' '))
+        if sub_args.command == 'run':
+            logging.error("Can't use the run command in a script: %s" % line)
+            if exit_on_error:
+                exit(1)
+            else:
+                continue
+
         execute(sub_args, exit_on_error)
 
 
