@@ -5,9 +5,9 @@ import polling
 from halo import Halo
 
 from mdev.configuration import get_config
-from mdev.logging import get_logger
+from mdev.logging import get_logger, key_word
 from mdev.requests import login, get, post, post_file
-from mdev.utils import lower_kebab, config_string_to_paths, MdevError
+from mdev.utils import lower_kebab, config_string_to_paths, MdevError, upper_snake
 
 log = get_logger()
 config = get_config()
@@ -47,7 +47,7 @@ def import_(args):
 
         if target_path.stem in files:
             file = files[target_path.stem]
-            spinner.text = 'Importing %s' % file.name
+            spinner.text = 'Importing %s' % key_word(file.name)
             # spinner.start()
             response = post_file(config.get('api', 'import'), file, {'action': config.get('set', 'import_action')})
             import_run_url = urljoin(config.get('api', 'host'), response.text)
@@ -95,7 +95,7 @@ def _get_quick_folders():
 
 def make(args):
     login()
-    spinner.text = 'Making user %s a member of role %s' % (args.user, args.role.upper())
+    spinner.text = 'Making user %s a member of role %s' % (key_word(args.user), key_word(args.role.upper()))
 
     group_name = _find_group(args.role)
 
@@ -111,8 +111,7 @@ def _find_group(role):
     matches = {len(group['name']): group['name'] for group in groups.json()['items'] if role.startswith(group['name'])}
 
     if not matches:
-        log.error('No group found for role %s', role.upper())
-        exit(1)
+        raise MdevError('No group found for role %s' % upper_snake(role))
 
     return matches[max(matches, key=int)]
 
@@ -121,13 +120,11 @@ def add(args):
     login()
 
     if args.type == 'user':
-        spinner.text = 'Adding user %s' % args.value
+        spinner.text = 'Adding user %s' % key_word(args.value)
         _add_user(args.value)
     elif args.type == 'group':
-        spinner.text = 'Adding group %s' % args.value
+        spinner.text = 'Adding group %s' % key_word(args.value)
         _add_group(args.value)
-    else:
-        raise ValueError('invalid choice for add: %s', args.type)
 
 
 def _add_user(username):
