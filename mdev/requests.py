@@ -11,12 +11,23 @@ log = get_logger()
 token = ''
 
 
-def login():
+def login(args):
     global token
 
+    if args.as_user is None:
+        username = config.get('auth', 'username')
+    else:
+        username = args.as_user[0]
+
+    if args.with_password is None:
+        if args.as_user is None:
+            password = config.get('auth', 'password')
+        else:
+            password = args.as_user[0]
+    else:
+        password = args.with_password[0]
+
     login_url = config.get('api', 'login')
-    username = config.get('auth', 'username')
-    password = config.get('auth', 'password')
 
     log.debug('Logging in as user %s', username)
 

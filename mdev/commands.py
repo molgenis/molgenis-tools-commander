@@ -31,10 +31,9 @@ def execute(args, exit_on_error):
 
 
 def import_(args):
-    login()
-
     if args.from_path:
         spinner.text = 'Importing from path %s' % highlight(args.file)
+        login(args)
         file = Path(args.file)
         if not file.is_file():
             raise MdevError("File %s doesn't exist" % str(file.resolve()))
@@ -43,6 +42,7 @@ def import_(args):
     else:
         file_name = args.file
         spinner.text = 'Importing %s' % highlight(file_name)
+        login(args)
 
         files = _scan_folders_for_files(_get_molgenis_folders() + _get_quick_folders())
 
@@ -96,7 +96,7 @@ def _get_quick_folders():
 
 
 def make(args):
-    login()
+    login(args)
     spinner.text = 'Making user %s a member of role %s' % (highlight(args.user), highlight(args.role.upper()))
 
     group_name = _find_group(args.role)
@@ -119,7 +119,7 @@ def _find_group(role):
 
 
 def add(args):
-    login()
+    login(args)
 
     if args.type == 'user':
         spinner.text = 'Adding user %s' % highlight(args.value)
