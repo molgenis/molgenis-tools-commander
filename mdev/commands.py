@@ -1,12 +1,15 @@
+import re
 from pathlib import Path
 from urllib.parse import urljoin
 
 import polling
+import requests
+from github import Github, UnknownObjectException
 from halo import Halo
 
+from mdev.client import login, get, post, post_file
 from mdev.configuration import get_config
 from mdev.logging import get_logger, highlight
-from mdev.requests import login, get, post, post_file
 from mdev.utils import lower_kebab, config_string_to_paths, MdevError, upper_snake
 
 log = get_logger()
@@ -39,6 +42,29 @@ def import_(args):
             raise MdevError("File %s doesn't exist" % str(file.resolve()))
 
         _do_import(args.file)
+    elif args.from_issue:
+        spinner.text = 'Importing from GitHub issue %s' % highlight('#' + args.file)
+        try:
+            issue_num = int(args.file)
+            issue = Github().get_organization('molgenis').get_repo('molgenis').get_issue(issue_num)
+        except ValueError:
+            raise MdevError('Not a valid issue number: %s' % args.file)
+        except UnknownObjectException:
+            raise MdevError("Issue #%s doesn't exist" % args.file)
+
+        # GitHub has no API for downloading attachments yet so we get them from the issue description
+        file_links = re.findall('\(https://github.com/molgenis/molgenis/files/.*\)', issue.body)
+        if len(file_links) == 0:
+            raise MdevError("Issue #%s doesn't contain any files" % issue_num)
+        file_links = list(map(lambda s: s.strip('()'), file_links))
+
+        for link in file_links:
+            name = link.rsplit('/', 1)[-1]
+            r = requests.get(file_links[0])
+            open(name, 'wb').write(r.content)
+
+        exit(1)
+
     else:
         file_name = args.file
         spinner.text = 'Importing %s' % highlight(file_name)

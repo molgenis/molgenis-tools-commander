@@ -31,6 +31,9 @@ def _create_parser():
     p_import_source.add_argument('--from-path', '-p',
                                  action='store_true',
                                  help='Select a file by path instead of by looking in quick folders')
+    p_import_source.add_argument('--from-issue', '-i',
+                                 action='store_true',
+                                 help='Import a file from a GitHub issue')
 
     # create the parser for the "make" command
     p_make = subparsers.add_parser('make',
