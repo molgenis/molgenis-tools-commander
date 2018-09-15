@@ -26,7 +26,7 @@ def execute(args, exit_on_error):
         args.func(args)
     except MdevError as e:
         spinner.fail()
-        log.error(str(e).strip('\"\''))
+        log.error('  ' + str(e).strip('\"\''))
         if exit_on_error:
             exit(1)
     else:
@@ -108,7 +108,9 @@ def _scan_folders_for_files(folders):
 
 def _get_molgenis_folders():
     if not config.has_option('data', 'git_root') or not config.has_option('data', 'git_paths'):
-        log.warn('Molgenis git paths not configured. Edit the mdev.ini file to include the test data.')
+        spinner.warn()
+        log.warn('  Molgenis git paths not configured. Edit the mdev.ini file to include the test data.')
+        spinner.start()
         return list()
     else:
         return config_string_to_paths(config.get('data', 'git_paths'))
