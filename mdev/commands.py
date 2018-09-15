@@ -4,6 +4,7 @@ from urllib.parse import urljoin
 
 import polling
 import requests
+from PyInquirer import prompt
 from github import Github, UnknownObjectException
 from halo import Halo
 
@@ -58,8 +59,24 @@ def import_(args):
             raise MdevError("Issue #%s doesn't contain any files" % issue_num)
         file_links = list(map(lambda s: s.strip('()'), file_links))
 
+        files = {'/'.join(link.rsplit('/', 2)[-2:]): link for link in file_links}
+
+        if len(files) > 1:
+            spinner.stop_and_persist()
+            questions = [
+                {
+                    'type': 'rawlist',
+                    'name': 'file',
+                    'message': 'Issue #%s contains multiple files. Pick one:' % issue_num,
+                    'choices': files.keys()
+                }
+            ]
+            answer = prompt(questions)
+
+            spinner.start()
+
         for link in file_links:
-            name = link.rsplit('/', 1)[-1]
+            name = link.rsplit('/', 2)[-2]
             r = requests.get(file_links[0])
             open(name, 'wb').write(r.content)
 
