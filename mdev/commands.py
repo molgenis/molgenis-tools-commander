@@ -4,9 +4,9 @@ from urllib.parse import urljoin
 
 import polling
 import requests
-from PyInquirer import prompt
 from github import Github, UnknownObjectException
-from halo import Halo
+
+from mdev import io
 
 from mdev.client import login, get, post, post_file
 from mdev.configuration import get_config
@@ -15,28 +15,22 @@ from mdev.utils import lower_kebab, config_string_to_paths, MdevError, upper_sna
 
 log = get_logger()
 config = get_config()
-spinner = None
 
 
 def execute(args, exit_on_error):
-    global spinner
-
     try:
-        spinner = Halo(spinner='dots')
-        spinner.start()
         args.func(args)
     except MdevError as e:
-        spinner.fail()
-        log.error('  ' + str(e).strip('\"\''))
+        io.error(str(e))
         if exit_on_error:
             exit(1)
     else:
-        spinner.succeed()
+        io.succeed()
 
 
 def import_(args):
     if args.from_path:
-        spinner.text = 'Importing from path %s' % highlight(args.file)
+        io.start('Importing from path %s' % highlight(args.file))
         login(args)
         file = Path(args.file)
         if not file.is_file():
@@ -44,7 +38,7 @@ def import_(args):
 
         _do_import(args.file)
     elif args.from_issue:
-        spinner.text = 'Importing from GitHub issue %s' % highlight('#' + args.file)
+        io.start('Importing from GitHub issue %s' % highlight('#' + args.file))
         try:
             issue_num = int(args.file)
             issue = Github().get_organization('molgenis').get_repo('molgenis').get_issue(issue_num)
@@ -62,18 +56,8 @@ def import_(args):
         files = {'/'.join(link.rsplit('/', 2)[-2:]): link for link in file_links}
 
         if len(files) > 1:
-            spinner.stop_and_persist()
-            questions = [
-                {
-                    'type': 'rawlist',
-                    'name': 'file',
-                    'message': 'Issue #%s contains multiple files. Pick one:' % issue_num,
-                    'choices': files.keys()
-                }
-            ]
-            answer = prompt(questions)
-
-            spinner.start()
+            io.multi_choice(question='Issue #%s contains multiple files. Pick one:' % issue_num,
+                            choices=files.keys())
 
         for link in file_links:
             name = link.rsplit('/', 2)[-2]
@@ -84,7 +68,7 @@ def import_(args):
 
     else:
         file_name = args.file
-        spinner.text = 'Importing %s' % highlight(file_name)
+        io.start('Importing %s' % highlight(file_name))
         login(args)
 
         files = _scan_folders_for_files(_get_molgenis_folders() + _get_quick_folders())
@@ -125,9 +109,7 @@ def _scan_folders_for_files(folders):
 
 def _get_molgenis_folders():
     if not config.has_option('data', 'git_root') or not config.has_option('data', 'git_paths'):
-        spinner.warn()
-        log.warn('  Molgenis git paths not configured. Edit the mdev.ini file to include the test data.')
-        spinner.start()
+        io.warn('Molgenis git paths not configured. Edit the mdev.ini file to include the test data.')
         return list()
     else:
         return config_string_to_paths(config.get('data', 'git_paths'))
@@ -142,7 +124,7 @@ def _get_quick_folders():
 
 def make(args):
     login(args)
-    spinner.text = 'Making user %s a member of role %s' % (highlight(args.user), highlight(args.role.upper()))
+    io.start('Making user %s a member of role %s' % (highlight(args.user), highlight(args.role.upper())))
 
     group_name = _find_group(args.role)
 
@@ -167,10 +149,10 @@ def add(args):
     login(args)
 
     if args.type == 'user':
-        spinner.text = 'Adding user %s' % highlight(args.value)
+        io.start('Adding user %s' % highlight(args.value))
         _add_user(args.value)
     elif args.type == 'group':
-        spinner.text = 'Adding group %s' % highlight(args.value)
+        io.start('Adding group %s' % highlight(args.value))
         _add_group(args.value)
 
 
