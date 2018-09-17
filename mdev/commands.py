@@ -4,6 +4,9 @@ from urllib.parse import urljoin
 
 import polling
 import requests
+
+# PyGithub's package is called github which throws off PyCharm
+# noinspection PyPackageRequirements
 from github import Github, UnknownObjectException
 
 from mdev import io
