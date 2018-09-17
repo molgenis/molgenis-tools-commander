@@ -1,9 +1,11 @@
 from PyInquirer import prompt
 from halo import Halo
 
+from mdev.configuration import get_config
 from mdev.logging import get_logger
 
 log = get_logger()
+config = get_config()
 spinner = None
 
 
@@ -15,7 +17,10 @@ def start(message):
 
 def succeed():
     if spinner:
-        spinner.succeed()
+        if config.has_option('set', 'unicorn_mode') and config.getboolean('set', 'unicorn_mode'):
+            spinner.stop_and_persist(symbol='🦄'.encode('utf-8'))
+        else:
+            spinner.succeed()
 
 
 def warn(message):

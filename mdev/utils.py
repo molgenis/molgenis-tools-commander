@@ -29,5 +29,4 @@ def config_string_to_paths(config_string):
     """Strips and splits comma separated, multi-line configuration variables and converts them to Paths objects."""
     clean_string = ''.join(config_string.split())
     paths = clean_string.split(',')
-    paths = map(lambda string: Path(string), paths)
-    return list(paths)
+    return [Path(path_string) for path_string in paths]
