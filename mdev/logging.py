@@ -5,7 +5,7 @@ from colorama import Fore
 from rainbow_logging_handler import RainbowLoggingHandler
 
 # setup `logging` module
-logger = logging.getLogger()
+logger = logging.getLogger('console')
 formatter = logging.Formatter("%(message)s")
 
 # setup `RainbowLoggingHandler`

@@ -1,10 +1,13 @@
 import logging
+import sys
 from pathlib import Path
 
 from mdev.arguments import parse_args, parse_arg_string
 from mdev.commands import execute
 from mdev.configuration import load_config
 from mdev.logging import set_level
+
+from mdev import history
 
 
 def main():
@@ -15,6 +18,7 @@ def main():
     if args.command == 'run':
         run(args)
     else:
+        history.write(' '.join(sys.argv[1:]))
         execute(args, exit_on_error=True)
 
 
@@ -34,6 +38,7 @@ def run(args):
             else:
                 continue
 
+        history.write(line)
         execute(sub_args, exit_on_error)
 
 

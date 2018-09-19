@@ -10,6 +10,7 @@ import requests
 from github import Github, UnknownObjectException
 
 from mdev import io
+from mdev import history as hist
 
 from mdev.client import login, get, post, post_file
 from mdev.configuration import get_config
@@ -173,3 +174,11 @@ def _add_group(name):
 
 def give(args):
     pass
+
+
+def history(args):
+    lines = hist.read(args.number)
+    if len(lines) == 0:
+        log.warn('History is empty.')
+    for line in lines:
+        log.info(line)

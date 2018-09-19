@@ -1,6 +1,6 @@
 import argparse
 
-from .commands import import_, add, make, give
+from .commands import import_, add, make, give, history
 
 
 def _create_parser():
@@ -83,6 +83,16 @@ def _create_parser():
     p_run.add_argument('--ignore-errors', '-i',
                        action='store_true',
                        help='Let the script continue when one or more commands throw an error')
+
+    # create the parser for the "history" command
+    p_history = subparsers.add_parser('history',
+                                      help="Shows the history of commands that were run. Commands from scripts are"
+                                           " also included.")
+    p_history.set_defaults(func=history)
+    p_history.add_argument('--number', '-n',
+                           type=int,
+                           default=10,
+                           help='Number of lines of history to show. Default: 20')
     return parser
 
 
