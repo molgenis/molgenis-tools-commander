@@ -99,6 +99,9 @@ def _create_parser():
                            type=int,
                            default=10,
                            help='Number of lines of history to show. Default: 20')
+    p_history.add_argument('--clear', '-c',
+                           action='store_true',
+                           help='Clears the history.')
     return parser
 
 

@@ -21,17 +21,6 @@ log = get_logger()
 config = get_config()
 
 
-def execute(args, exit_on_error):
-    try:
-        args.func(args)
-    except MdevError as e:
-        io.error(str(e))
-        if exit_on_error:
-            exit(1)
-    else:
-        io.succeed()
-
-
 def import_(args):
     if args.from_path:
         io.start('Importing from path %s' % highlight(args.file))
@@ -127,8 +116,8 @@ def _get_quick_folders():
 
 
 def make(args):
-    login(args)
     io.start('Making user %s a member of role %s' % (highlight(args.user), highlight(args.role.upper())))
+    login(args)
 
     group_name = _find_group(args.role)
 
@@ -150,13 +139,13 @@ def _find_group(role):
 
 
 def add(args):
-    login(args)
-
     if args.type == 'user':
         io.start('Adding user %s' % highlight(args.value))
+        login(args)
         _add_user(args.value)
     elif args.type == 'group':
         io.start('Adding group %s' % highlight(args.value))
+        login(args)
         _add_group(args.value)
 
 
@@ -177,8 +166,12 @@ def give(args):
 
 
 def history(args):
-    lines = hist.read(args.number)
-    if len(lines) == 0:
-        log.warn('History is empty.')
-    for line in lines:
-        log.info(line)
+    if args.clear:
+        io.start('Clearing history')
+        hist.clear()
+    else:
+        lines = hist.read(args.number)
+        if len(lines) == 0:
+            log.warn('History is empty.')
+        for line in lines:
+            log.info(line)

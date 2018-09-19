@@ -3,11 +3,11 @@ import sys
 from pathlib import Path
 
 from mdev.arguments import parse_args, parse_arg_string
-from mdev.commands import execute
 from mdev.configuration import load_config
 from mdev.logging import set_level
 
-from mdev import history
+from mdev import history, io
+from mdev.utils import MdevError
 
 
 def main():
@@ -18,9 +18,7 @@ def main():
     if args.command == 'run':
         run(args)
     else:
-        if args.write_to_history:
-            history.write(' '.join(sys.argv[1:]))
-        execute(args, exit_on_error=True)
+        execute(args, exit_on_error=True, arg_string=' '.join(sys.argv[1:]))
 
 
 def run(args):
@@ -39,9 +37,22 @@ def run(args):
             else:
                 continue
 
-        if sub_args.write_to_history:
-            history.write(line)
-        execute(sub_args, exit_on_error)
+        execute(sub_args, exit_on_error, line)
+
+
+def execute(args, exit_on_error, arg_string):
+    try:
+        args.func(args)
+    except MdevError as e:
+        io.error(str(e))
+        if args.write_to_history:
+            history.write(arg_string, success=False)
+        if exit_on_error:
+            exit(1)
+    else:
+        if args.write_to_history:
+            history.write(arg_string, success=True)
+        io.succeed()
 
 
 def set_log_level(args):
