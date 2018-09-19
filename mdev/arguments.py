@@ -24,7 +24,8 @@ def _create_parser():
     # create the parser for the "import" command
     p_import = subparsers.add_parser('import',
                                      help='Import a file')
-    p_import.set_defaults(func=import_)
+    p_import.set_defaults(func=import_,
+                          write_to_history=True)
     p_import.add_argument('file',
                           help='The file to upload')
     p_import_source = p_import.add_mutually_exclusive_group()
@@ -38,7 +39,8 @@ def _create_parser():
     # create the parser for the "make" command
     p_make = subparsers.add_parser('make',
                                    help='Make a user member of a role')
-    p_make.set_defaults(func=make)
+    p_make.set_defaults(func=make,
+                        write_to_history=True)
     p_make.add_argument('user',
                         type=str,
                         help='The user to make a member')
@@ -49,7 +51,8 @@ def _create_parser():
     # create the parser for the "add" command
     p_add = subparsers.add_parser('add',
                                   help='Add a user, group or token')
-    p_add.set_defaults(func=add)
+    p_add.set_defaults(func=add,
+                       write_to_history=True)
     p_add.add_argument('type',
                        choices=['group', 'user'])
     p_add.add_argument('value',
@@ -59,7 +62,8 @@ def _create_parser():
     # create the parser for the "give" command
     p_give = subparsers.add_parser('give',
                                    help='Give permissions on resources to roles or users')
-    p_give.set_defaults(func=give)
+    p_give.set_defaults(func=give,
+                        write_to_history=True)
     p_give.add_argument('--user',
                         action='store_true',
                         help='Give the permission to a user instead of a role')
@@ -77,6 +81,7 @@ def _create_parser():
     # create the parser for the "run" command
     p_run = subparsers.add_parser('run',
                                   help='Run an mdev script')
+    p_run.set_defaults(write_to_history=False)
     p_run.add_argument('script',
                        type=str,
                        help='The .mdev script to run')
@@ -88,7 +93,8 @@ def _create_parser():
     p_history = subparsers.add_parser('history',
                                       help="Shows the history of commands that were run. Commands from scripts are"
                                            " also included.")
-    p_history.set_defaults(func=history)
+    p_history.set_defaults(func=history,
+                           write_to_history=False)
     p_history.add_argument('--number', '-n',
                            type=int,
                            default=10,

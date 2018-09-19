@@ -18,7 +18,8 @@ def main():
     if args.command == 'run':
         run(args)
     else:
-        history.write(' '.join(sys.argv[1:]))
+        if args.write_to_history:
+            history.write(' '.join(sys.argv[1:]))
         execute(args, exit_on_error=True)
 
 
@@ -38,7 +39,8 @@ def run(args):
             else:
                 continue
 
-        history.write(line)
+        if sub_args.write_to_history:
+            history.write(line)
         execute(sub_args, exit_on_error)
 
 
