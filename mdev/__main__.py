@@ -2,11 +2,11 @@ import logging
 import sys
 from pathlib import Path
 
+from mdev import history, io
 from mdev.arguments import parse_args, parse_arg_string
 from mdev.configuration import load_config
+from mdev.io import set_debug
 from mdev.logging import set_level
-
-from mdev import history, io
 from mdev.utils import MdevError
 
 
@@ -31,7 +31,7 @@ def run(args):
     for line in lines:
         sub_args = parse_arg_string(line.split(' '))
         if sub_args.command == 'run':
-            logging.error("Can't use the run command in a script: %s" % line)
+            io.error("Can't use the run command in a script: %s" % line)
             if exit_on_error:
                 exit(1)
             else:
@@ -60,6 +60,7 @@ def set_log_level(args):
         verbosity = int(args.verbose)
         if verbosity > 0:
             set_level(logging.DEBUG)
+            set_debug()
     else:
         set_level(logging.INFO)
 

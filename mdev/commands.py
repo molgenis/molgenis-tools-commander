@@ -4,14 +4,12 @@ from urllib.parse import urljoin
 
 import polling
 import requests
-
 # PyGithub's package is called github which throws off PyCharm
 # noinspection PyPackageRequirements
 from github import Github, UnknownObjectException
 
-from mdev import io
 from mdev import history as hist
-
+from mdev import io
 from mdev.client import login, get, post, post_file
 from mdev.configuration import get_config
 from mdev.logging import get_logger, highlight
@@ -102,7 +100,7 @@ def _scan_folders_for_files(folders):
 
 def _get_molgenis_folders():
     if not config.has_option('data', 'git_root') or not config.has_option('data', 'git_paths'):
-        io.warn('Molgenis git paths not configured. Edit the mdev.ini file to include the test data.')
+        io.info('Molgenis git paths not configured. Edit the mdev.ini file to include the test data.')
         return list()
     else:
         return config_string_to_paths(config.get('data', 'git_paths'))
@@ -126,7 +124,7 @@ def make(args):
 
 
 def _find_group(role):
-    log.debug('Fetching groups')
+    io.debug('Fetching groups')
     groups = get(config.get('api', 'rest2') + 'sys_sec_Group?attrs=name')
     role = lower_kebab(role)
 
@@ -174,12 +172,10 @@ def give(args):
         io.warn('plugin')
     else:
         login(args)
-        entity_type = get(config.get('api', 'rest2') + 'sys_md_EntityType?q=id==%s' % args.resource).json()['total'] == 1
+        entity_type = get(config.get('api', 'rest2') + 'sys_md_EntityType?q=id==%s' % args.resource).json()[
+                          'total'] == 1
         package = get(config.get('api', 'rest2') + 'sys_md_Package?q=id==%s' % args.resource).json()['total'] == 1
         plugin = get(config.get('api', 'rest2') + 'sys_Plugin?q=id==%s' % args.resource).json()['total'] == 1
-
-
-
 
 
 def history(args):

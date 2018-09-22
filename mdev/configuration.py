@@ -2,9 +2,7 @@ import shutil
 from configparser import ConfigParser
 from os import path, makedirs
 
-from mdev.logging import get_logger
-
-log = get_logger()
+from mdev import io
 
 _INSTALL_DIR = path.dirname(__file__)
 _DEFAULT_CONFIG = path.join(_INSTALL_DIR, 'config/defaults.ini')
@@ -19,13 +17,13 @@ def _create_user_config():
         makedirs(_USER_CONFIG_DIR, exist_ok=True)
         shutil.copyfile(_DEFAULT_CONFIG, _USER_CONFIG)
     except OSError as err:
-        log.error("Error setting up user configuration: %s", err.strerror)
+        io.error("Error setting up user configuration: %s" % err.strerror)
         exit(1)
 
 
 def _check_user_config():
     if not path.isfile(_USER_CONFIG):
-        log.warn("No user configuration file found. Creating it now.")
+        io.info("No user configuration file found. Creating it now.")
         _create_user_config()
 
 

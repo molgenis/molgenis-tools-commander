@@ -6,6 +6,8 @@ from mdev.logging import get_logger
 
 log = get_logger()
 config = get_config()
+
+_debug_mode = False
 spinner = None
 
 
@@ -23,6 +25,22 @@ def succeed():
             spinner.succeed()
 
 
+def info(message):
+    """Replaces an existing spinner with an info message and restarts the previous spinner afterwards. Just shows the
+    info message if there was no spinner running."""
+    prev_text = None
+    if spinner:
+        prev_text = spinner.text
+        info_spinner = spinner
+    else:
+        info_spinner = _new_spinner()
+
+    info_spinner.info(message)
+
+    if prev_text:
+        spinner.start(prev_text)
+
+
 def warn(message):
     if spinner:
         spinner.warn()
@@ -37,6 +55,15 @@ def error(message):
         spinner.fail()
 
     log.error('  ' + message.strip('\"\''))
+
+
+def debug(message):
+    if not _debug_mode:
+        return
+
+    if spinner:
+        spinner.stop_and_persist()
+        log.debug('  ' + message)
 
 
 def multi_choice(question, choices):
@@ -60,3 +87,8 @@ def multi_choice(question, choices):
 
 def _new_spinner():
     return Halo(spinner='dots')
+
+
+def set_debug():
+    global _debug_mode
+    _debug_mode = True

@@ -2,6 +2,7 @@ import json
 
 import requests
 
+from mdev import io
 from mdev.configuration import get_config
 from mdev.logging import get_logger
 from mdev.utils import MdevError
@@ -28,7 +29,7 @@ def login(args):
 
     login_url = config.get('api', 'login')
 
-    log.debug('Logging in as user %s', username)
+    io.debug('Logging in as user %s' % username)
 
     response = post(login_url,
                     data={"username": username, "password": password})
