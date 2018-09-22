@@ -12,7 +12,8 @@ from mdev import history as hist
 from mdev import io
 from mdev.client import login, get, post, post_file
 from mdev.configuration import get_config
-from mdev.logging import get_logger, highlight
+from mdev.logging import get_logger
+from mdev.io import highlight
 from mdev.utils import lower_kebab, config_string_to_paths, MdevError, upper_snake
 
 log = get_logger()

@@ -1,7 +1,6 @@
 import logging
 import sys
 
-from colorama import Fore
 from rainbow_logging_handler import RainbowLoggingHandler
 
 # setup `logging` module
@@ -22,5 +21,3 @@ def set_level(level):
     logger.setLevel(level)
 
 
-def highlight(string):
-    return Fore.BLUE + string + Fore.RESET

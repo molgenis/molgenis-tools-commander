@@ -1,4 +1,5 @@
 from PyInquirer import prompt
+from colorama import Fore
 from halo import Halo
 
 from mdev.configuration import get_config
@@ -92,3 +93,7 @@ def _new_spinner():
 def set_debug():
     global _debug_mode
     _debug_mode = True
+
+
+def highlight(string):
+    return Fore.BLUE + string + Fore.RESET

@@ -23,8 +23,12 @@ def main():
 
 def run(args):
     script = Path(args.script)
-    with open(script) as file:
-        lines = [line.rstrip('\n') for line in file]
+    lines = list()
+    try:
+        with open(script) as file:
+            lines = [line.rstrip('\n') for line in file]
+    except OSError as e:
+        io.error('Error reading script: %s' % str(e))
 
     exit_on_error = not args.ignore_errors
 
