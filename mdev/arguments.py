@@ -11,8 +11,9 @@ def _create_parser():
     parser.add_argument('--as-user', '--user', '-u',
                         nargs=1,
                         type=str,
-                        help="Execute a command as a user. (The default user is set in the mdev.ini file). Assumes that "
-                             "the password is the same as the username. If it isn't, also supply the --password argument.")
+                        help="Execute a command as a user. (The default user is set in the mdev.ini file). Assumes "
+                             "that the password is the same as the username. If it isn't, also supply the --password "
+                             "argument.")
     parser.add_argument('--with-password', '--password', '-p',
                         nargs=1,
                         type=str,
@@ -67,6 +68,16 @@ def _create_parser():
     p_give.add_argument('--user',
                         action='store_true',
                         help='Give the permission to a user instead of a role')
+    p_give_resource = p_give.add_mutually_exclusive_group()
+    p_give_resource.add_argument('--entity-type', '-e',
+                                 action='store_true',
+                                 help='Flag to specify that the resource is an entity type')
+    p_give_resource.add_argument('--package', '-p',
+                                 action='store_true',
+                                 help='Flag to specify that the resource is a package')
+    p_give_resource.add_argument('--plugin', '-pl',
+                                 action='store_true',
+                                 help='Flag to specify that the resource is a plugin')
     p_give.add_argument('receiver',
                         type=str,
                         help='The role (or user) to give the permission to')

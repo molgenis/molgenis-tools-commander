@@ -162,7 +162,24 @@ def _add_group(name):
 
 
 def give(args):
-    pass
+    io.start('Giving %s permission to %s on %s' % (highlight(args.receiver),
+                                                   highlight(args.permission),
+                                                   highlight(args.resource)))
+
+    if args.entity_type:
+        io.warn('entity type')
+    elif args.package:
+        io.warn('package')
+    elif args.plugin:
+        io.warn('plugin')
+    else:
+        login(args)
+        entity_type = get(config.get('api', 'rest2') + 'sys_md_EntityType?q=id==%s' % args.resource).json()['total'] == 1
+        package = get(config.get('api', 'rest2') + 'sys_md_Package?q=id==%s' % args.resource).json()['total'] == 1
+        plugin = get(config.get('api', 'rest2') + 'sys_Plugin?q=id==%s' % args.resource).json()['total'] == 1
+
+
+
 
 
 def history(args):
