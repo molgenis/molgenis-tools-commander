@@ -59,12 +59,15 @@ def error(message):
 
 
 def debug(message):
+    global spinner
     if not _debug_mode:
         return
 
     if spinner:
         spinner.stop_and_persist()
-        log.debug('  ' + message)
+        spinner = None
+
+    log.debug('  ' + message)
 
 
 def multi_choice(question, choices):
@@ -79,7 +82,7 @@ def multi_choice(question, choices):
             'choices': choices
         }
     ]
-    answer = prompt(questions)
+    answer = prompt(questions)['answer']
 
     if spinner:
         spinner.start()

@@ -62,12 +62,9 @@ def _create_parser():
 
     # create the parser for the "give" command
     p_give = subparsers.add_parser('give',
-                                   help='Give permissions on resources to roles or users')
+                                   help='Give permissions on resources to roles or users.')
     p_give.set_defaults(func=give,
                         write_to_history=True)
-    p_give.add_argument('--user',
-                        action='store_true',
-                        help='Give the permission to a user instead of a role')
     p_give_resource = p_give.add_mutually_exclusive_group()
     p_give_resource.add_argument('--entity-type', '-e',
                                  action='store_true',
@@ -78,6 +75,13 @@ def _create_parser():
     p_give_resource.add_argument('--plugin', '-pl',
                                  action='store_true',
                                  help='Flag to specify that the resource is a plugin')
+    p_give_receiver = p_give.add_mutually_exclusive_group()
+    p_give_receiver.add_argument('--user', '-u',
+                                 action='store_true',
+                                 help='Flag to specify that the receiver is a role')
+    p_give_receiver.add_argument('--role', '-r',
+                                 action='store_true',
+                                 help='Flag to specify that the receiver is a role')
     p_give.add_argument('receiver',
                         type=str,
                         help='The role (or user) to give the permission to')
