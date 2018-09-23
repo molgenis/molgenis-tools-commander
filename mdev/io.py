@@ -2,7 +2,7 @@ from PyInquirer import prompt
 from colorama import Fore
 from halo import Halo
 
-from mdev.configuration import get_config
+from mdev.config.config import get_config
 from mdev.logging import get_logger
 
 log = get_logger()

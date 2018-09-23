@@ -1,6 +1,10 @@
 import argparse
 
-from .commands import import_, add, make, give, history
+from mdev.commands.add import add
+from mdev.commands.give import give
+from mdev.commands.history import history
+from mdev.commands.import_ import import_
+from mdev.commands.make import make
 
 
 def _create_parser():
@@ -58,7 +62,7 @@ def _create_parser():
                        choices=['group', 'user'])
     p_add.add_argument('value',
                        type=str,
-                       help='The group name, user name or user token to add')
+                       help='The group name or user name to add')
 
     # create the parser for the "give" command
     p_give = subparsers.add_parser('give',

@@ -4,7 +4,7 @@ from enum import Enum
 import requests
 
 from mdev import io
-from mdev.configuration import get_config
+from mdev.config.config import get_config
 from mdev.logging import get_logger
 from mdev.utils import MdevError
 

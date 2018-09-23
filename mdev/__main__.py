@@ -4,7 +4,7 @@ from pathlib import Path
 
 from mdev import history, io
 from mdev.arguments import parse_args, parse_arg_string
-from mdev.configuration import load_config
+from mdev.config.config import load_config
 from mdev.io import set_debug
 from mdev.logging import set_level
 from mdev.utils import MdevError
