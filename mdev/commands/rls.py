@@ -1,3 +1,8 @@
+"""
+Enables or disables row level security on an entity type. Enables by default to prevent accidental removal of row level
+security on important data. Will disable when the --disable flag is used.
+"""
+
 from mdev import io
 from mdev.client import post, login, resource_exists, ResourceType
 from mdev.config.config import get_config

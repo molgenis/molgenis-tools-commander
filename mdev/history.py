@@ -1,3 +1,4 @@
+from collections import deque
 from os import path
 
 from mdev.utils import MdevError
@@ -20,7 +21,7 @@ def write(arg_string, success):
 
 
 def read(num_lines):
-    lines = list()
+    lines = deque()
 
     if not path.isfile(_USER_HISTORY):
         return lines
@@ -30,7 +31,7 @@ def read(num_lines):
             for line in history:
                 lines.append(line.rstrip('\n'))
                 if len(lines) > num_lines:
-                    lines.pop()
+                    lines.popleft()
     except OSError as e:
         raise MdevError("Error reading from history: %s" % str(e))
 
