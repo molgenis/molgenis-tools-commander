@@ -5,6 +5,7 @@ from mdev.commands.give import give
 from mdev.commands.history import history
 from mdev.commands.import_ import import_
 from mdev.commands.make import make
+from mdev.commands.rls import rls
 
 
 def _create_parser():
@@ -96,6 +97,19 @@ def _create_parser():
     p_give.add_argument('resource',
                         type=str,
                         help='The resource to which permission is given')
+
+    # create the parser for the "rls" command
+    p_rls = subparsers.add_parser('rls',
+                                  help='Enables row level security on an entity type. Can be disabled by using the'
+                                       '--disabled flag.')
+    p_rls.set_defaults(func=rls,
+                       write_to_history=True)
+    p_rls.add_argument('entity',
+                       type=str,
+                       help='The id of the entity type to enable/disable row level security for.')
+    p_rls.add_argument('--disable', '-d',
+                       action='store_true',
+                       help='Disables row level security.')
 
     # create the parser for the "run" command
     p_run = subparsers.add_parser('run',

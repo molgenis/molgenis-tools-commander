@@ -113,10 +113,13 @@ def _handle_request(request):
         return response
     except requests.HTTPError as e:
         if 'application/json' in response.headers.get('Content-Type'):
-            if 'errors' in response.json():
-                for error in response.json()['errors']:
+            response_json = response.json()
+            if 'errors' in response_json:
+                for error in response_json['errors']:
                     # TODO capture multiple error messages
                     raise MdevError(error['message'])
+            elif 'errorMessage' in response_json:
+                raise MdevError(response_json['errorMessage'])
         raise MdevError(str(e))
     except requests.RequestException as e:
         raise MdevError(str(e))
