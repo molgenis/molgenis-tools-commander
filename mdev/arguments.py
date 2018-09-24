@@ -6,6 +6,7 @@ from mdev.commands.history import history
 from mdev.commands.import_ import import_
 from mdev.commands.make import make
 from mdev.commands.rls import rls
+from mdev.commands.script import script
 
 
 def _create_parser():
@@ -122,6 +123,19 @@ def _create_parser():
                        action='store_true',
                        help='Let the script continue when one or more commands throw an error')
 
+    # create the parser for the "script" command
+    p_script = subparsers.add_parser('script',
+                                     help="Create a script based on the history.")
+    p_script.set_defaults(func=script,
+                          write_to_history=False)
+    p_script.add_argument('--number', '-n',
+                          type=int,
+                          default=10,
+                          help='Number of lines of history to choose from. Default: 10')
+    p_script.add_argument('--show-fails', '-f',
+                          action='store_true',
+                          help='Also show the failed commands from history. Disabled by default.')
+
     # create the parser for the "history" command
     p_history = subparsers.add_parser('history',
                                       help="Shows the history of commands that were run. Commands from scripts are"
@@ -131,7 +145,7 @@ def _create_parser():
     p_history.add_argument('--number', '-n',
                            type=int,
                            default=10,
-                           help='Number of lines of history to show. Default: 20')
+                           help='Number of lines of history to show. Default: 10')
     p_history.add_argument('--clear', '-c',
                            action='store_true',
                            help='Clears the history.')

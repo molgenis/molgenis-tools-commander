@@ -55,7 +55,8 @@ def error(message):
     if spinner:
         spinner.fail()
 
-    log.error('  ' + message.strip('\"\''))
+    if message:
+        log.error('  ' + message.strip('\"\''))
 
 
 def debug(message):
@@ -87,6 +88,27 @@ def multi_choice(question, choices):
     if spinner:
         spinner.start()
     return answer
+
+
+def checkbox(question, choices):
+    if spinner:
+        spinner.stop_and_persist()
+
+    checks = [{'name': choice, 'value': idx} for idx, choice in enumerate(choices)]
+
+    questions = [
+        {
+            'type': 'checkbox',
+            'name': 'answer',
+            'message': question,
+            'choices': checks,
+            'validate': lambda answer: 'You must choose at least one option.' \
+                if len(answer) == 0 else True
+        }
+    ]
+
+    answer_ids = prompt(questions)['answer']
+    return [choices[idx] for idx in answer_ids]
 
 
 def _new_spinner():

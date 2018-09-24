@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -86,7 +87,7 @@ def _scan_folders_for_files(folders):
     files = dict()
     for folder in folders:
         if not folder.is_dir():
-            io.warn('Folder %s is not a valid folder, skipping it...', folder)
+            io.warn('Folder %s is not a valid folder, skipping it...' % folder)
 
         for file in list(folder.glob('*.xlsx')):
             files[file.stem] = file

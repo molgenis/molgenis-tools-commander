@@ -6,21 +6,24 @@ from mdev.utils import MdevError
 _USER_HISTORY_DIR = path.join(path.expanduser('~'), '.mdev')
 _USER_HISTORY = path.join(_USER_HISTORY_DIR, 'history.log')
 
+_INDICATOR_SUCCESS = 'v'
+_INDICATOR_FAILURE = 'x'
+
 
 def write(arg_string, success):
     try:
         history = open(_USER_HISTORY, 'a')
 
-        indicator = 'v'
+        indicator = _INDICATOR_SUCCESS
         if not success:
-            indicator = 'x'
+            indicator = _INDICATOR_FAILURE
 
         history.write('%s %s\n' % (indicator, arg_string))
     except OSError as e:
         raise MdevError("Error writing to history: %s" % str(e))
 
 
-def read(num_lines):
+def read(num_lines, include_fails):
     lines = deque()
 
     if not path.isfile(_USER_HISTORY):
@@ -29,7 +32,14 @@ def read(num_lines):
     try:
         with open(_USER_HISTORY, 'r') as history:
             for line in history:
-                lines.append(line.rstrip('\n'))
+                line = line.rstrip('\n')
+
+                if line.startswith(_INDICATOR_FAILURE):
+                    if include_fails:
+                        lines.append((False, line[2:]))
+                else:
+                    lines.append((True, line[2:]))
+
                 if len(lines) > num_lines:
                     lines.popleft()
     except OSError as e:

@@ -10,8 +10,12 @@ def history(args):
         io.start('Clearing history')
         hist.clear()
     else:
-        lines = hist.read(args.number)
+        lines = hist.read(args.number, include_fails=True)
         if len(lines) == 0:
             log.warn('History is empty.')
         for line in lines:
-            log.info(line)
+            io.start(line[1])
+            if line[0]:
+                io.succeed()
+            else:
+                io.error(None)
