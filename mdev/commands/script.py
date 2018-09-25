@@ -14,7 +14,7 @@ def script(args):
     options = [line[1] for line in lines]
 
     file_name = _input_script_name()
-    commands = io.checkbox('Pick the lines that will form te script:', options)
+    commands = io.checkbox('Pick the lines that will form the script:', options)
 
     try:
         script_file = open(join(_USER_SCRIPTS_DIR, file_name + '.mdev'), 'w')

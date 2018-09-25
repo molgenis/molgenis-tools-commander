@@ -7,7 +7,11 @@ from mdev.utils import MdevError
 
 
 def run(args):
-    script = Path(args.script)
+    if not args.script.endswith('.mdev'):
+        args.script += '.mdev'
+
+    script = Path().home().joinpath('.mdev', 'scripts', args.script)
+
     lines = list()
     try:
         with open(script) as file:
