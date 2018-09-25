@@ -43,7 +43,7 @@ def import_(args):
         files = {'/'.join(link.rsplit('/', 2)[-2:]): link for link in file_links}
 
         if len(files) > 1:
-            io.multi_choice(question='Issue #%s contains multiple files. Pick one:' % issue_num,
+            io.multi_choice(message='Issue #%s contains multiple files. Pick one:' % issue_num,
                             choices=files.keys())
 
         for link in file_links:

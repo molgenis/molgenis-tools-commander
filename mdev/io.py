@@ -71,74 +71,63 @@ def debug(message):
     log.debug('  ' + message)
 
 
-def multi_choice(question, choices):
+def multi_choice(message, choices):
     if spinner:
         spinner.stop_and_persist()
 
-    questions = [
-        {
-            'type': 'rawlist',
-            'name': 'answer',
-            'message': question,
-            'choices': choices
-        }
-    ]
-    answer = prompt(questions)['answer']
+    message = {
+        'type': 'rawlist',
+        'name': 'answer',
+        'message': message,
+        'choices': choices
+    }
 
-    if spinner:
-        spinner.start()
-    return answer
+    return _handle_question(message)
 
 
-def checkbox(question, choices):
+def checkbox(message, choices):
     if spinner:
         spinner.stop_and_persist()
 
     checks = [{'name': choice, 'value': idx} for idx, choice in enumerate(choices)]
 
-    questions = [
-        {
-            'type': 'checkbox',
-            'name': 'answer',
-            'message': question,
-            'choices': checks,
-            'validate': lambda answer: 'You must choose at least one option.' \
-                if len(answer) == 0 else True
-        }
-    ]
+    message = {
+        'type': 'checkbox',
+        'name': 'answer',
+        'message': message,
+        'choices': checks,
+        'validate': lambda answer: 'You must choose at least one option.' \
+            if len(answer) == 0 else True
+    }
 
-    answer_ids = prompt(questions)['answer']
+    answer_ids = _handle_question(message)
     return [choices[idx] for idx in answer_ids]
 
 
-def input_(question):
+def input_(message):
     if spinner:
         spinner.stop_and_persist()
 
-    questions = [
-        {
-            'type': 'input',
-            'name': 'answer',
-            'message': question
-        }
-    ]
+    message = {
+        'type': 'input',
+        'name': 'answer',
+        'message': message
+    }
 
-    return prompt(questions)['answer']
+    return _handle_question(message)
 
 
-def confirm(question):
+def confirm(message):
     if spinner:
         spinner.stop_and_persist()
 
-    questions = [
-        {
-            'type': 'confirm',
-            'name': 'answer',
-            'message': question
-        }
-    ]
+    message = {
+        'type': 'confirm',
+        'name': 'answer',
+        'message': message
+    }
 
-    return prompt(questions)['answer']
+    return _handle_question(message)
 
 
 def _new_spinner():
@@ -152,3 +141,14 @@ def set_debug():
 
 def highlight(string):
     return Fore.BLUE + string + Fore.RESET
+
+
+def _handle_question(question):
+    answer = prompt([question])
+    if not answer:
+        # empty result means that the user cancelled the prompt
+        exit(0)
+    else:
+        if spinner:
+            spinner.start()
+        return answer['answer']
