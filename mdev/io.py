@@ -111,6 +111,36 @@ def checkbox(question, choices):
     return [choices[idx] for idx in answer_ids]
 
 
+def input_(question):
+    if spinner:
+        spinner.stop_and_persist()
+
+    questions = [
+        {
+            'type': 'input',
+            'name': 'answer',
+            'message': question
+        }
+    ]
+
+    return prompt(questions)['answer']
+
+
+def confirm(question):
+    if spinner:
+        spinner.stop_and_persist()
+
+    questions = [
+        {
+            'type': 'confirm',
+            'name': 'answer',
+            'message': question
+        }
+    ]
+
+    return prompt(questions)['answer']
+
+
 def _new_spinner():
     return Halo(spinner='dots')
 
