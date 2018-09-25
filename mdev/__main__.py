@@ -10,6 +10,11 @@ from mdev.logging import set_level
 
 def main():
     load_config()
+
+    if len(sys.argv) == 1:
+        # no arguments supplied, show help
+        sys.argv.append('--help')
+
     args = parse_args()
     set_log_level(args)
 
