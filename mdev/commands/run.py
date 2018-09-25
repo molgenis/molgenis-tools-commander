@@ -1,3 +1,4 @@
+import configparser
 from pathlib import Path
 
 from mdev import io, history
@@ -33,6 +34,12 @@ def execute(args, exit_on_error, arg_string):
         args.func(args)
     except MdevError as e:
         io.error(str(e))
+        if args.write_to_history:
+            history.write(arg_string, success=False)
+        if exit_on_error:
+            exit(1)
+    except configparser.Error as e:
+        io.error('Error reading or writing mdev.ini: %s' % str(e))
         if args.write_to_history:
             history.write(arg_string, success=False)
         if exit_on_error:
