@@ -1,4 +1,5 @@
 import re
+from os import makedirs
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -16,16 +17,15 @@ config = get_config()
 
 
 def import_(args):
+    login(args)
     if args.from_path:
         io.start('Importing from path %s' % highlight(args.file))
-        login(args)
         file = Path(args.file)
         if not file.is_file():
             raise MdevError("File %s doesn't exist" % str(file.resolve()))
 
         _do_import(args.file)
     elif args.from_issue:
-        io.start('Importing from GitHub issue %s' % highlight('#' + args.file))
         try:
             issue_num = int(args.file)
             issue = Github().get_organization('molgenis').get_repo('molgenis').get_issue(issue_num)
@@ -43,20 +43,27 @@ def import_(args):
         files = {'/'.join(link.rsplit('/', 2)[-2:]): link for link in file_links}
 
         if len(files) > 1:
-            io.multi_choice(question='Issue #%s contains multiple files. Pick one:' % issue_num,
-                            choices=files.keys())
+            # TODO implement downloading of multiple files
+            raise MdevError('Issue contains more than one file. (Not supported yet).')
 
-        for link in file_links:
-            name = link.rsplit('/', 2)[-2]
-            r = requests.get(file_links[0])
-            open(name, 'wb').write(r.content)
+        issue_folder = Path().home().joinpath('.mdev', 'issues', str(issue_num))
+        issue_folder.mkdir(parents=True, exist_ok=True)
 
-        exit(1)
+        link = file_links[0]
+        name = link.rsplit('/', 1)[-1]
+        io.start('Downloading %s from GitHub issue %s' % (highlight(name), highlight('#' + args.file)))
+        file_path = issue_folder.joinpath(name)
+        r = requests.get(file_links[0])
+        with file_path.open('wb') as fp:
+            fp.write(r.content)
+        io.succeed()
+
+        io.start('Importing %s from GitHub issue %s' % (highlight(name), highlight('#' + args.file)))
+        _do_import(str(file_path))
 
     else:
         file_name = args.file
         io.start('Importing %s' % highlight(file_name))
-        login(args)
 
         files = _scan_folders_for_files(_get_molgenis_folders() + _get_quick_folders())
 
