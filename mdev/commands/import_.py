@@ -1,5 +1,4 @@
 import re
-from os import makedirs
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -26,40 +25,16 @@ def import_(args):
 
         _do_import(args.file)
     elif args.from_issue:
-        try:
-            issue_num = int(args.file)
-            issue = Github().get_organization('molgenis').get_repo('molgenis').get_issue(issue_num)
-        except ValueError:
-            raise MdevError('Not a valid issue number: %s' % args.file)
-        except UnknownObjectException:
-            raise MdevError("Issue #%s doesn't exist" % args.file)
+        issue_num = args.file
 
-        # GitHub has no API for downloading attachments yet so we get them from the issue description
-        file_links = re.findall('\(https://github.com/molgenis/molgenis/files/.*\)', issue.body)
-        if len(file_links) == 0:
-            raise MdevError("Issue #%s doesn't contain any files" % issue_num)
-        file_links = list(map(lambda s: s.strip('()'), file_links))
+        issue_folder = Path.home().joinpath('.mdev', 'issues', issue_num)
+        if not issue_folder.exists():
+            file_path = _download_github_file(issue_num)
+        else:
+            file_path = list(_scan_folders_for_files([issue_folder]))[0]
 
-        files = {'/'.join(link.rsplit('/', 2)[-2:]): link for link in file_links}
-
-        if len(files) > 1:
-            # TODO implement downloading of multiple files
-            raise MdevError('Issue contains more than one file. (Not supported yet).')
-
-        issue_folder = Path().home().joinpath('.mdev', 'issues', str(issue_num))
-        issue_folder.mkdir(parents=True, exist_ok=True)
-
-        link = file_links[0]
-        name = link.rsplit('/', 1)[-1]
-        io.start('Downloading %s from GitHub issue %s' % (highlight(name), highlight('#' + args.file)))
-        file_path = issue_folder.joinpath(name)
-        r = requests.get(file_links[0])
-        with file_path.open('wb') as fp:
-            fp.write(r.content)
-        io.succeed()
-
-        io.start('Importing %s from GitHub issue %s' % (highlight(name), highlight('#' + args.file)))
-        _do_import(str(file_path))
+        io.start('Importing %s' % file_path)
+        _do_import(file_path)
 
     else:
         file_name = args.file
@@ -72,6 +47,40 @@ def import_(args):
             _do_import(file)
         else:
             raise MdevError('No file found for %s' % file_name)
+
+
+def _download_github_file(issue_num):
+    try:
+        issue = Github().get_organization('molgenis').get_repo('molgenis').get_issue(int(issue_num))
+    except ValueError:
+        raise MdevError('Not a valid issue number: %s' % issue_num)
+    except UnknownObjectException:
+        raise MdevError("Issue #%s doesn't exist" % issue_num)
+
+    # GitHub has no API for downloading attachments yet so we get them from the issue description
+    file_links = re.findall('\(https://github.com/molgenis/molgenis/files/.*\)', issue.body)
+    if len(file_links) == 0:
+        raise MdevError("Issue #%s doesn't contain any files" % issue_num)
+    file_links = list(map(lambda s: s.strip('()'), file_links))
+
+    files = {'/'.join(link.rsplit('/', 2)[-2:]): link for link in file_links}
+
+    if len(files) > 1:
+        # TODO implement downloading of multiple files
+        raise MdevError('Issue contains more than one file. (Not supported yet).')
+
+    issue_folder = Path().home().joinpath('.mdev', 'issues', issue_num)
+    issue_folder.mkdir(parents=True, exist_ok=True)
+
+    link = file_links[0]
+    name = link.rsplit('/', 1)[-1]
+    io.start('Downloading %s from GitHub issue %s' % (highlight(name), highlight('#' + issue_num)))
+    file_path = issue_folder.joinpath(name)
+    r = requests.get(file_links[0])
+    with file_path.open('wb') as fp:
+        fp.write(r.content)
+    io.succeed()
+    return file_path
 
 
 def _do_import(file_path):
