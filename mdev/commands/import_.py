@@ -91,6 +91,8 @@ def _do_import(file_path, to_package):
     data = {'action': config.get('set', 'import_action')}
     if to_package:
         data['packageId'] = to_package
+    if '.owl' in file_path.name:
+        data['action'] = 'add'
     response = post_file(config.get('api', 'import'), file_path, data)
     import_run_url = urljoin(config.get('api', 'host'), response.text)
     status, message = _poll_for_completion(import_run_url)
@@ -112,7 +114,7 @@ def _scan_folders_for_files(folders):
         if not folder.is_dir():
             io.warn('Folder %s is not a valid folder, skipping it...' % folder)
 
-        for file in list(folder.glob('*.xlsx')):
+        for file in list(folder.glob('*.*')):
             files[file.stem] = file
     return files
 
