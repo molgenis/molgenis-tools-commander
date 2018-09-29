@@ -42,6 +42,9 @@ def _create_parser():
     p_import_source.add_argument('--from-issue', '-i',
                                  action='store_true',
                                  help='Import a file from a GitHub issue')
+    p_import.add_argument('--to-package',
+                          type=str,
+                          help='The package to import to')
 
     # create the parser for the "make" command
     p_make = subparsers.add_parser('make',
@@ -84,7 +87,7 @@ def _create_parser():
     p_give_receiver = p_give.add_mutually_exclusive_group()
     p_give_receiver.add_argument('--user', '-u',
                                  action='store_true',
-                                 help='Flag to specify that the receiver is a role')
+                                 help='Flag to specify that the receiver is a user')
     p_give_receiver.add_argument('--role', '-r',
                                  action='store_true',
                                  help='Flag to specify that the receiver is a role')

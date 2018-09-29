@@ -146,7 +146,7 @@ def highlight(string):
 def _handle_question(question):
     answer = prompt([question])
     if not answer:
-        # empty result means that the user cancelled the prompt
+        # empty result means that PyInquirer caught an InterruptException
         exit(0)
     else:
         if spinner:

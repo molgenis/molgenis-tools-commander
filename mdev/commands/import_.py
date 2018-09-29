@@ -17,13 +17,17 @@ config = get_config()
 
 def import_(args):
     login(args)
+    to_package = None
+    if args.to_package:
+        to_package = args.to_package
+
     if args.from_path:
         io.start('Importing from path %s' % highlight(args.file))
         file = Path(args.file)
         if not file.is_file():
             raise MdevError("File %s doesn't exist" % str(file.resolve()))
 
-        _do_import(args.file)
+        _do_import(args.file, to_package)
     elif args.from_issue:
         issue_num = args.file
 
@@ -34,7 +38,7 @@ def import_(args):
             file_path = list(_scan_folders_for_files([issue_folder]))[0]
 
         io.start('Importing %s' % file_path)
-        _do_import(file_path)
+        _do_import(file_path, to_package)
 
     else:
         file_name = args.file
@@ -44,7 +48,7 @@ def import_(args):
 
         if file_name in files:
             file = files[file_name]
-            _do_import(file)
+            _do_import(file, to_package)
         else:
             raise MdevError('No file found for %s' % file_name)
 
@@ -83,8 +87,13 @@ def _download_github_file(issue_num):
     return file_path
 
 
-def _do_import(file_path):
-    response = post_file(config.get('api', 'import'), file_path, {'action': config.get('set', 'import_action')})
+def _do_import(file_path, to_package):
+    data = {'action': config.get('set', 'import_action')}
+    if to_package:
+        data['packageId'] = to_package
+    if '.owl' in file_path.name:
+        data['action'] = 'add'
+    response = post_file(config.get('api', 'import'), file_path, data)
     import_run_url = urljoin(config.get('api', 'host'), response.text)
     status, message = _poll_for_completion(import_run_url)
     if status == 'FAILED':
@@ -105,7 +114,7 @@ def _scan_folders_for_files(folders):
         if not folder.is_dir():
             io.warn('Folder %s is not a valid folder, skipping it...' % folder)
 
-        for file in list(folder.glob('*.xlsx')):
+        for file in list(folder.glob('*.*')):
             files[file.stem] = file
     return files
 
