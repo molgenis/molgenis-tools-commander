@@ -17,9 +17,9 @@ def main():
         # no arguments supplied, show help
         sys.argv.append('--help')
 
-    load_config()
     args = parse_args()
     set_log_level(args)
+    load_config()
 
     if args.command == 'run':
         run(args)

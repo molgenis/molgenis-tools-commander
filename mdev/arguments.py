@@ -14,13 +14,13 @@ def _create_parser():
     subparsers = parser.add_subparsers(title="commands", dest="command")
 
     # global optionals
-    parser.add_argument('--as-user', '--user', '-u',
+    parser.add_argument('--as-user', '-u',
                         nargs=1,
                         type=str,
                         help="Execute a command as a user. (The default user is set in the mdev.ini file). Assumes "
                              "that the password is the same as the username. If it isn't, also supply the --password "
                              "argument.")
-    parser.add_argument('--with-password', '--password', '-p',
+    parser.add_argument('--with-password', '-p',
                         nargs=1,
                         type=str,
                         help="The password to use when logging in. (The default is set in the mdev.ini file)")
@@ -57,7 +57,7 @@ def _create_parser():
 
     # create the parser for the "add" command
     p_add = subparsers.add_parser('add',
-                                  help='Add a user, group or token')
+                                  help='Add users and groups')
     p_add.set_defaults(func=add,
                        write_to_history=True)
     p_add.add_argument('type',
