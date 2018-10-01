@@ -4,7 +4,7 @@ security on important data. Will disable when the --disable flag is used.
 """
 
 from mdev import io
-from mdev.client import post, login, resource_exists, ResourceType
+from mdev.client.molgenis_client import post, login, resource_exists, ResourceType
 from mdev.config.config import get_config
 from mdev.io import highlight
 from mdev.utils import MdevError

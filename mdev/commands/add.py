@@ -1,5 +1,5 @@
 from mdev import io
-from mdev.client import login, post
+from mdev.client.molgenis_client import login, post
 from mdev.config.config import get_config
 from mdev.io import highlight
 

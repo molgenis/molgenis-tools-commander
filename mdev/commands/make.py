@@ -1,5 +1,5 @@
 from mdev import io
-from mdev.client import login, post, get
+from mdev.client.molgenis_client import login, post, get
 from mdev.config.config import get_config
 from mdev.io import highlight
 from mdev.utils import lower_kebab, MdevError, upper_snake

@@ -17,12 +17,14 @@ def _create_parser():
     parser.add_argument('--as-user', '-u',
                         nargs=1,
                         type=str,
+                        metavar='USER',
                         help="Execute a command as a user. (The default user is set in the mdev.ini file). Assumes "
                              "that the password is the same as the username. If it isn't, also supply the --password "
                              "argument.")
     parser.add_argument('--with-password', '-p',
                         nargs=1,
                         type=str,
+                        metavar='PASSWORD',
                         help="The password to use when logging in. (The default is set in the mdev.ini file)")
     parser.add_argument('--verbose', '-v',
                         action='count',
@@ -34,16 +36,18 @@ def _create_parser():
     p_import.set_defaults(func=import_,
                           write_to_history=True)
     p_import.add_argument('file',
+                          nargs='?',
                           help='The file to upload')
     p_import_source = p_import.add_mutually_exclusive_group()
     p_import_source.add_argument('--from-path', '-p',
                                  action='store_true',
                                  help='Select a file by path instead of by looking in quick folders')
     p_import_source.add_argument('--from-issue', '-i',
-                                 action='store_true',
+                                 metavar='ISSUE_NUMBER',
                                  help='Import a file from a GitHub issue')
     p_import.add_argument('--to-package',
                           type=str,
+                          metavar='PACKAGE_ID',
                           help='The package to import to')
 
     # create the parser for the "make" command

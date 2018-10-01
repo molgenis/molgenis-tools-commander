@@ -5,8 +5,8 @@ principal doesn't exist, the program will terminate.
 """
 
 from mdev import io
-from mdev.client import login, grant, user_exists, PrincipalType, role_exists, principal_exists, resource_exists, \
-    ResourceType
+from mdev.client.molgenis_client import login, grant, user_exists, PrincipalType, role_exists, principal_exists, \
+    resource_exists, ResourceType
 from mdev.io import multi_choice, highlight
 from mdev.utils import MdevError
 
