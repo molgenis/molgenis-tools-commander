@@ -1,3 +1,4 @@
+from collections import defaultdict
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -31,13 +32,21 @@ def import_(args):
         _do_import(file_path, args.to_package)
     else:
         file_name = args.file
-        files = _scan_folders_for_files(_get_molgenis_folders() + _get_quick_folders())
+        file_map = _scan_folders_for_files(_get_molgenis_folders() + _get_quick_folders())
+        path = _select_path(file_map, file_name)
+        _do_import(path, args.to_package)
 
-        if file_name in files:
-            file = files[file_name]
-            _do_import(file, args.to_package)
+
+def _select_path(file_map, file_name):
+    if file_name in file_map:
+        paths = file_map[file_name]
+        if len(paths) > 1:
+            path = _choose_file(paths, file_name)
         else:
-            raise MdevError('No file found for %s' % file_name)
+            path = paths[0]
+    else:
+        raise MdevError('No file found for %s' % file_name)
+    return path
 
 
 def _select_attachment(issue_num, wanted_attachment):
@@ -85,6 +94,12 @@ def _choose_attachment(attachments):
 
     answer = io.multi_choice('Multiple attachments found. Choose which one to import:', choices)
     return attachment_map[answer]
+
+
+def _choose_file(paths, name):
+    choices = [str(path) for path in paths]
+    answer = io.multi_choice('Multiple files found for %s. Pick one:' % name, choices)
+    return Path(answer)
 
 
 def _download_attachment(attachment, issue_num):
@@ -139,13 +154,13 @@ def _poll_for_completion(url):
 
 
 def _scan_folders_for_files(folders):
-    files = dict()
+    files = defaultdict(list)
     for folder in folders:
         if not folder.is_dir():
             io.warn('Folder %s is not a valid folder, skipping it...' % folder)
 
         for file in list(folder.glob('*.*')):
-            files[file.stem] = file
+            files[file.stem].append(file)
     return files
 
 
