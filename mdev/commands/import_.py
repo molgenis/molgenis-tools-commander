@@ -26,13 +26,11 @@ def import_(args):
         _do_import(file, args.to_package)
     elif args.from_issue:
         issue_num = args.from_issue
-        attachment = _get_attachment(issue_num)
+        attachment = _select_attachment(issue_num, args.file)
         file_path = _download_attachment(attachment, issue_num)
         _do_import(file_path, args.to_package)
     else:
         file_name = args.file
-        io.start('Importing %s' % highlight(file_name))
-
         files = _scan_folders_for_files(_get_molgenis_folders() + _get_quick_folders())
 
         if file_name in files:
@@ -42,13 +40,24 @@ def import_(args):
             raise MdevError('No file found for %s' % file_name)
 
 
-def _get_attachment(issue_num):
+def _select_attachment(issue_num, wanted_attachment):
+    """Gets attachments from a GitHub issue. If wanted_attachment is specified it will try to select that attachment."""
     attachments = github.get_attachments(issue_num)
     if len(attachments) == 0:
         raise MdevError("Issue #%s doesn't contain any files" % issue_num)
-    if len(attachments) > 1:
-        attachments = _choose_attachments(attachments)
-    return attachments
+
+    if wanted_attachment:
+        selected = [a for a in attachments if a.name == wanted_attachment]
+        if len(selected) == 0:
+            raise MdevError('There are no attachments named %s.' % wanted_attachment)
+        if len(selected) > 1:
+            raise MdevError('Multiple attachments with name %s found.' % wanted_attachment)
+        return selected[0]
+    else:
+        if len(attachments) > 1:
+            return _choose_attachment(attachments)
+        else:
+            return attachments[0]
 
 
 def _create_attachment_map(attachments):
@@ -69,7 +78,7 @@ def _create_attachment_map(attachments):
     return attachment_map
 
 
-def _choose_attachments(attachments):
+def _choose_attachment(attachments):
     """Let user choose from multiple attachments. Attachments with duplicate names will display their id."""
     attachment_map = _create_attachment_map(attachments)
     choices = list(attachment_map.keys())
