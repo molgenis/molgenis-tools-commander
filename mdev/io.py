@@ -19,11 +19,14 @@ def start(message):
 
 
 def succeed():
+    global spinner
     if spinner:
         if config.has_option('set', 'unicorn_mode') and config.getboolean('set', 'unicorn_mode'):
             spinner.stop_and_persist(symbol='🦄'.encode('utf-8'))
         else:
             spinner.succeed()
+
+        spinner = None
 
 
 def info(message):

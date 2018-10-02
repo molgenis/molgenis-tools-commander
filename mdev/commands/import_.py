@@ -7,7 +7,7 @@ import requests
 
 from mdev import io
 from mdev.client import github_client as github
-from mdev.client.molgenis_client import login, post_file, get
+from mdev.client.molgenis_client import login, post_file, get, resource_exists
 from mdev.config.config import get_config
 from mdev.io import highlight
 from mdev.utils import MdevError, config_string_to_paths
@@ -126,12 +126,14 @@ def _download_attachment(attachment, issue_num):
 
 def _do_import(file_path, package):
     io.start('Importing %s' % (highlight(file_path.name)))
-    data = {'action': _get_import_action(file_path)}
+
+    params = {'action': _get_import_action(file_path),
+              'metadataAction': 'upsert'}
 
     if package:
-        data['packageId'] = package
+        params['packageId'] = package
 
-    response = post_file(config.get('api', 'import'), file_path.resolve(), data)
+    response = post_file(config.get('api', 'import'), file_path.resolve(), params)
     import_run_url = urljoin(config.get('api', 'host'), response.text)
     status, message = _poll_for_completion(import_run_url)
     if status == 'FAILED':
@@ -142,7 +144,7 @@ def _get_import_action(file):
     if '.owl' in file.name:
         return 'add'
     else:
-        config.get('set', 'import_action')
+        return config.get('set', 'import_action')
 
 
 def _poll_for_completion(url):

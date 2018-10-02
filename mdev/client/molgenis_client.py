@@ -108,7 +108,6 @@ def _handle_request(request):
     response = str()
     try:
         response = request()
-        io.debug('Response: ' + response.text)
         response.raise_for_status()
         return response
     except requests.HTTPError as e:
