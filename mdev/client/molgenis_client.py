@@ -125,6 +125,7 @@ def _handle_request(request):
 
 
 def resource_exists(resource_id, resource_type):
+    log.debug('Checking if %s %s exists' % (resource_type.get_label(), resource_id))
     response = get(config.get('api', 'rest2') + resource_type.get_entity_id() + '?q=id==' + resource_id)
     return int(response.json()['total']) > 0
 
@@ -139,10 +140,12 @@ def principal_exists(principal_name, principal_type):
 
 
 def user_exists(username):
+    log.debug('Checking if user %s exists' % username)
     response = get(config.get('api', 'rest2') + 'sys_sec_User?q=username==' + username)
     return int(response.json()['total']) > 0
 
 
 def role_exists(rolename):
+    log.debug('Checking if role %s exists' % rolename)
     response = get(config.get('api', 'rest2') + 'sys_sec_Role?q=name==' + rolename.upper())
     return int(response.json()['total']) > 0

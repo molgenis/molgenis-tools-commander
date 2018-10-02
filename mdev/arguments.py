@@ -99,9 +99,8 @@ def _create_parser():
                         type=str,
                         help='The role (or user) to give the permission to')
     p_give.add_argument('permission',
-                        choices=['none', 'writemeta', 'readmeta', 'write', 'read', 'count', 'n', 'wm', 'rm', 'w', 'r',
-                                 'c'],
-                        help='The permission type to give')
+                        choices=['none', 'writemeta', 'readmeta', 'write', 'edit', 'read', 'view', 'count'],
+                        help='The permission type to give. Synonyms are allowed (e.g. write/edit).')
     p_give.add_argument('resource',
                         type=str,
                         help='The resource to which permission is given')

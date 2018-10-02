@@ -19,22 +19,33 @@ def import_(args):
     login(args)
 
     if args.from_path:
-        io.start('Importing from path %s' % highlight(args.file))
-        file = Path(args.file)
-        if not file.is_file():
-            raise MdevError("File %s doesn't exist" % str(file.resolve()))
-
-        _do_import(file, args.to_package)
+        _import_from_path(args)
     elif args.from_issue:
-        issue_num = args.from_issue
-        attachment = _select_attachment(issue_num, args.file)
-        file_path = _download_attachment(attachment, issue_num)
-        _do_import(file_path, args.to_package)
+        _import_from_issue(args)
     else:
-        file_name = args.file
-        file_map = _scan_folders_for_files(_get_molgenis_folders() + _get_quick_folders())
-        path = _select_path(file_map, file_name)
-        _do_import(path, args.to_package)
+        _import_from_quick_folders(args)
+
+
+def _import_from_quick_folders(args):
+    file_name = args.file
+    file_map = _scan_folders_for_files(_get_molgenis_folders() + _get_quick_folders())
+    path = _select_path(file_map, file_name)
+    _do_import(path, args.to_package)
+
+
+def _import_from_issue(args):
+    issue_num = args.from_issue
+    attachment = _select_attachment(issue_num, args.file)
+    file_path = _download_attachment(attachment, issue_num)
+    _do_import(file_path, args.to_package)
+
+
+def _import_from_path(args):
+    io.start('Importing from path %s' % highlight(args.file))
+    file = Path(args.file)
+    if not file.is_file():
+        raise MdevError("File %s doesn't exist" % str(file.resolve()))
+    _do_import(file, args.to_package)
 
 
 def _select_path(file_map, file_name):
