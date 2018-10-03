@@ -152,7 +152,7 @@ def _do_import(file_path, package):
 
 
 def _get_import_action(file):
-    if '.owl' in file.name:
+    if '.owl' in file.name or '.obo' in file.name:
         return 'add'
     else:
         return config.get('set', 'import_action')
