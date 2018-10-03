@@ -7,7 +7,7 @@ import requests
 
 from mdev import io
 from mdev.client import github_client as github
-from mdev.client.molgenis_client import login, post_file, get, resource_exists
+from mdev.client.molgenis_client import login, post_file, get
 from mdev.config.config import get_config
 from mdev.io import highlight
 from mdev.utils import MdevError, config_string_to_paths

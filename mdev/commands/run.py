@@ -20,7 +20,6 @@ def run(args):
         io.error('Error reading script: %s' % str(e))
 
     exit_on_error = not args.ignore_errors
-
     for line in lines:
         sub_args = parse_arg_string(line.split(' '))
         if sub_args.command == 'run':
@@ -37,18 +36,19 @@ def execute(args, exit_on_error, arg_string):
     try:
         args.func(args)
     except MdevError as e:
-        io.error(str(e))
-        if args.write_to_history:
-            history.write(arg_string, success=False)
-        if exit_on_error:
-            exit(1)
+        _handle_error(str(e), args.write_to_history, arg_string, exit_on_error)
     except configparser.Error as e:
-        io.error('Error reading or writing mdev.ini: %s' % str(e))
-        if args.write_to_history:
-            history.write(arg_string, success=False)
-        if exit_on_error:
-            exit(1)
+        message = 'Error reading or writing mdev.ini: %s' % str(e)
+        _handle_error(message, args.write_to_history, arg_string, exit_on_error)
     else:
         if args.write_to_history:
             history.write(arg_string, success=True)
         io.succeed()
+
+
+def _handle_error(message, write_to_history, arg_string, exit_on_error):
+    io.error(message)
+    if write_to_history:
+        history.write(arg_string, success=False)
+    if exit_on_error:
+        exit(1)
