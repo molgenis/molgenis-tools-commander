@@ -141,6 +141,9 @@ def _create_parser():
     p_script.add_argument('--show-fails', '-f',
                           action='store_true',
                           help='Also show the failed commands from history. Disabled by default.')
+    p_script.add_argument('--list', '-l',
+                          action='store_true',
+                          help='Lists the stored scripts.')
 
     # create the parser for the "history" command
     p_history = subparsers.add_parser('history',
