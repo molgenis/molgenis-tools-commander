@@ -7,8 +7,9 @@ import requests
 
 from mdev import io
 from mdev.client import github_client as github
-from mdev.client.molgenis_client import login, post_file, get, resource_exists
+from mdev.client.molgenis_client import login, post_file, get
 from mdev.config.config import get_config
+from mdev.config.struct import get_issues_folder
 from mdev.io import highlight
 from mdev.utils import MdevError, config_string_to_paths
 
@@ -114,7 +115,7 @@ def _choose_file(paths, name):
 
 
 def _download_attachment(attachment, issue_num):
-    issue_folder = Path().home().joinpath('.mdev', 'issues', issue_num)
+    issue_folder = get_issues_folder().joinpath(issue_num)
     issue_folder.mkdir(parents=True, exist_ok=True)
     file_path = issue_folder.joinpath(attachment.name)
 
