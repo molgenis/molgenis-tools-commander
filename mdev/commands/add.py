@@ -6,24 +6,17 @@ from mdev.io import highlight
 config = get_config()
 
 
-def add(args):
-    if args.type == 'user':
-        io.start('Adding user %s' % highlight(args.value))
-        login(args)
-        _add_user(args.value)
-    elif args.type == 'group':
-        io.start('Adding group %s' % highlight(args.value))
-        login(args)
-        _add_group(args.value)
-
-
-def _add_user(username):
+def add_user(args):
+    io.start('Adding user %s' % highlight(args.username))
+    login(args)
     post(config.get('api', 'rest1') + 'sys_sec_User',
-         {'username': username,
-          'password_': username,
-          'Email': username + "@molgenis.org",
+         {'username': args.username,
+          'password_': args.username,
+          'Email': args.username + "@molgenis.org",
           'active': True})
 
 
-def _add_group(name):
-    post(config.get('api', 'group'), {'name': name, 'label': name})
+def add_group(args):
+    io.start('Adding group %s' % highlight(args.name))
+    login(args)
+    post(config.get('api', 'group'), {'name': args.name, 'label': args.name})
