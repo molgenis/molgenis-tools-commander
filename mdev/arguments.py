@@ -81,7 +81,23 @@ def _create_parser():
                             write_to_history=True)
     p_add_user.add_argument('username',
                             type=str,
-                            help="The group's name")
+                            help="The user's name")
+    p_add_user.add_argument('--with-password', '-p',
+                            metavar='PASSWORD',
+                            type=str,
+                            nargs=1,
+                            help="The user's password")
+    p_add_user.add_argument('--with-email', '-e',
+                            metavar='EMAIL',
+                            type=str,
+                            nargs=1,
+                            help="The user's e-mail address")
+    p_add_user.add_argument('--is-active', '-a',
+                            metavar='TRUE/FALSE',
+                            type=bool,
+                            nargs=1,
+                            default=True,
+                            help="Is the user active? (default: true)")
 
     # create the parser for the "give" command
     p_give = subparsers.add_parser('give',

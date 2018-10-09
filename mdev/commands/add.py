@@ -9,11 +9,15 @@ config = get_config()
 def add_user(args):
     io.start('Adding user %s' % highlight(args.username))
     login(args)
+
+    password = args.with_password if args.with_password else args.username
+    email = args.with_email if args.with_email else args.username + '@molgenis.org'
+
     post(config.get('api', 'rest1') + 'sys_sec_User',
          {'username': args.username,
-          'password_': args.username,
-          'Email': args.username + "@molgenis.org",
-          'active': True})
+          'password_': password,
+          'Email': email,
+          'active': args.is_active})
 
 
 def add_group(args):
