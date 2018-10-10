@@ -1,6 +1,7 @@
 import argparse
 
 from mdev.commands.add import add
+from mdev.commands.delete_ import delete_
 from mdev.commands.give import give
 from mdev.commands.history import history
 from mdev.commands.import_ import import_
@@ -49,6 +50,19 @@ def _create_parser():
                           type=str,
                           metavar='PACKAGE_ID',
                           help='The package to import to')
+
+    # create the parser for the "delete" command
+    p_delete = subparsers.add_parser('delete',
+                                  help='Delete a complete entityType or rows from it')
+    p_delete.set_defaults(func=delete_,
+                       write_to_history=True)
+    p_delete.add_argument('entityType',
+                          nargs='?',
+                          help='The entityType you want to delete')
+    p_delete.add_argument('--data',
+                          type=str,
+                          metavar='DATA',
+                          help='A comma separated list of id \'s of rows to delete from the specified entityType')
 
     # create the parser for the "make" command
     p_make = subparsers.add_parser('make',
