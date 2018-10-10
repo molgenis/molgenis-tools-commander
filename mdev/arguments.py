@@ -1,6 +1,6 @@
 import argparse
 
-from mdev.commands.add import add
+from mdev.commands.add import add_group, add_user
 from mdev.commands.delete_ import delete_
 from mdev.commands.give import give
 from mdev.commands.history import history
@@ -78,14 +78,40 @@ def _create_parser():
 
     # create the parser for the "add" command
     p_add = subparsers.add_parser('add',
-                                  help='Add users and groups')
-    p_add.set_defaults(func=add,
-                       write_to_history=True)
-    p_add.add_argument('type',
-                       choices=['group', 'user'])
-    p_add.add_argument('value',
-                       type=str,
-                       help='The group name or user name to add')
+                                  help='Add users and groups',
+                                  description="Run 'mdev add group -h' or 'mdev add user -h' to view the help for those "
+                                              "sub-commands")
+    p_add_subparsers = p_add.add_subparsers(dest="type")
+    p_add_group = p_add_subparsers.add_parser('group',
+                                              help='Add a group')
+    p_add_group.set_defaults(func=add_group,
+                             write_to_history=True)
+    p_add_group.add_argument('name',
+                             type=str,
+                             help="The group's name")
+    p_add_user = p_add_subparsers.add_parser('user',
+                                             help='Add a user')
+    p_add_user.set_defaults(func=add_user,
+                            write_to_history=True)
+    p_add_user.add_argument('username',
+                            type=str,
+                            help="The user's name")
+    p_add_user.add_argument('--with-password', '-p',
+                            metavar='PASSWORD',
+                            type=str,
+                            nargs=1,
+                            help="The user's password")
+    p_add_user.add_argument('--with-email', '-e',
+                            metavar='EMAIL',
+                            type=str,
+                            nargs=1,
+                            help="The user's e-mail address")
+    p_add_user.add_argument('--is-active', '-a',
+                            metavar='TRUE/FALSE',
+                            type=bool,
+                            nargs=1,
+                            default=True,
+                            help="Is the user active? (default: true)")
 
     # create the parser for the "give" command
     p_give = subparsers.add_parser('give',
