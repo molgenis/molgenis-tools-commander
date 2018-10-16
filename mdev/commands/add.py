@@ -24,3 +24,16 @@ def add_group(args):
     io.start('Adding group %s' % highlight(args.name))
     login(args)
     post(config.get('api', 'group'), {'name': args.name, 'label': args.name})
+
+
+def add_package(args):
+    io.start('Adding package %s' % highlight(args.id))
+    login(args)
+
+    data = {'id': args.id,
+            'label': args.id}
+
+    if args.with_parent:
+        data['parent'] = args.with_parent
+
+    post(config.get('api', 'rest1') + 'sys_md_Package', data)
