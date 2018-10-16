@@ -7,7 +7,7 @@ import requests
 
 from mdev import io
 from mdev.client import github_client as github
-from mdev.client.molgenis_client import login, post_file, get
+from mdev.client.molgenis_client import login, post_file, get, import_by_url
 from mdev.config.config import get_config
 from mdev.config.struct import get_issues_folder
 from mdev.io import highlight
@@ -21,10 +21,33 @@ def import_(args):
 
     if args.from_path:
         _import_from_path(args)
+    elif args.from_url:
+        _import_from_url(args)
     elif args.from_issue:
         _import_from_issue(args)
     else:
         _import_from_quick_folders(args)
+
+
+def _import_from_url(args):
+    login(args)
+    file_url = args.from_url
+    file_name = file_url.split("/")[-1]
+    io.start('Importing from URL %s' % highlight(file_url))
+
+    params = {'action': _get_import_action(file_name),
+              'metadataAction': 'upsert'}
+
+    if args.to_package:
+        params['packageId'] = args.to_package
+
+    params['url'] = file_url
+
+    response = import_by_url(params)
+    import_run_url = urljoin(config.get('api', 'host'), response.text)
+    status, message = _poll_for_completion(import_run_url)
+    if status == 'FAILED':
+        raise MdevError(message)
 
 
 def _import_from_quick_folders(args):
@@ -139,7 +162,7 @@ def _download_attachment(attachment, issue_num):
 def _do_import(file_path, package):
     io.start('Importing %s' % (highlight(file_path.name)))
 
-    params = {'action': _get_import_action(file_path),
+    params = {'action': _get_import_action(file_path.name),
               'metadataAction': 'upsert'}
 
     if package:
@@ -152,8 +175,8 @@ def _do_import(file_path, package):
         raise MdevError(message)
 
 
-def _get_import_action(file):
-    if '.owl' in file.name or '.obo' in file.name:
+def _get_import_action(file_name):
+    if '.owl' in file_name or '.obo' in file_name:
         return 'add'
     else:
         return config.get('set', 'import_action')

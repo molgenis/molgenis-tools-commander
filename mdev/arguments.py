@@ -45,6 +45,10 @@ def _create_parser():
     p_import_source.add_argument('--from-issue', '-i',
                                  metavar='ISSUE_NUMBER',
                                  help='Import a file from a GitHub issue')
+    p_import_source.add_argument('--from-url',
+                                 metavar='URL',
+                                 help='Import a file from a URL. Uses the importByUrl endpoint of the MOLGENIS '
+                                      'importer.')
     p_import.add_argument('--to-package',
                           type=str,
                           metavar='PACKAGE_ID',
