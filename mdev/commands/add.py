@@ -1,7 +1,8 @@
 from mdev import io
-from mdev.client.molgenis_client import login, post
+from mdev.client.molgenis_client import login, post, get
 from mdev.config.config import get_config
 from mdev.io import highlight
+from mdev.utils import MdevError
 
 config = get_config()
 
@@ -37,3 +38,19 @@ def add_package(args):
         data['parent'] = args.with_parent
 
     post(config.get('api', 'rest1') + 'sys_md_Package', data)
+
+
+def add_token(args):
+    io.start('Adding token %s for user %s' % (highlight(args.token), highlight(args.user)))
+    login(args)
+
+    user = get(config.get('api', 'rest2') + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
+    if user.json()['total'] == 0:
+        raise MdevError('Unknown user %s' % args.user)
+
+    user_id = user.json()['items'][0]['id']
+
+    data = {'User': user_id,
+            'token': args.token}
+
+    post(config.get('api', 'rest1') + 'sys_sec_Token', data)

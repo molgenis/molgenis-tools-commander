@@ -1,6 +1,6 @@
 import argparse
 
-from mdev.commands.add import add_group, add_user, add_package
+from mdev.commands.add import add_group, add_user, add_package, add_token
 from mdev.commands.give import give
 from mdev.commands.history import history
 from mdev.commands.import_ import import_
@@ -115,6 +115,17 @@ def _create_parser():
     p_add_package.add_argument('--with-parent', '-p',
                                type=str,
                                help="The id of the parent")
+
+    p_add_token = p_add_subparsers.add_parser('token',
+                                              help='Add a token')
+    p_add_token.set_defaults(func=add_token,
+                             write_to_history=True)
+    p_add_token.add_argument('user',
+                             type=str,
+                             help="The user to give the token to")
+    p_add_token.add_argument('token',
+                             type=str,
+                             help="The token")
 
     # create the parser for the "give" command
     p_give = subparsers.add_parser('give',
