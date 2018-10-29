@@ -112,8 +112,9 @@ def _create_parser():
     p_add_package.add_argument('id',
                                type=str,
                                help="The id of the Package")
-    p_add_package.add_argument('--with-parent', '-p',
+    p_add_package.add_argument('--in',
                                type=str,
+                               dest='parent',
                                help="The id of the parent")
 
     p_add_token = p_add_subparsers.add_parser('token',

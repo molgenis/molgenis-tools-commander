@@ -34,8 +34,8 @@ def add_package(args):
     data = {'id': args.id,
             'label': args.id}
 
-    if args.with_parent:
-        data['parent'] = args.with_parent
+    if args.parent:
+        data['parent'] = args.parent
 
     post(config.get('api', 'rest1') + 'sys_md_Package', data)
 
