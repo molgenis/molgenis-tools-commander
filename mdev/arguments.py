@@ -1,7 +1,7 @@
 import argparse
 
-from mdev.commands.add import add_group, add_user
 from mdev.commands.delete_ import delete_
+from mdev.commands.add import add_group, add_user, add_package, add_token
 from mdev.commands.give import give
 from mdev.commands.history import history
 from mdev.commands.import_ import import_
@@ -46,6 +46,10 @@ def _create_parser():
     p_import_source.add_argument('--from-issue', '-i',
                                  metavar='ISSUE_NUMBER',
                                  help='Import a file from a GitHub issue')
+    p_import_source.add_argument('--from-url',
+                                 metavar='URL',
+                                 help='Import a file from a URL. Uses the importByUrl endpoint of the MOLGENIS '
+                                      'importer.')
     p_import.add_argument('--to-package',
                           type=str,
                           metavar='PACKAGE_ID',
@@ -79,9 +83,10 @@ def _create_parser():
     # create the parser for the "add" command
     p_add = subparsers.add_parser('add',
                                   help='Add users and groups',
-                                  description="Run 'mdev add group -h' or 'mdev add user -h' to view the help for those "
-                                              "sub-commands")
+                                  description="Run 'mdev add group -h' or 'mdev add user -h' to view the help for those"
+                                              " sub-commands")
     p_add_subparsers = p_add.add_subparsers(dest="type")
+
     p_add_group = p_add_subparsers.add_parser('group',
                                               help='Add a group')
     p_add_group.set_defaults(func=add_group,
@@ -89,6 +94,7 @@ def _create_parser():
     p_add_group.add_argument('name',
                              type=str,
                              help="The group's name")
+
     p_add_user = p_add_subparsers.add_parser('user',
                                              help='Add a user')
     p_add_user.set_defaults(func=add_user,
@@ -112,6 +118,29 @@ def _create_parser():
                             nargs=1,
                             default=True,
                             help="Is the user active? (default: true)")
+
+    p_add_package = p_add_subparsers.add_parser('package',
+                                                help='Add a package')
+    p_add_package.set_defaults(func=add_package,
+                               write_to_history=True)
+    p_add_package.add_argument('id',
+                               type=str,
+                               help="The id of the Package")
+    p_add_package.add_argument('--in',
+                               type=str,
+                               dest='parent',
+                               help="The id of the parent")
+
+    p_add_token = p_add_subparsers.add_parser('token',
+                                              help='Add a token')
+    p_add_token.set_defaults(func=add_token,
+                             write_to_history=True)
+    p_add_token.add_argument('user',
+                             type=str,
+                             help="The user to give the token to")
+    p_add_token.add_argument('token',
+                             type=str,
+                             help="The token")
 
     # create the parser for the "give" command
     p_give = subparsers.add_parser('give',

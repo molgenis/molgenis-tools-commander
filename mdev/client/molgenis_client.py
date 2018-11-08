@@ -107,6 +107,12 @@ def delete_data(url, data):
                                                  data=json.dumps({"entityIds": data})))
 
 
+def import_by_url(params):
+    return _handle_request(lambda: requests.post(config.get('api', 'import_url'),
+                                                 headers=_get_default_headers(),
+                                                 params=params))
+
+
 def _get_default_headers():
     headers = {'Content-Type': 'application/json'}
     if token:
