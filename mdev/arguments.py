@@ -1,6 +1,7 @@
 import argparse
 
 from mdev.commands.delete_ import delete_
+from mdev.commands.update import update
 from mdev.commands.add import add_group, add_user, add_package, add_token
 from mdev.commands.give import give
 from mdev.commands.history import history
@@ -57,9 +58,9 @@ def _create_parser():
 
     # create the parser for the "delete" command
     p_delete = subparsers.add_parser('delete',
-                                  help='Delete a complete entityType or rows from it')
+                                     help='Delete a complete entityType or rows from it')
     p_delete.set_defaults(func=delete_,
-                       write_to_history=True)
+                          write_to_history=True)
     p_delete.add_argument('entityType',
                           nargs='?',
                           help='The entityType you want to delete')
@@ -67,6 +68,38 @@ def _create_parser():
                           type=str,
                           metavar='DATA',
                           help='A comma separated list of id \'s of rows to delete from the specified entityType')
+
+    # create the parser for the "update" command
+    p_update = subparsers.add_parser('update',
+                                     help='Update given attribute of given row from given entity type with given value',
+                                     description="Run 'mdev update attribute -h' to view the help for this sub-command")
+    p_update.set_defaults(func=update,
+                          write_to_history=True)
+
+    p_update.add_argument('entityType',
+                          type=str,
+                          metavar='ENTITY_TYPE',
+                          help='The entityType you want to update')
+
+    p_update.add_argument('--row',
+                          type=str,
+                          metavar='ROW_ID',
+                          help='The id of the row you want to update')
+
+    p_update.add_argument('--rows',
+                          type=str,
+                          metavar='ROWS',
+                          help='Json structure with the rows that should be updated')
+
+    p_update.add_argument('--attribute',
+                          type=str,
+                          metavar='ATTRIBUTE',
+                          help='The attribute you want to update')
+
+    p_update.add_argument('--to',
+                          type=str,
+                          metavar='NEW_VALUE',
+                          help='The value you want the attribute to update to')
 
     # create the parser for the "make" command
     p_make = subparsers.add_parser('make',

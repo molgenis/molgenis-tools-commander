@@ -54,3 +54,6 @@ def add_token(args):
             'token': args.token}
 
     post(config.get('api', 'rest1') + 'sys_sec_Token', data)
+
+def add_row(args):
+    io.start
