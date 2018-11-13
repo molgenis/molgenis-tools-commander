@@ -67,6 +67,7 @@ def _update_rows(args, rows=True):
     :param rows: whether the function is called because the --rows parameter is specified or not (default True)
     :return: None
     """
+    content = args.rows
     # If --rows was used, tell the user what happens and check if the input is a file containing json or json itself
     if rows:
         io.start('Updating rows for entity type: {}'.format(highlight(args.entityType)))
@@ -75,14 +76,7 @@ def _update_rows(args, rows=True):
         # Check if commandline argument is a file
         if file.is_file():
             content = file_to_string(args.rows)
-
-        # If argument is not a file, it should be json
-        else:
-            # TODO: Work with the quick paths
-            content = args.rows
-    # The --to option was used to specify the update data and can only be json
-    else:
-        content = args.rows
+        # TODO: Work with the quick paths
     json_structure = string_to_json(content)
     data = {'entities': json_structure}
     url = '{}{}'.format(config.get('api', 'rest2'), args.entityType)

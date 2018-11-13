@@ -68,15 +68,13 @@ def add_rows(args):
     if not resource_exists(args.entityType, ResourceType.ENTITY_TYPE):
         raise MdevError("Entity type {} doesn't exist".format(args.entityType))
 
+    content = args.rows
     file = Path(args.rows)
     # Check if commandline argument is a file
     if file.is_file():
         content = file_to_string(args.rows)
 
-    # If argument is not a file, it should be json
-    else:
-        # TODO: Work with the quick paths
-        content = args.rows
+    # TODO: Work with the quick paths
     json_structure = string_to_json(content)
     data = {'entities': json_structure}
     url = '{}{}'.format(config.get('api', 'rest2'), args.entityType)
