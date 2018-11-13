@@ -12,6 +12,12 @@ config = get_config()
 
 
 def delete_(args):
+    """
+    delete_ deletes specified entityTypes or rows
+    :param args: commandline arguments
+    :return: None
+    :exception: MdevError: when the entityType you try to delete (from) does not exist
+    """
     login(args)
 
     if not resource_exists(args.entityType, ResourceType.ENTITY_TYPE):
@@ -24,6 +30,11 @@ def delete_(args):
 
 
 def _delete_data(args):
+    """
+    _delete_data deletes rows from a entityType
+    :param args: commandline arguments containing the entityType to delete from and the id's of the rows to remove
+    :return: None
+    """
     io.start('Deleting rows from entityType: {}'.format(highlight(args.entityType)))
     url = '{}{}'.format(config.get('api', 'rest2'), args.entityType)
     data = args.data.split(',')
@@ -31,6 +42,11 @@ def _delete_data(args):
 
 
 def _delete_entity_type(args):
+    """
+    _delete_entity_type deletes the specified entityType doing a delete request
+    :param args: commandline arguments containing the entityType to delete
+    :return: None
+    """
     io.start('Deleting entityType: {}'.format(highlight(args.entityType)))
     url = '{}{}/meta'.format(config.get('api', 'rest1'), args.entityType)
     delete(url)
