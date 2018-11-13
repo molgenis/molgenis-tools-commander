@@ -110,7 +110,7 @@ def delete_data(url, data):
 def put(url, data):
     return _handle_request(lambda : requests.put(url=url,
                                                  headers=_get_default_headers(),
-                                                 data=data))
+                                                 data=json.dumps(data)))
 
 
 def import_by_url(params):

@@ -1,8 +1,9 @@
 from mdev import io
-from mdev.client.molgenis_client import login, post, get
+from mdev.client.molgenis_client import login, post, get, resource_exists, ResourceType
 from mdev.config.config import get_config
 from mdev.io import highlight
-from mdev.utils import MdevError
+from mdev.utils import MdevError, file_to_string, string_to_json
+from pathlib import Path
 
 config = get_config()
 
@@ -55,5 +56,28 @@ def add_token(args):
 
     post(config.get('api', 'rest1') + 'sys_sec_Token', data)
 
-def add_row(args):
-    io.start
+
+def add_rows(args):
+    """
+    add_rows calls a post request to add rows to the specified table
+    :param args: commandline arguments containing entityType and rows
+    :return: None
+    """
+    io.start('Adding rows to entity type {}'.format(args.entityType))
+    login(args)
+    if not resource_exists(args.entityType, ResourceType.ENTITY_TYPE):
+        raise MdevError("Entity type {} doesn't exist".format(args.entityType))
+
+    file = Path(args.rows)
+    # Check if commandline argument is a file
+    if file.is_file():
+        content = file_to_string(args.rows)
+
+    # If argument is not a file, it should be json
+    else:
+        # TODO: Work with the quick paths
+        content = args.rows
+    json_structure = string_to_json(content)
+    data = {'entities': json_structure}
+    url = '{}{}'.format(config.get('api', 'rest2'), args.entityType)
+    post(url, data)

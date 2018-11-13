@@ -2,7 +2,7 @@ import argparse
 
 from mdev.commands.delete_ import delete_
 from mdev.commands.update import update
-from mdev.commands.add import add_group, add_user, add_package, add_token
+from mdev.commands.add import add_group, add_user, add_package, add_token, add_rows
 from mdev.commands.give import give
 from mdev.commands.history import history
 from mdev.commands.import_ import import_
@@ -174,6 +174,17 @@ def _create_parser():
     p_add_token.add_argument('token',
                              type=str,
                              help="The token")
+
+    p_add_rows = p_add_subparsers.add_parser('rows',
+                                             help='Add rows to an entityType')
+    p_add_rows.set_defaults(func=add_rows,
+                            write_to_history=True)
+    p_add_rows.add_argument('entityType',
+                            type=str,
+                            help="The entityType to add rows to")
+    p_add_rows.add_argument('rows',
+                            type=str,
+                            help="An absolute path to a json file containing the rows or a string with the rows in a json array")
 
     # create the parser for the "give" command
     p_give = subparsers.add_parser('give',
