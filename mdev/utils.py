@@ -1,5 +1,7 @@
 from pathlib import Path
 import ast
+import os
+
 
 class MdevError(Exception):
     def __init__(self, message):
@@ -57,3 +59,12 @@ def string_to_json(json_string):
         return json_structure
     except:
         raise MdevError("Input rows are not written in valid json")
+
+
+def get_file_name_from_path(path):
+    """
+    get_file_name returns a file name from a path to the file
+    :param path: path to the file (i.e. /Users/henk/Desktop/example.xlsx)
+    :return: filename (i.e. example.xlsx)
+    """
+    return path.split(os.sep)[-1]

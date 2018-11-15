@@ -2,7 +2,7 @@ import argparse
 
 from mdev.commands.delete_ import delete_
 from mdev.commands.update import update
-from mdev.commands.add import add_group, add_user, add_package, add_token, add_rows, add_logo
+from mdev.commands.add import add_group, add_user, add_package, add_token, add_rows, add_logo, add_theme
 from mdev.commands.give import give
 from mdev.commands.history import history
 from mdev.commands.import_ import import_
@@ -188,8 +188,18 @@ def _create_parser():
 
     p_add_logo = p_add_subparsers.add_parser('logo', help='Upload a logo')
     p_add_logo.set_defaults(func=add_logo,
-                             write_to_history=True)
+                            write_to_history=True)
     p_add_logo.add_argument('logo', type=str, help='An absolute path to the logo you want to upload')
+
+    p_add_theme = p_add_subparsers.add_parser('theme', help='Upload a bootstrap theme')
+    p_add_theme.set_defaults(func=add_theme,
+                             write_to_history=True)
+    p_add_theme.add_argument('bootstrap3_theme',
+                             type=str,
+                             help='The bootstrap3 css theme file')
+    p_add_theme.add_argument('--bootstrap4-theme', '-b4',
+                             type=str,
+                             help='The bootstrap4 css theme file (when not specified, the default molgenis theme will be applied on bootstrap4 pages)')
 
     # create the parser for the "give" command
     p_give = subparsers.add_parser('give',

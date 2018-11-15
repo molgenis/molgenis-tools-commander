@@ -6,7 +6,7 @@ import requests
 from mdev import io
 from mdev.config.config import get_config
 from mdev.logging import get_logger
-from mdev.utils import MdevError
+from mdev.utils import MdevError, get_file_name_from_path
 
 config = get_config()
 log = get_logger()
@@ -120,27 +120,65 @@ def import_by_url(params):
                                                  params=params))
 
 
+def import_bootstrap_theme(bs3file, bs4file=None):
+    """
+    import_bootstrap_theme imports a bootstrap theme to use as molgenis theme
+    :param bs3file: the bootstrap 3 theme file
+    :param bs4file: the bootstrap 4 theme file
+    :return: response of the post request
+    :exception: MdevError: when provided file is not a css file (ending with .css)
+    """
+    bs3_file_name = get_file_name_from_path(bs3file)
+    content_type = 'text/css'
+    extension = 'css'
+
+    if not bs3_file_name.endswith(extension):
+        raise MdevError('Bootstrap3 file: [{}] is not a valid css file.'.format(bs3_file_name))
+    files = {'bootstrap3-style': (bs3_file_name, open(bs3file, 'rb'), content_type)}
+
+    if bs4file:
+        bs4_file_name = get_file_name_from_path(bs4file)
+
+        if not bs4_file_name.endswith(extension):
+            raise MdevError('Bootstrap4 file: [{}] is not a valid css file.'.format(bs4_file_name))
+        else:
+            files['bootstrap4-style'] = (bs4_file_name, open(bs4file, 'rb'), content_type)
+
+    return _handle_request(lambda: requests.post(config.get('api', 'theme'),
+                                                 headers={'x-molgenis-token': token},
+                                                 files=files))
+
+
 def import_logo(file):
     """
     import_logo uploads an image file as logo
     :param file: path to an image file (jpeg, jpg, png or gif)
-    :return: None
+    :return: response of the post request
     :exception: MdevError: if filetype is invalid
     """
-    file_name = file.split('/')[-1]
-    type = file_name.split('.')[-1]
-    valid_types = {'jpg': 'jpeg', 'jpeg': 'jpeg', 'png': 'png', 'gif': 'gif'}
+    file_name = get_file_name_from_path(file)
+    extension = _get_file_extension(file_name)
+    valid_extensions = {'jpg': 'jpeg', 'jpeg': 'jpeg', 'png': 'png', 'gif': 'gif'}
     content_type = 'image/'
-    if type in valid_types:
-        content_type += valid_types[type]
+    if extension in valid_extensions:
+        content_type += valid_extensions[type]
     else:
         raise MdevError(
             'File {} is not a valid image, type should be of one of these types: [{}]'.format(file_name,
                                                                                               ', '.join(dict.keys(
-                                                                                                  valid_types))))
+                                                                                                  valid_extensions))))
     return _handle_request(lambda: requests.post(config.get('api', 'logo'),
                                                  headers={'x-molgenis-token': token},
                                                  files={'logo': (file_name, open(file, 'rb'), content_type)}))
+
+
+def _get_file_extension(file_name):
+    """
+    _get_file_extension returns the file extension given a file name (i.e. bootstrap.min.css returns css)
+    :param file_name: the filename with extension
+    :return: extension of the file
+    """
+    return file_name.split('.')[-1]
 
 
 def _get_default_headers():
