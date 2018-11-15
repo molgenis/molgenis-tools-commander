@@ -121,6 +121,12 @@ def import_by_url(params):
 
 
 def import_logo(file):
+    """
+    import_logo uploads an image file as logo
+    :param file: path to an image file (jpeg, jpg, png or gif)
+    :return: None
+    :exception: MdevError: if filetype is invalid
+    """
     file_name = file.split('/')[-1]
     type = file_name.split('.')[-1]
     valid_types = {'jpg': 'jpeg', 'jpeg': 'jpeg', 'png': 'png', 'gif': 'gif'}
@@ -130,7 +136,7 @@ def import_logo(file):
     else:
         raise MdevError(
             'File {} is not a valid image, type should be of one of these types: [{}]'.format(file_name,
-                                                                                          ', '.join(dict.keys(
+                                                                                              ', '.join(dict.keys(
                                                                                                   valid_types))))
     return _handle_request(lambda: requests.post(config.get('api', 'logo'),
                                                  headers={'x-molgenis-token': token},

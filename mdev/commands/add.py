@@ -84,7 +84,8 @@ def add_logo(args):
     """
     add_logo uploads a logo to add to the left top of the menu
     :param args:
-    :return:
+    :return: None
+    :exception: MdevError: when path in argument is not a file
     """
     io.start('Adding logo from path: {}'.format(args.logo))
     login(args)
