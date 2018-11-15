@@ -2,6 +2,7 @@ import argparse
 
 from mdev.commands.delete_ import delete_
 from mdev.commands.update import update
+from mdev.commands.enable import enable_theme
 from mdev.commands.add import add_group, add_user, add_package, add_token, add_rows, add_logo, add_theme
 from mdev.commands.give import give
 from mdev.commands.history import history
@@ -100,6 +101,19 @@ def _create_parser():
                           type=str,
                           metavar='NEW_VALUE',
                           help='The value you want the attribute to update to')
+
+    # create the parser for the "enable" command
+    p_enable = subparsers.add_parser('enable',
+                                     help='Enable a bootstrap theme',
+                                     description="Run 'mdev enable attribute -h' to view the help for this sub-command")
+    p_enable_subparsers = p_enable.add_subparsers(dest="type")
+    p_enable_theme = p_enable_subparsers.add_parser('theme', help='Enable a bootstrap theme')
+    p_enable_theme.set_defaults(func=enable_theme,
+                                write_to_history=True)
+
+    p_enable_theme.add_argument('theme',
+                                type=str,
+                                help='The bootstrap theme you want to enable (without .css)')
 
     # create the parser for the "make" command
     p_make = subparsers.add_parser('make',

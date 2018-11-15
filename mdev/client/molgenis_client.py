@@ -144,7 +144,7 @@ def import_bootstrap_theme(bs3file, bs4file=None):
         else:
             files['bootstrap4-style'] = (bs4_file_name, open(bs4file, 'rb'), content_type)
 
-    return _handle_request(lambda: requests.post(config.get('api', 'theme'),
+    return _handle_request(lambda: requests.post(config.get('api', 'add_theme'),
                                                  headers={'x-molgenis-token': token},
                                                  files=files))
 
