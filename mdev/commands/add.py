@@ -1,5 +1,5 @@
 from mdev import io
-from mdev.client.molgenis_client import login, post, get, resource_exists, ResourceType
+from mdev.client.molgenis_client import login, post, get, resource_exists, ResourceType, import_logo
 from mdev.config.config import get_config
 from mdev.io import highlight
 from mdev.utils import MdevError, file_to_string, string_to_json
@@ -79,3 +79,19 @@ def add_rows(args):
     data = {'entities': json_structure}
     url = '{}{}'.format(config.get('api', 'rest2'), args.entityType)
     post(url, data)
+
+def add_logo(args):
+    """
+    add_logo uploads a logo to add to the left top of the menu
+    :param args:
+    :return:
+    """
+    io.start('Adding logo from path: {}'.format(args.logo))
+    login(args)
+    filePath = Path(args.logo)
+    # Check if commandline argument is a file
+    if filePath.is_file():
+        # TODO: Work with the quick paths
+        import_logo(args.logo)
+    else:
+        raise MdevError("Provided path: {} is not a file".format(args.logo))

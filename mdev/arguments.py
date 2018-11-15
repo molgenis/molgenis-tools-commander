@@ -2,7 +2,7 @@ import argparse
 
 from mdev.commands.delete_ import delete_
 from mdev.commands.update import update
-from mdev.commands.add import add_group, add_user, add_package, add_token, add_rows
+from mdev.commands.add import add_group, add_user, add_package, add_token, add_rows, add_logo
 from mdev.commands.give import give
 from mdev.commands.history import history
 from mdev.commands.import_ import import_
@@ -185,6 +185,11 @@ def _create_parser():
     p_add_rows.add_argument('rows',
                             type=str,
                             help="An absolute path to a json file containing the rows or a string with the rows in a json array")
+
+    p_add_logo = p_add_subparsers.add_parser('logo', help='Upload a logo')
+    p_add_logo.set_defaults(func=add_logo,
+                             write_to_history=True)
+    p_add_logo.add_argument('logo', type=str, help='An absolute path to the logo you want to upload')
 
     # create the parser for the "give" command
     p_give = subparsers.add_parser('give',
