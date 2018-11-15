@@ -121,9 +121,20 @@ def import_by_url(params):
 
 
 def import_logo(file):
+    file_name = file.split('/')[-1]
+    type = file_name.split('.')[-1]
+    valid_types = {'jpg': 'jpeg', 'jpeg': 'jpeg', 'png': 'png', 'gif': 'gif'}
+    content_type = 'image/'
+    if type in valid_types:
+        content_type += valid_types[type]
+    else:
+        raise MdevError(
+            'File {} is not a valid image, type should be of one of these types: [{}]'.format(file_name,
+                                                                                          ', '.join(dict.keys(
+                                                                                                  valid_types))))
     return _handle_request(lambda: requests.post(config.get('api', 'logo'),
-                                                 headers={'x-molgenis-token': token, 'Content-Type':'image/png'},
-                                                 files={'logo': open(file, 'rb')}))
+                                                 headers={'x-molgenis-token': token},
+                                                 files={'logo': (file_name, open(file, 'rb'), content_type)}))
 
 
 def _get_default_headers():
