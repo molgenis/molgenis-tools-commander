@@ -1,10 +1,10 @@
 from collections import deque
 from os import path
 
+from mdev.config.struct import get_history_file
 from mdev.utils import MdevError
 
-_USER_HISTORY_DIR = path.join(path.expanduser('~'), '.mdev')
-_USER_HISTORY = path.join(_USER_HISTORY_DIR, 'history.log')
+_USER_HISTORY = get_history_file()
 
 _INDICATOR_SUCCESS = 'v'
 _INDICATOR_FAILURE = 'x'
@@ -26,7 +26,7 @@ def write(arg_string, success):
 def read(num_lines, include_fails):
     lines = deque()
 
-    if not path.isfile(_USER_HISTORY):
+    if not path.isfile(get_history_file()):
         return lines
 
     try:

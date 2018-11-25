@@ -55,8 +55,10 @@ def warn(message):
 
 
 def error(message):
+    global spinner
     if spinner:
         spinner.fail()
+        spinner = None
 
     if message:
         log.error('  ' + message.strip('\"\''))

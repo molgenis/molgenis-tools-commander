@@ -40,7 +40,7 @@ def history(args):
     else:
         lines = hist.read(args.number, include_fails=True)
         if len(lines) == 0:
-            log.warn('History is empty.')
+            log.info('History is empty.')
         for line in lines:
             io.start(line[1])
             if line[0]:

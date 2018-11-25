@@ -12,10 +12,11 @@ from mdev.logging import set_level
 
 
 def main():
+    # setup friendly interrupt message
     signal.signal(signal.SIGINT, interrupt_handler)
 
+    # show help when no arguments are supplied
     if len(sys.argv) == 1:
-        # no arguments supplied, show help
         sys.argv.append('--help')
 
     args = parse_args()
