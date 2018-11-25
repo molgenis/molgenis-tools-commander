@@ -4,8 +4,9 @@ import sys
 
 from mdev import io
 from mdev.arguments import parse_args
-from mdev.commands.run import execute, run
+from mdev.commands.run import run
 from mdev.config.config import load_config
+from mdev.executor import execute
 from mdev.io import set_debug
 from mdev.logging import set_level
 
@@ -37,6 +38,7 @@ def set_log_level(args):
         set_level(logging.INFO)
 
 
+# noinspection PyUnusedLocal
 def interrupt_handler(sig, frame):
     io.warn('Interrupted by user.')
     sys.exit(0)

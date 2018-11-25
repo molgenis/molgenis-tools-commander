@@ -13,8 +13,47 @@ from mdev.config.struct import get_issues_folder
 from mdev.io import highlight
 from mdev.utils import MdevError, config_string_to_paths
 
+
+# =========
+# Arguments
+# =========
+
+def arguments(subparsers):
+    p_import = subparsers.add_parser('import',
+                                     help='Import a file')
+    p_import.set_defaults(func=import_,
+                          write_to_history=True)
+    p_import.add_argument('file',
+                          nargs='?',
+                          help='The file to upload')
+    p_import_source = p_import.add_mutually_exclusive_group()
+    p_import_source.add_argument('--from-path', '-p',
+                                 action='store_true',
+                                 help='Import a file the old school way (by path)')
+    p_import_source.add_argument('--from-issue', '-i',
+                                 metavar='ISSUE_NUMBER',
+                                 help='Import a file from a GitHub issue')
+    p_import_source.add_argument('--from-url',
+                                 metavar='URL',
+                                 help='Import a file from a URL. Uses the importByUrl endpoint of the MOLGENIS '
+                                      'importer.')
+    p_import.add_argument('--to-package',
+                          type=str,
+                          metavar='PACKAGE_ID',
+                          help='The package to import to')
+    return p_import
+
+
+# =======
+# Globals
+# =======
+
 config = get_config()
 
+
+# =======
+# Methods
+# =======
 
 def import_(args):
     login(args)

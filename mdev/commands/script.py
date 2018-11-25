@@ -4,8 +4,52 @@ from mdev.io import confirm, highlight
 from mdev.logging import get_logger
 from mdev.utils import MdevError
 
+
+# =========
+# Arguments
+# =========
+
+def arguments(subparsers):
+    p_script = subparsers.add_parser('script',
+                                     help="Do actions involving scripts.")
+    p_script.set_defaults(func=script,
+                          write_to_history=False)
+    p_script_action = p_script.add_mutually_exclusive_group()
+    p_script_action.add_argument('--create',
+                                 action='store_true',
+                                 help='Create a script from the history. (This is the default action.)')
+    p_script_action.add_argument('--list', '-l',
+                                 action='store_true',
+                                 help='List the stored scripts.')
+    p_script_action.add_argument('--remove', '-rm',
+                                 metavar='SCRIPT NAME',
+                                 nargs=1,
+                                 type=str,
+                                 help='Remove a script.')
+    p_script_action.add_argument('--read',
+                                 metavar='SCRIPT NAME',
+                                 nargs=1,
+                                 type=str,
+                                 help='Read the contents of a script.')
+    p_script.add_argument('--number', '-n',
+                          type=int,
+                          default=10,
+                          help='Number of lines of history to choose from. Default: 10')
+    p_script.add_argument('--show-fails', '-f',
+                          action='store_true',
+                          help='Also show the failed commands from history. Disabled by default.')
+
+
+# =======
+# Globals
+# =======
+
 log = get_logger()
 
+
+# =======
+# Methods
+# =======
 
 def script(args):
     if args.list:

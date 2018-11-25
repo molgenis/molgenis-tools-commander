@@ -11,9 +11,55 @@ from mdev.io import multi_choice, highlight
 from mdev.utils import MdevError
 
 
+# =========
+# Arguments
+# =========
+
+def arguments(subparsers):
+    p_give = subparsers.add_parser('give',
+                                   help='Give permissions on resources to roles or users.')
+    p_give.set_defaults(func=give,
+                        write_to_history=True)
+    p_give_resource = p_give.add_mutually_exclusive_group()
+    p_give_resource.add_argument('--entity-type', '-e',
+                                 action='store_true',
+                                 help='Flag to specify that the resource is an entity type')
+    p_give_resource.add_argument('--package', '-p',
+                                 action='store_true',
+                                 help='Flag to specify that the resource is a package')
+    p_give_resource.add_argument('--plugin', '-pl',
+                                 action='store_true',
+                                 help='Flag to specify that the resource is a plugin')
+    p_give_receiver = p_give.add_mutually_exclusive_group()
+    p_give_receiver.add_argument('--user', '-u',
+                                 action='store_true',
+                                 help='Flag to specify that the receiver is a user')
+    p_give_receiver.add_argument('--role', '-r',
+                                 action='store_true',
+                                 help='Flag to specify that the receiver is a role')
+    p_give.add_argument('receiver',
+                        type=str,
+                        help='The role (or user) to give the permission to')
+    p_give.add_argument('permission',
+                        choices=['none', 'writemeta', 'readmeta', 'write', 'edit', 'read', 'view', 'count'],
+                        help='The permission type to give. Synonyms are allowed (e.g. write/edit).')
+    p_give.add_argument('resource',
+                        type=str,
+                        help='The resource to which permission is given')
+
+
+# =======
+# Globals
+# =======
+
+
 _PERMISSION_MAP = {'view': 'read',
                    'edit': 'write'}
 
+
+# =======
+# Methods
+# =======
 
 def give(args):
     login(args)

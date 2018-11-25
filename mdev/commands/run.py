@@ -1,10 +1,29 @@
-import configparser
 from pathlib import Path
 
-from mdev import io, history
-from mdev.arguments import parse_arg_string
-from mdev.utils import MdevError
+import mdev.arguments as arg_parser
+from mdev import io
+from mdev.executor import execute
 
+
+# =========
+# Arguments
+# =========
+
+def arguments(subparsers):
+    p_run = subparsers.add_parser('run',
+                                  help='Run an mdev script')
+    p_run.set_defaults(write_to_history=False)
+    p_run.add_argument('script',
+                       type=str,
+                       help='The .mdev script to run')
+    p_run.add_argument('--ignore-errors', '-i',
+                       action='store_true',
+                       help='Let the script continue when one or more commands throw an error')
+
+
+# =======
+# Methods
+# =======
 
 def run(args):
     script = Path().home().joinpath('.mdev', 'scripts', args.script)
@@ -18,7 +37,7 @@ def run(args):
 
     exit_on_error = not args.ignore_errors
     for line in lines:
-        sub_args = parse_arg_string(line.split(' '))
+        sub_args = arg_parser.parse_arg_string(line.split(' '))
         if sub_args.command == 'run':
             io.error("Can't use the run command in a script: %s" % line)
             if exit_on_error:
@@ -27,25 +46,3 @@ def run(args):
                 continue
 
         execute(sub_args, exit_on_error, line)
-
-
-def execute(args, exit_on_error, arg_string):
-    try:
-        args.func(args)
-    except MdevError as e:
-        _handle_error(str(e), args.write_to_history, arg_string, exit_on_error)
-    except configparser.Error as e:
-        message = 'Error reading or writing mdev.ini: %s' % str(e)
-        _handle_error(message, args.write_to_history, arg_string, exit_on_error)
-    else:
-        if args.write_to_history:
-            history.write(arg_string, success=True)
-        io.succeed()
-
-
-def _handle_error(message, write_to_history, arg_string, exit_on_error):
-    io.error(message)
-    if write_to_history:
-        history.write(arg_string, success=False)
-    if exit_on_error:
-        exit(1)

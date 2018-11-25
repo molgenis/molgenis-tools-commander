@@ -2,8 +2,36 @@ from mdev import history as hist
 from mdev import io
 from mdev.logging import get_logger
 
+
+# =========
+# Arguments
+# =========
+
+def arguments(subparsers):
+    p_history = subparsers.add_parser('history',
+                                      help="Shows the history of commands that were run. Commands from scripts are"
+                                           " also included.")
+    p_history.set_defaults(func=history,
+                           write_to_history=False)
+    p_history.add_argument('--number', '-n',
+                           type=int,
+                           default=10,
+                           help='Number of lines of history to show. Default: 10')
+    p_history.add_argument('--clear', '-c',
+                           action='store_true',
+                           help='Clears the history.')
+
+
+# =======
+# Globals
+# =======
+
 log = get_logger()
 
+
+# =======
+# Methods
+# =======
 
 def history(args):
     if args.clear:

@@ -9,8 +9,35 @@ from mdev.config.config import get_config
 from mdev.io import highlight
 from mdev.utils import MdevError
 
+
+# =========
+# Arguments
+# =========
+
+def arguments(subparsers):
+    p_rls = subparsers.add_parser('rls',
+                                  help='Enables row level security on an entity type. Can be disabled by using the'
+                                       '--disabled flag.')
+    p_rls.set_defaults(func=rls,
+                       write_to_history=True)
+    p_rls.add_argument('entity',
+                       type=str,
+                       help='The id of the entity type to enable/disable row level security for.')
+    p_rls.add_argument('--disable', '-d',
+                       action='store_true',
+                       help='Disables row level security.')
+
+
+# =======
+# Globals
+# =======
+
 config = get_config()
 
+
+# =======
+# Methods
+# =======
 
 def rls(args):
     action_str = 'Enabling'

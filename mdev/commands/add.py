@@ -4,8 +4,84 @@ from mdev.config.config import get_config
 from mdev.io import highlight
 from mdev.utils import MdevError
 
+
+# =========
+# Arguments
+# =========
+
+def arguments(subparsers):
+    p_add = subparsers.add_parser('add',
+                                  help='Add users and groups',
+                                  description="Run 'mdev add group -h' or 'mdev add user -h' to view the help for those"
+                                              " sub-commands")
+    p_add_subparsers = p_add.add_subparsers(dest="type")
+
+    p_add_group = p_add_subparsers.add_parser('group',
+                                              help='Add a group')
+    p_add_group.set_defaults(func=add_group,
+                             write_to_history=True)
+    p_add_group.add_argument('name',
+                             type=str,
+                             help="The group's name")
+
+    p_add_user = p_add_subparsers.add_parser('user',
+                                             help='Add a user')
+    p_add_user.set_defaults(func=add_user,
+                            write_to_history=True)
+    p_add_user.add_argument('username',
+                            type=str,
+                            help="The user's name")
+    p_add_user.add_argument('--with-password', '-p',
+                            metavar='PASSWORD',
+                            type=str,
+                            nargs=1,
+                            help="The user's password")
+    p_add_user.add_argument('--with-email', '-e',
+                            metavar='EMAIL',
+                            type=str,
+                            nargs=1,
+                            help="The user's e-mail address")
+    p_add_user.add_argument('--is-active', '-a',
+                            metavar='TRUE/FALSE',
+                            type=bool,
+                            nargs=1,
+                            default=True,
+                            help="Is the user active? (default: true)")
+
+    p_add_package = p_add_subparsers.add_parser('package',
+                                                help='Add a package')
+    p_add_package.set_defaults(func=add_package,
+                               write_to_history=True)
+    p_add_package.add_argument('id',
+                               type=str,
+                               help="The id of the Package")
+    p_add_package.add_argument('--in',
+                               type=str,
+                               dest='parent',
+                               help="The id of the parent")
+
+    p_add_token = p_add_subparsers.add_parser('token',
+                                              help='Add a token')
+    p_add_token.set_defaults(func=add_token,
+                             write_to_history=True)
+    p_add_token.add_argument('user',
+                             type=str,
+                             help="The user to give the token to")
+    p_add_token.add_argument('token',
+                             type=str,
+                             help="The token")
+
+
+# =======
+# Globals
+# =======
+
 config = get_config()
 
+
+# =======
+# Methods
+# =======
 
 def add_user(args):
     io.start('Adding user %s' % highlight(args.username))
