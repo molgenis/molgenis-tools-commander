@@ -1,6 +1,6 @@
 from mdev import io
 from mdev.client.molgenis_client import login, post, get
-from mdev.config.config import get_config
+from mdev.config.config import config
 from mdev.io import highlight
 from mdev.utils import MdevError
 
@@ -73,13 +73,6 @@ def arguments(subparsers):
 
 
 # =======
-# Globals
-# =======
-
-config = get_config()
-
-
-# =======
 # Methods
 # =======
 
@@ -90,7 +83,7 @@ def add_user(args):
     password = args.with_password if args.with_password else args.username
     email = args.with_email if args.with_email else args.username + '@molgenis.org'
 
-    post(config.get('api', 'rest1') + 'sys_sec_User',
+    post(config().get('api', 'rest1') + 'sys_sec_User',
          {'username': args.username,
           'password_': password,
           'Email': email,
@@ -100,7 +93,7 @@ def add_user(args):
 def add_group(args):
     io.start('Adding group %s' % highlight(args.name))
     login(args)
-    post(config.get('api', 'group'), {'name': args.name, 'label': args.name})
+    post(config().get('api', 'group'), {'name': args.name, 'label': args.name})
 
 
 def add_package(args):
@@ -113,14 +106,14 @@ def add_package(args):
     if args.parent:
         data['parent'] = args.parent
 
-    post(config.get('api', 'rest1') + 'sys_md_Package', data)
+    post(config().get('api', 'rest1') + 'sys_md_Package', data)
 
 
 def add_token(args):
     io.start('Adding token %s for user %s' % (highlight(args.token), highlight(args.user)))
     login(args)
 
-    user = get(config.get('api', 'rest2') + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
+    user = get(config().get('api', 'rest2') + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
     if user.json()['total'] == 0:
         raise MdevError('Unknown user %s' % args.user)
 
@@ -129,4 +122,4 @@ def add_token(args):
     data = {'User': user_id,
             'token': args.token}
 
-    post(config.get('api', 'rest1') + 'sys_sec_Token', data)
+    post(config().get('api', 'rest1') + 'sys_sec_Token', data)

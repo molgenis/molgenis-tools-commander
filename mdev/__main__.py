@@ -5,7 +5,6 @@ import sys
 from mdev import io
 from mdev.arguments import parse_args
 from mdev.commands.run import run
-from mdev.config.config import load_config
 from mdev.executor import execute
 from mdev.io import set_debug
 from mdev.logging import set_level
@@ -21,7 +20,6 @@ def main():
 
     args = parse_args()
     set_log_level(args)
-    load_config()
 
     if args.command == 'run':
         run(args)

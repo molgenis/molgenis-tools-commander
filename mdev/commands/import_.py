@@ -8,7 +8,7 @@ import requests
 from mdev import io
 from mdev.client import github_client as github
 from mdev.client.molgenis_client import login, post_file, get, import_by_url
-from mdev.config.config import get_config
+from mdev.config.config import config
 from mdev.config.struct import get_issues_folder
 from mdev.io import highlight
 from mdev.utils import MdevError, config_string_to_paths
@@ -45,13 +45,6 @@ def arguments(subparsers):
 
 
 # =======
-# Globals
-# =======
-
-config = get_config()
-
-
-# =======
 # Methods
 # =======
 
@@ -83,7 +76,7 @@ def _import_from_url(args):
     params['url'] = file_url
 
     response = import_by_url(params)
-    import_run_url = urljoin(config.get('api', 'host'), response.text)
+    import_run_url = urljoin(config().get('api', 'host'), response.text)
     status, message = _poll_for_completion(import_run_url)
     if status == 'FAILED':
         raise MdevError(message)
@@ -207,8 +200,8 @@ def _do_import(file_path, package):
     if package:
         params['packageId'] = package
 
-    response = post_file(config.get('api', 'import'), file_path.resolve(), params)
-    import_run_url = urljoin(config.get('api', 'host'), response.text)
+    response = post_file(config().get('api', 'import'), file_path.resolve(), params)
+    import_run_url = urljoin(config().get('api', 'host'), response.text)
     status, message = _poll_for_completion(import_run_url)
     if status == 'FAILED':
         raise MdevError(message)
@@ -218,7 +211,7 @@ def _get_import_action(file_name):
     if '.owl' in file_name or '.obo' in file_name:
         return 'add'
     else:
-        return config.get('set', 'import_action')
+        return config().get('set', 'import_action')
 
 
 def _poll_for_completion(url):
@@ -241,15 +234,15 @@ def _scan_folders_for_files(folders):
 
 
 def _get_molgenis_folders():
-    if not config.has_option('data', 'git_root') or not config.has_option('data', 'git_paths'):
+    if not config().has_option('data', 'git_root') or not config().has_option('data', 'git_paths'):
         io.info('Molgenis git paths not configured. Edit the mdev.ini file to include the test data.')
         return list()
     else:
-        return config_string_to_paths(config.get('data', 'git_paths'))
+        return config_string_to_paths(config().get('data', 'git_paths'))
 
 
 def _get_quick_folders():
-    if not config.has_option('data', 'quick_folders'):
+    if not config().has_option('data', 'quick_folders'):
         return list()
     else:
-        return config_string_to_paths(config.get('data', 'quick_folders'))
+        return config_string_to_paths(config().get('data', 'quick_folders'))

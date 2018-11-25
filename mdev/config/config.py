@@ -9,7 +9,7 @@ _DEFAULT_CONFIG = path.join(_INSTALL_DIR, 'config/defaults.ini')
 _USER_CONFIG_DIR = path.join(path.expanduser('~'), '.mdev')
 _USER_CONFIG = path.join(_USER_CONFIG_DIR, 'mdev.ini')
 
-_config = ConfigParser()
+_config = None
 
 
 def _create_user_config():
@@ -27,10 +27,14 @@ def _check_user_config():
         _create_user_config()
 
 
-def load_config():
+def _load_config():
+    global _config
     _check_user_config()
+    _config = ConfigParser()
     _config.read(_USER_CONFIG)
 
 
-def get_config():
+def config():
+    if not _config:
+        _load_config()
     return _config
