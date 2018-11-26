@@ -1,5 +1,5 @@
 from mdev import history, io
-from mdev.config.struct import get_scripts_folder
+from mdev.config.home import get_scripts_folder
 from mdev.io import confirm, highlight
 from mdev.logging import get_logger
 from mdev.utils import MdevError

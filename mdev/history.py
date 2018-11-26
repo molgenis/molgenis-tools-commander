@@ -1,7 +1,7 @@
 from collections import deque
 from os import path
 
-from mdev.config.struct import get_history_file
+from mdev.config.home import get_history_file
 from mdev.utils import MdevError
 
 _USER_HISTORY = get_history_file()

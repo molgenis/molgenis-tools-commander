@@ -9,7 +9,7 @@ from mdev import io
 from mdev.client import github_client as github
 from mdev.client.molgenis_client import login, post_file, get, import_by_url
 from mdev.config.config import config
-from mdev.config.struct import get_issues_folder
+from mdev.config.home import get_issues_folder
 from mdev.io import highlight
 from mdev.utils import MdevError, config_string_to_paths
 
