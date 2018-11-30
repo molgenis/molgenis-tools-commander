@@ -2,7 +2,7 @@ from mdev import io
 from mdev.client.molgenis_client import login, post, get
 from mdev.config.config import config
 from mdev.io import highlight
-from mdev.utils import MdevError
+from mdev.utils import MdevError, is_true_or_false
 
 
 # =========
@@ -43,9 +43,10 @@ def arguments(subparsers):
                             help="The user's e-mail address")
     p_add_user.add_argument('--is-active', '-a',
                             metavar='TRUE/FALSE',
-                            type=bool,
+                            #with bool the default option is not working
+                            type=str,
                             nargs=1,
-                            default=True,
+                            default="true",
                             help="Is the user active? (default: true)")
 
     p_add_package = p_add_subparsers.add_parser('package',
@@ -81,13 +82,17 @@ def add_user(args):
     login(args)
 
     password = args.set_password[0] if args.set_password else args.username
-    email = args.with_email if args.with_email else args.username + '@molgenis.org'
+    email = args.with_email[0] if args.with_email else args.username + '@molgenis.org'
+
+    active = str(is_true_or_false(args.is_active[0]))
+    if active == 'None':
+        raise MdevError('--is-active should be a boolean, cannot transform {} to boolean'.format(args.is_active))
 
     post(config().get('api', 'rest1') + 'sys_sec_User',
          {'username': args.username,
           'password_': password,
           'Email': email,
-          'active': args.is_active})
+          'active': active})
 
 
 def add_group(args):

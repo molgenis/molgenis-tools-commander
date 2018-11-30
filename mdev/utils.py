@@ -30,3 +30,15 @@ def config_string_to_paths(config_string):
     clean_string = ''.join(config_string.split())
     paths = clean_string.split(',')
     return [Path(path_string) for path_string in paths]
+
+
+def is_true_or_false(boolean_like_value):
+    truthy = ['true', '1', 't', 'y', 'yes', 'yeah', 'yup', 'certainly', 'uh-huh', 'sure', 'yep', 'yush']
+    falsy = ['no', '0', 'nope', 'n', 'never', 'not', 'false', 'f']
+    value = str(boolean_like_value.lower())
+    if value in truthy:
+        return True
+    elif value in falsy:
+        return False
+    else:
+        return None
