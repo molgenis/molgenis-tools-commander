@@ -61,9 +61,8 @@ _PERMISSION_MAP = {'view': 'read',
 # Methods
 # =======
 
+@login
 def give(args):
-    login(args)
-
     # Convert synonyms to correct permission type
     if args.permission in _PERMISSION_MAP:
         args.permission = _PERMISSION_MAP[args.permission]

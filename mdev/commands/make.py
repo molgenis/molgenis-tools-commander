@@ -26,9 +26,9 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@login
 def make(args):
     io.start('Making user %s a member of role %s' % (highlight(args.user), highlight(args.role.upper())))
-    login(args)
 
     group_name = _find_group(args.role)
 

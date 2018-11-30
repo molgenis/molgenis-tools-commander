@@ -48,9 +48,8 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@login
 def import_(args):
-    login(args)
-
     if args.from_path:
         _import_from_path(args)
     elif args.from_url:
@@ -62,7 +61,6 @@ def import_(args):
 
 
 def _import_from_url(args):
-    login(args)
     file_url = args.from_url
     file_name = file_url.split("/")[-1]
     io.start('Importing from URL %s' % highlight(file_url))

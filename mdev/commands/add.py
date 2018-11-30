@@ -76,9 +76,9 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@login
 def add_user(args):
     io.start('Adding user %s' % highlight(args.username))
-    login(args)
 
     password = args.with_password if args.with_password else args.username
     email = args.with_email if args.with_email else args.username + '@molgenis.org'
@@ -90,15 +90,15 @@ def add_user(args):
           'active': args.is_active})
 
 
+@login
 def add_group(args):
     io.start('Adding group %s' % highlight(args.name))
-    login(args)
     post(config().get('api', 'group'), {'name': args.name, 'label': args.name})
 
 
+@login
 def add_package(args):
     io.start('Adding package %s' % highlight(args.id))
-    login(args)
 
     data = {'id': args.id,
             'label': args.id}
@@ -109,9 +109,9 @@ def add_package(args):
     post(config().get('api', 'rest1') + 'sys_md_Package', data)
 
 
+@login
 def add_token(args):
     io.start('Adding token %s for user %s' % (highlight(args.token), highlight(args.user)))
-    login(args)
 
     user = get(config().get('api', 'rest2') + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
     if user.json()['total'] == 0:

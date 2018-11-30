@@ -32,6 +32,7 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@login
 def rls(args):
     action_str = 'Enabling'
     if args.disable:
@@ -39,7 +40,6 @@ def rls(args):
 
     io.start('%s row level security on entity type %s' % (action_str, highlight(args.entity)))
 
-    login(args)
     if not resource_exists(args.entity, ResourceType.ENTITY_TYPE):
         raise MdevError("Entity type %s doesn't exist" % args.entity)
     post(config().get('api', 'rls'), data={'id': args.entity,
