@@ -44,15 +44,15 @@ def login(func):
         if args.as_user is None:
             username = config().get('auth', 'username')
         else:
-            username = args.as_user[0]
+            username = args.as_user
 
         if args.with_password is None:
             if args.as_user is None:
                 password = config().get('auth', 'password')
             else:
-                password = args.as_user[0]
+                password = args.as_user
         else:
-            password = args.with_password[0]
+            password = args.with_password
 
         login_url = config().get('api', 'login')
 

@@ -23,12 +23,10 @@ def arguments(subparsers):
                                  help='List the stored scripts.')
     p_script_action.add_argument('--remove', '-rm',
                                  metavar='SCRIPT NAME',
-                                 nargs=1,
                                  type=str,
                                  help='Remove a script.')
     p_script_action.add_argument('--read',
                                  metavar='SCRIPT NAME',
-                                 nargs=1,
                                  type=str,
                                  help='Read the contents of a script.')
     p_script.add_argument('--number', '-n',
@@ -55,9 +53,9 @@ def script(args):
     if args.list:
         _list_scripts()
     elif args.remove:
-        _remove_script(args.remove[0])
+        _remove_script(args.remove)
     elif args.read:
-        _read_script(args.read[0])
+        _read_script(args.read)
     else:
         _create_script(args)
 

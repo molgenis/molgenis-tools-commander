@@ -26,14 +26,12 @@ def _create_parser():
 
     # add general optionals
     parser.add_argument('--as-user', '-u',
-                        nargs=1,
                         type=str,
                         metavar='USER',
                         help="Execute a command as a user. (The default user is set in the mdev.properties file). Assumes "
                              "that the password is the same as the username. If it isn't, also supply the --password "
                              "argument.")
     parser.add_argument('--with-password', '-p',
-                        nargs=1,
                         type=str,
                         metavar='PASSWORD',
                         help="The password to use when logging in. (The default is set in the mdev.ini file)")
