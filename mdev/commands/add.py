@@ -31,7 +31,7 @@ def arguments(subparsers):
     p_add_user.add_argument('username',
                             type=str,
                             help="The user's name")
-    p_add_user.add_argument('--with-password', '-p',
+    p_add_user.add_argument('--set-password', '-p',
                             metavar='PASSWORD',
                             type=str,
                             nargs=1,
@@ -80,7 +80,7 @@ def add_user(args):
     io.start('Adding user %s' % highlight(args.username))
     login(args)
 
-    password = args.with_password if args.with_password else args.username
+    password = args.set_password[0] if args.set_password else args.username
     email = args.with_email if args.with_email else args.username + '@molgenis.org'
 
     post(config().get('api', 'rest1') + 'sys_sec_User',
