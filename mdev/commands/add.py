@@ -43,11 +43,18 @@ def arguments(subparsers):
                             help="The user's e-mail address")
     p_add_user.add_argument('--is-active', '-a',
                             metavar='TRUE/FALSE',
-                            #with bool the default option is not working
+                            # with bool the default option is not working
                             type=str,
                             nargs=1,
                             default="true",
                             help="Is the user active? (default: true)")
+    p_add_user.add_argument('--is-superuser', '-s',
+                            metavar='TRUE/FALSE',
+                            # with bool the default option is not working
+                            type=str,
+                            nargs=1,
+                            default="false",
+                            help="Is the user superuser? (default: false)")
 
     p_add_package = p_add_subparsers.add_parser('package',
                                                 help='Add a package')
@@ -85,14 +92,21 @@ def add_user(args):
     email = args.with_email[0] if args.with_email else args.username + '@molgenis.org'
 
     active = str(is_true_or_false(args.is_active[0]))
+    error_message = '{} should be a boolean, cannot transform [{}] to boolean'
     if active == 'None':
-        raise MdevError('--is-active should be a boolean, cannot transform {} to boolean'.format(args.is_active))
+        raise MdevError(error_message.format('--is-active', args.is_active[0]))
+
+    superuser = str(is_true_or_false(args.is_superuser[0]))
+    if superuser == 'None':
+        raise MdevError(error_message.format('--is-superuser', args.is_superuser[0]))
 
     post(config().get('api', 'rest1') + 'sys_sec_User',
          {'username': args.username,
           'password_': password,
           'Email': email,
-          'active': active})
+          'active': active,
+          'superuser': superuser
+          })
 
 
 def add_group(args):
