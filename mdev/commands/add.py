@@ -2,7 +2,7 @@ from mdev import io
 from mdev.client.molgenis_client import login, post, get
 from mdev.config.config import config
 from mdev.io import highlight
-from mdev.utils import MdevError, is_true_or_false
+from mdev.utils import MdevError
 
 
 # =========
@@ -39,25 +39,15 @@ def arguments(subparsers):
                             metavar='EMAIL',
                             type=str,
                             help="The user's e-mail address")
-    p_add_user.add_argument('--is-active', '-a',
-                            metavar='TRUE/FALSE',
-                            type=bool,
-                            default=True,
-                            help="Is the user active? (default: true)")
+    p_add_user.add_argument('--is-inactive', '-a',
+                            action='store_true',
+                            help="Make user inactive")
     p_add_user.add_argument('--is-superuser', '-s',
-                            metavar='TRUE/FALSE',
-                            # with bool the default option is not working
-                            type=str,
-                            nargs=1,
-                            default="false",
-                            help="Is the user superuser? (default: false)")
+                            action='store_true',
+                            help="Make user superuser")
     p_add_user.add_argument('--change-password', '-c',
-                            metavar='TRUE/FALSE',
-                            # with bool the default option is not working
-                            type=str,
-                            nargs=1,
-                            default="false",
-                            help="Change the password at first login? (default: false)")
+                            action='store_true',
+                            help="Set change password to true for user")
 
     p_add_package = p_add_subparsers.add_parser('package',
                                                 help='Add a package')
@@ -93,24 +83,14 @@ def add_user(args):
 
     password = args.set_password[0] if args.set_password else args.username
     email = args.with_email[0] if args.with_email else args.username + '@molgenis.org'
-
-    active = str(is_true_or_false(args.is_active[0]))
-    error_message = '{} should be a boolean, cannot transform [{}] to boolean'
-    if active == 'None':
-        raise MdevError(error_message.format('--is-active', args.is_active[0]))
-
-    superuser = str(is_true_or_false(args.is_superuser[0]))
-    if superuser == 'None':
-        raise MdevError(error_message.format('--is-superuser', args.is_superuser[0]))
-
-    change_pwd = str(is_true_or_false(args.change_password[0]))
-    if change_pwd == 'None':
-        raise MdevError(error_message.format('--change-password', args.is_superuser[0]))
+    active = not args.is_inactive
+    superuser = args.is_superuser
+    ch_pwd = args.change_password
 
     post(config().get('api', 'rest1') + 'sys_sec_User',
          {'username': args.username,
           'password_': password,
-          'changePassword': change_pwd,
+          'changePassword': ch_pwd,
           'Email': email,
           'active': active,
           'superuser': superuser
