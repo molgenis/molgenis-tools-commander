@@ -34,19 +34,15 @@ def arguments(subparsers):
     p_add_user.add_argument('--set-password', '-p',
                             metavar='PASSWORD',
                             type=str,
-                            nargs=1,
                             help="The user's password")
     p_add_user.add_argument('--with-email', '-e',
                             metavar='EMAIL',
                             type=str,
-                            nargs=1,
                             help="The user's e-mail address")
     p_add_user.add_argument('--is-active', '-a',
                             metavar='TRUE/FALSE',
-                            # with bool the default option is not working
-                            type=str,
-                            nargs=1,
-                            default="true",
+                            type=bool,
+                            default=True,
                             help="Is the user active? (default: true)")
     p_add_user.add_argument('--is-superuser', '-s',
                             metavar='TRUE/FALSE',
@@ -91,9 +87,9 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@login
 def add_user(args):
     io.start('Adding user %s' % highlight(args.username))
-    login(args)
 
     password = args.set_password[0] if args.set_password else args.username
     email = args.with_email[0] if args.with_email else args.username + '@molgenis.org'
@@ -121,15 +117,15 @@ def add_user(args):
           })
 
 
+@login
 def add_group(args):
     io.start('Adding group %s' % highlight(args.name))
-    login(args)
     post(config().get('api', 'group'), {'name': args.name, 'label': args.name})
 
 
+@login
 def add_package(args):
     io.start('Adding package %s' % highlight(args.id))
-    login(args)
 
     data = {'id': args.id,
             'label': args.id}
@@ -140,9 +136,9 @@ def add_package(args):
     post(config().get('api', 'rest1') + 'sys_md_Package', data)
 
 
+@login
 def add_token(args):
     io.start('Adding token %s for user %s' % (highlight(args.token), highlight(args.user)))
-    login(args)
 
     user = get(config().get('api', 'rest2') + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
     if user.json()['total'] == 0:

@@ -19,12 +19,13 @@ def main():
         sys.argv.append('--help')
 
     args = parse_args()
+    setattr(args, 'arg_string', ' '.join(sys.argv[1:]))
     set_log_level(args)
 
     if args.command == 'run':
         run(args)
     else:
-        execute(args, exit_on_error=True, arg_string=' '.join(sys.argv[1:]))
+        execute(args, exit_on_error=True)
 
 
 def set_log_level(args):

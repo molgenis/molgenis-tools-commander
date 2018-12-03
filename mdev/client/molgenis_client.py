@@ -36,28 +36,35 @@ class PrincipalType(Enum):
     ROLE = 'role'
 
 
-def login(args):
-    global token
-    if args.as_user is None:
-        username = config().get('auth', 'username')
-    else:
-        username = args.as_user[0]
+def login(func):
+    """Login decorator."""
 
-    if args.with_password is None:
+    def wrapper(args):
+        global token
         if args.as_user is None:
-            password = config().get('auth', 'password')
+            username = config().get('auth', 'username')
         else:
-            password = args.as_user[0]
-    else:
-        password = args.with_password[0]
+            username = args.as_user
 
-    login_url = config().get('api', 'login')
+        if args.with_password is None:
+            if args.as_user is None:
+                password = config().get('auth', 'password')
+            else:
+                password = args.as_user
+        else:
+            password = args.with_password
 
-    io.debug('Logging in as user %s' % username)
+        login_url = config().get('api', 'login')
 
-    response = post(login_url,
-                    data={"username": username, "password": password})
-    token = response.json()['token']
+        io.debug('Logging in as user %s' % username)
+
+        response = post(login_url,
+                        data={"username": username, "password": password})
+        token = response.json()['token']
+
+        func(args)
+
+    return wrapper
 
 
 def get(url):

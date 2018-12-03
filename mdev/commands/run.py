@@ -38,6 +38,7 @@ def run(args):
     exit_on_error = not args.ignore_errors
     for line in lines:
         sub_args = arg_parser.parse_arg_string(line.split(' '))
+        setattr(sub_args, 'arg_string', line)
         if sub_args.command == 'run':
             io.error("Can't use the run command in a script: %s" % line)
             if exit_on_error:
@@ -45,4 +46,4 @@ def run(args):
             else:
                 continue
 
-        execute(sub_args, exit_on_error, line)
+        execute(sub_args, exit_on_error)
