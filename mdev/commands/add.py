@@ -55,6 +55,13 @@ def arguments(subparsers):
                             nargs=1,
                             default="false",
                             help="Is the user superuser? (default: false)")
+    p_add_user.add_argument('--change-password', '-c',
+                            metavar='TRUE/FALSE',
+                            # with bool the default option is not working
+                            type=str,
+                            nargs=1,
+                            default="false",
+                            help="Change the password at first login? (default: false)")
 
     p_add_package = p_add_subparsers.add_parser('package',
                                                 help='Add a package')
@@ -100,9 +107,14 @@ def add_user(args):
     if superuser == 'None':
         raise MdevError(error_message.format('--is-superuser', args.is_superuser[0]))
 
+    change_pwd = str(is_true_or_false(args.change_password[0]))
+    if change_pwd == 'None':
+        raise MdevError(error_message.format('--change-password', args.is_superuser[0]))
+
     post(config().get('api', 'rest1') + 'sys_sec_User',
          {'username': args.username,
           'password_': password,
+          'changePassword': change_pwd,
           'Email': email,
           'active': active,
           'superuser': superuser
