@@ -25,7 +25,7 @@ def arguments(subparsers):
                                  metavar='SCRIPT NAME',
                                  type=str,
                                  help='Remove a script.')
-    p_script_action.add_argument('--read',
+    p_script_action.add_argument('--read', '-r',
                                  metavar='SCRIPT NAME',
                                  type=str,
                                  help='Read the contents of a script.')
