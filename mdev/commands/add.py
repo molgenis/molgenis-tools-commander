@@ -81,8 +81,8 @@ def arguments(subparsers):
 def add_user(args):
     io.start('Adding user %s' % highlight(args.username))
 
-    password = args.set_password[0] if args.set_password else args.username
-    email = args.with_email[0] if args.with_email else args.username + '@molgenis.org'
+    password = args.set_password if args.set_password else args.username
+    email = args.with_email if args.with_email else args.username + '@molgenis.org'
     active = not args.is_inactive
     superuser = args.is_superuser
     ch_pwd = args.change_password
