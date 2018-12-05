@@ -37,7 +37,8 @@ def arguments(subparsers):
                                  metavar='URL',
                                  help='Import a file from a URL. Uses the importByUrl endpoint of the MOLGENIS '
                                       'importer.')
-    p_import.add_argument('--to-package',
+    p_import.add_argument('--in',
+                          dest='to_package',
                           type=str,
                           metavar='PACKAGE_ID',
                           help='The package to import to')
