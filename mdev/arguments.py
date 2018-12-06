@@ -1,6 +1,7 @@
 import argparse
 
 from mdev.commands.add import arguments as add_args
+from mdev.commands.backup import arguments as backup_args
 from mdev.commands.give import arguments as give_args
 from mdev.commands.history import arguments as history_args
 from mdev.commands.import_ import arguments as import_args
@@ -48,6 +49,7 @@ def _create_parser():
     run_args(subparsers)
     script_args(subparsers)
     history_args(subparsers)
+    backup_args(subparsers)
 
     return parser
 
