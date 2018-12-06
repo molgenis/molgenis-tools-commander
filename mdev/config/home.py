@@ -20,6 +20,7 @@ from pathlib import Path
 _MDEV_FOLDER = '.mdev'
 _SCRIPT_FOLDER = 'scripts'
 _DATASET_FOLDER = 'datasets'
+_BACKUP_FOLDER = 'backups'
 _ISSUE_FOLDER = 'issues'
 _PROPERTIES_FILE = 'mdev.properties'
 _HISTORY_FILE = 'history.log'
@@ -38,6 +39,11 @@ def get_scripts_folder():
 def get_datasets_folder():
     datasets_folder = get_mdev_home().joinpath(_DATASET_FOLDER)
     return _mkdir_if_not_exists(datasets_folder)
+
+
+def get_backups_folder():
+    backups_folder = get_mdev_home().joinpath(_BACKUP_FOLDER)
+    return _mkdir_if_not_exists(backups_folder)
 
 
 def get_issues_folder():
