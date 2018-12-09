@@ -1,6 +1,3 @@
-# =========
-# Arguments
-# =========
 import os
 import subprocess
 import tempfile
@@ -13,6 +10,10 @@ from mdev.config.home import get_backups_folder
 from mdev.io import confirm
 from mdev.utils import MdevError
 
+
+# =========
+# Arguments
+# =========
 
 def arguments(subparsers):
     p_backup = subparsers.add_parser('backup',
@@ -34,9 +35,7 @@ def backup(args):
     try:
         with zipfile.ZipFile(backup_name, 'w') as backup_zip:
             _backup_database(backup_zip)
-            _backup_index(backup_zip)
             _backup_filestore(backup_zip)
-
     except MdevError as error:
         Path(backup_name).unlink()
         raise error
@@ -64,14 +63,9 @@ def _backup_database(backup_zip):
     io.succeed()
 
 
-def _backup_index(backup_zip):
-    pass
-
-
-# TODO get molgenis home from config
 def _backup_filestore(backup_zip):
     io.start('Backing up filestore')
-    filestore = Path().home().joinpath('.molgenis').joinpath('omx').joinpath('data').joinpath('filestore')
+    filestore = config().get('data', 'molgenis_home').joinpath('data').joinpath('filestore')
     try:
         for root, dirs, files in os.walk(str(filestore)):
             for file in files:
