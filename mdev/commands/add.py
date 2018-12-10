@@ -31,7 +31,7 @@ def arguments(subparsers):
     p_add_user.add_argument('username',
                             type=str,
                             help="The user's name")
-    p_add_user.add_argument('--with-password', '-p',
+    p_add_user.add_argument('--set-password', '-p',
                             metavar='PASSWORD',
                             type=str,
                             help="The user's password")
@@ -39,11 +39,15 @@ def arguments(subparsers):
                             metavar='EMAIL',
                             type=str,
                             help="The user's e-mail address")
-    p_add_user.add_argument('--is-active', '-a',
-                            metavar='TRUE/FALSE',
-                            type=bool,
-                            default=True,
-                            help="Is the user active? (default: true)")
+    p_add_user.add_argument('--is-inactive', '-a',
+                            action='store_true',
+                            help="Make user inactive")
+    p_add_user.add_argument('--is-superuser', '-s',
+                            action='store_true',
+                            help="Make user superuser")
+    p_add_user.add_argument('--change-password', '-c',
+                            action='store_true',
+                            help="Set change password to true for user")
 
     p_add_package = p_add_subparsers.add_parser('package',
                                                 help='Add a package')
@@ -77,14 +81,20 @@ def arguments(subparsers):
 def add_user(args):
     io.start('Adding user %s' % highlight(args.username))
 
-    password = args.with_password if args.with_password else args.username
+    password = args.set_password if args.set_password else args.username
     email = args.with_email if args.with_email else args.username + '@molgenis.org'
+    active = not args.is_inactive
+    superuser = args.is_superuser
+    ch_pwd = args.change_password
 
     post(config().get('api', 'rest1') + 'sys_sec_User',
          {'username': args.username,
           'password_': password,
+          'changePassword': ch_pwd,
           'Email': email,
-          'active': args.is_active})
+          'active': active,
+          'superuser': superuser
+          })
 
 
 @login
