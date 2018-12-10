@@ -6,7 +6,7 @@ principal doesn't exist, the program will terminate.
 
 from mdev import io
 from mdev.client.molgenis_client import login, grant, user_exists, PrincipalType, role_exists, principal_exists, \
-    resource_exists, ResourceType
+    resource_exists, ResourceType, ensure_resource_exists
 from mdev.io import multi_choice, highlight
 from mdev.utils import MdevError
 
@@ -109,16 +109,13 @@ def _get_principal_type(args):
 def _get_resource_type(args):
     resource_id = args.resource
     if args.entity_type:
-        if not resource_exists(resource_id, ResourceType.ENTITY_TYPE):
-            raise MdevError('No Entity Type found with id %s' % resource_id)
+        ensure_resource_exists(resource_id, ResourceType.ENTITY_TYPE)
         return ResourceType.ENTITY_TYPE
     elif args.package:
-        if not resource_exists(resource_id, ResourceType.PACKAGE):
-            raise MdevError('No Package found with id %s' % resource_id)
+        ensure_resource_exists(resource_id, ResourceType.PACKAGE)
         return ResourceType.PACKAGE
     elif args.plugin:
-        if not resource_exists(resource_id, ResourceType.PLUGIN):
-            raise MdevError('No Plugin found with id %s' % resource_id)
+        ensure_resource_exists(resource_id, ResourceType.PLUGIN)
         return ResourceType.PLUGIN
     else:
         # No resource type specified, let's guess it

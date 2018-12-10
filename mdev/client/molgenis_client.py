@@ -143,6 +143,11 @@ def resource_exists(resource_id, resource_type):
     return int(response.json()['total']) > 0
 
 
+def ensure_resource_exists(resource_id, resource_type):
+    if not resource_exists(resource_id, resource_type):
+        raise MdevError('No %s found with id %s' % (resource_type.get_label(), resource_id))
+
+
 def principal_exists(principal_name, principal_type):
     if principal_type == PrincipalType.USER:
         return user_exists(principal_name)

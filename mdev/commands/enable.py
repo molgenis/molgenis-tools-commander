@@ -1,8 +1,7 @@
 from mdev import io
-from mdev.client.molgenis_client import login, resource_exists, ResourceType, post
+from mdev.client.molgenis_client import login, ResourceType, post, ensure_resource_exists
 from mdev.config.config import config
 from mdev.io import highlight
-from mdev.utils import MdevError
 
 
 # =========
@@ -33,7 +32,6 @@ def arguments(subparsers):
 def enable_rls(args):
     io.start('Enabling row level security on entity type %s' % highlight(args.entity))
 
-    if not resource_exists(args.entity, ResourceType.ENTITY_TYPE):
-        raise MdevError("Entity type %s doesn't exist" % args.entity)
+    ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
     post(config().get('api', 'rls'), data={'id': args.entity,
                                            'rlsEnabled': True})
