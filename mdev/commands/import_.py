@@ -234,7 +234,7 @@ def _scan_folders_for_files(folders):
 
 def _get_molgenis_folders():
     if not config().has_option('data', 'git_root') or not config().has_option('data', 'git_paths'):
-        io.info('Molgenis git paths not configured. Edit the mdev.ini file to include the test data.')
+        io.info('Molgenis git paths not configured. Edit the mdev.properties file to include the test data.')
         return list()
     else:
         return config_string_to_paths(config().get('data', 'git_paths'))

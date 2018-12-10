@@ -1,11 +1,12 @@
 import argparse
 
 from mdev.commands.add import arguments as add_args
+from mdev.commands.disable import arguments as disable_args
+from mdev.commands.enable import arguments as enable_args
 from mdev.commands.give import arguments as give_args
 from mdev.commands.history import arguments as history_args
 from mdev.commands.import_ import arguments as import_args
 from mdev.commands.make import arguments as make_args
-from mdev.commands.rls import arguments as rls_args
 from mdev.commands.run import arguments as run_args
 from mdev.commands.script import arguments as script_args
 
@@ -44,7 +45,8 @@ def _create_parser():
     make_args(subparsers)
     add_args(subparsers)
     give_args(subparsers)
-    rls_args(subparsers)
+    enable_args(subparsers)
+    disable_args(subparsers)
     run_args(subparsers)
     script_args(subparsers)
     history_args(subparsers)
