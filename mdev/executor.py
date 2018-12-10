@@ -4,7 +4,7 @@ from mdev import history, io
 from mdev.utils import MdevError
 
 
-def execute(args, exit_on_error):
+def execute(args, exit_on_error=True):
     try:
         args.func(args)
     except MdevError as e:

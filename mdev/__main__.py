@@ -25,7 +25,7 @@ def main():
     if args.command == 'run':
         run(args)
     else:
-        execute(args, exit_on_error=True)
+        execute(args)
 
 
 def set_log_level(args):
