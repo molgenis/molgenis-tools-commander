@@ -36,7 +36,7 @@ def get_attachments(issue_num):
     except UnknownObjectException:
         raise MdevError("Issue #%s doesn't exist" % issue_num)
 
-    # GitHub has no API for downloading attachments yet so we get them from the issue description
+    # GitHub has no API for downloading attachments so we get them from the issue description
     urls = _parse_attachment_urls(issue.body)
     return [Attachment(url.strip('()')) for url in urls]
 
