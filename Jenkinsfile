@@ -21,6 +21,7 @@ pipeline {
                     script {
                         sh "python install bumpversion"
                         sh "python install twine"
+                        sh "python install pip"
                     }
                 }
             }
@@ -31,7 +32,7 @@ pipeline {
             }
             steps {
                 container('python') {
-                    sh "python install ."
+                    sh "pip install ."
                     sh "python -m unittest discover . '*_test.py'"
                 }
             }
@@ -43,7 +44,7 @@ pipeline {
             steps {
                 milestone 1
                 container('node') {
-                    sh "python install ."
+                    sh "pip install ."
                     sh "python -m unittest discover . '*_test.py'"
                 }
             }
