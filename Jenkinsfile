@@ -77,6 +77,9 @@ pipeline {
 
                     sh "bumpversion ${RELEASE_SCOPE} setup.py"
 
+                    sh "pip install ."
+                    sh "python -m unittest discover . '*_test.py'"
+
 //                    sh "git push --tags origin master"
 
                     sh "twine upload --repository-url ${PYPI_LOCAL_REGISTRY} -u ${PYPI_LOCAL_USERNAME} -p ${PYPI_LOCAL_PASSWORD} dist/*"
