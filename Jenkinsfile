@@ -19,7 +19,6 @@ pipeline {
                 }
                 container('python') {
                     script {
-                        sh "python install pip"
                         sh "pip install bumpversion"
                         sh "pip install twine"
                     }

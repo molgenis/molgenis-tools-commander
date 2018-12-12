@@ -1,6 +1,5 @@
 The MOLGENIS command line development tool
 
-
 ### Development
 Go to the root of the project and run:
 
