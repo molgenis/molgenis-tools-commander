@@ -79,7 +79,7 @@ pipeline {
 
 //                    sh "git push --tags origin master"
 
-                    sh "twine upload -r ${PYPI_LOCAL_REGISTRY} -u ${PYPI_LOCAL_USERNAME} -p ${PYPI_LOCAL_PASSWORD} dist/*"
+                    sh "twine upload --repository-url ${PYPI_LOCAL_REGISTRY} -u ${PYPI_LOCAL_USERNAME} -p ${PYPI_LOCAL_PASSWORD} dist/*"
                     hubotSend(message: '${env.REPOSITORY} has been successfully deployed on ${env.PYPI_LOCAL_REGISTRY}.', status:'SUCCESS')
                 }
             }
