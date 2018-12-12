@@ -42,7 +42,7 @@ pipeline {
             }
             steps {
                 milestone 1
-                container('node') {
+                container('python') {
                     sh "pip install ."
                     sh "python -m unittest discover . '*_test.py'"
                 }
