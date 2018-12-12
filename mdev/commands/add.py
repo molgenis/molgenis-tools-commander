@@ -100,7 +100,7 @@ def add_user(args):
 @login
 def add_group(args):
     io.start('Adding group %s' % highlight(args.name))
-    post(config().get('api', 'group'), {'name': args.name, 'label': args.name})
+    post(config().get('api', 'group'), {'name': args.name.lower(), 'label': args.name})
 
 
 @login
