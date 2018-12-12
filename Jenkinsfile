@@ -77,8 +77,7 @@ pipeline {
 
                     sh "bumpversion ${RELEASE_SCOPE} setup.py"
 
-                    sh "pip install ."
-                    sh "python -m unittest discover . '*_test.py'"
+                    sh "python setup.py sdist"
 
 //                    sh "git push --tags origin master"
 
