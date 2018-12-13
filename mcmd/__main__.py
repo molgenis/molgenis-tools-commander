@@ -3,7 +3,7 @@ import signal
 import sys
 
 from mcmd import io
-from mcmd.arguments import parse_args
+from mcmd.arguments import parse_args, print_help
 from mcmd.commands.run import run
 from mcmd.executor import execute
 from mcmd.io import set_debug
@@ -19,6 +19,9 @@ def main():
         sys.argv.append('--help')
 
     args = parse_args()
+    if not args.command:
+        print_help()
+
     setattr(args, 'arg_string', ' '.join(sys.argv[1:]))
     set_log_level(args)
 
