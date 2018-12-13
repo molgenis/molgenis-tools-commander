@@ -3,10 +3,10 @@ from enum import Enum
 
 import requests
 
-from mdev import io
-from mdev.config.config import config
-from mdev.logging import get_logger
-from mdev.utils import MdevError
+from mcmd import io
+from mcmd.config.config import config
+from mcmd.logging import get_logger
+from mcmd.utils import McmdError
 
 log = get_logger()
 token = ''
@@ -80,7 +80,7 @@ def grant(principal_type, principal_name, resource_type, identifier, permission)
     elif principal_type == PrincipalType.ROLE:
         data['rolename'] = principal_name.upper()
     else:
-        raise MdevError('Unknown principal type: %s' % principal_type)
+        raise McmdError('Unknown principal type: %s' % principal_type)
 
     url = config().get('api', 'perm') + resource_type.get_resource_name() + '/' + principal_type.value
     return _handle_request(lambda: requests.post(url,
@@ -129,12 +129,12 @@ def _handle_request(request):
                 if 'errors' in response_json:
                     for error in response_json['errors']:
                         # TODO capture multiple error messages
-                        raise MdevError(error['message'])
+                        raise McmdError(error['message'])
                 elif 'errorMessage' in response_json:
-                    raise MdevError(response_json['errorMessage'])
-        raise MdevError(str(e))
+                    raise McmdError(response_json['errorMessage'])
+        raise McmdError(str(e))
     except requests.RequestException as e:
-        raise MdevError(str(e))
+        raise McmdError(str(e))
 
 
 def resource_exists(resource_id, resource_type):
@@ -145,7 +145,7 @@ def resource_exists(resource_id, resource_type):
 
 def ensure_resource_exists(resource_id, resource_type):
     if not resource_exists(resource_id, resource_type):
-        raise MdevError('No %s found with id %s' % (resource_type.get_label(), resource_id))
+        raise McmdError('No %s found with id %s' % (resource_type.get_label(), resource_id))
 
 
 def principal_exists(principal_name, principal_type):
@@ -154,7 +154,7 @@ def principal_exists(principal_name, principal_type):
     elif principal_type == PrincipalType.ROLE:
         return role_exists(principal_name)
     else:
-        raise MdevError('Unknown principal type: %s' % principal_type)
+        raise McmdError('Unknown principal type: %s' % principal_type)
 
 
 def user_exists(username):

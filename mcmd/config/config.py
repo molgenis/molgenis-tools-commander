@@ -3,11 +3,11 @@ from configparser import ConfigParser
 
 import pkg_resources
 
-from mdev import io
-from mdev.config.home import get_properties_file
-from mdev.utils import MdevError
+from mcmd import io
+from mcmd.config.home import get_properties_file
+from mcmd.utils import McmdError
 
-_DEFAULT_PROPERTIES = pkg_resources.resource_stream('mdev.config', 'default.properties')
+_DEFAULT_PROPERTIES = pkg_resources.resource_stream('mcmd.config', 'default.properties')
 
 _config = None
 
@@ -17,7 +17,7 @@ def _create_user_config():
         with get_properties_file().open('wb') as properties_file:
             shutil.copyfileobj(_DEFAULT_PROPERTIES, properties_file)
     except OSError as err:
-        raise MdevError("Error creating properties file: %s" % err)
+        raise McmdError("Error creating properties file: %s" % err)
 
 
 def _check_user_config():

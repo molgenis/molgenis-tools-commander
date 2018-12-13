@@ -1,7 +1,7 @@
-from mdev import io
-from mdev.client.molgenis_client import login, ResourceType, post, ensure_resource_exists
-from mdev.config.config import config
-from mdev.io import highlight
+from mcmd import io
+from mcmd.client.molgenis_client import login, ResourceType, post, ensure_resource_exists
+from mcmd.config.config import config
+from mcmd.io import highlight
 
 
 # =========
@@ -12,7 +12,7 @@ from mdev.io import highlight
 def arguments(subparsers):
     p_add = subparsers.add_parser('disable',
                                   help='Disable resources/functionality',
-                                  description="Run 'mdev disable rls -h' to view the help for those sub-commands")
+                                  description="Run 'mcmd disable rls -h' to view the help for those sub-commands")
     p_add_subparsers = p_add.add_subparsers(dest="type")
 
     p_add_group = p_add_subparsers.add_parser('rls',

@@ -1,8 +1,8 @@
-from mdev import io
-from mdev.client.molgenis_client import login, post, get
-from mdev.config.config import config
-from mdev.io import highlight
-from mdev.utils import lower_kebab, MdevError, upper_snake
+from mcmd import io
+from mcmd.client.molgenis_client import login, post, get
+from mcmd.config.config import config
+from mcmd.io import highlight
+from mcmd.utils import lower_kebab, McmdError, upper_snake
 
 
 # =========
@@ -44,6 +44,6 @@ def _find_group(role):
     matches = {len(group['name']): group['name'] for group in groups.json()['items'] if role.startswith(group['name'])}
 
     if not matches:
-        raise MdevError('No group found for role %s' % upper_snake(role))
+        raise McmdError('No group found for role %s' % upper_snake(role))
 
     return matches[max(matches, key=int)]

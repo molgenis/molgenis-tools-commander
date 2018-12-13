@@ -1,16 +1,16 @@
 import configparser
 
-from mdev import history, io
-from mdev.utils import MdevError
+from mcmd import history, io
+from mcmd.utils import McmdError
 
 
 def execute(args, exit_on_error=True):
     try:
         args.func(args)
-    except MdevError as e:
+    except McmdError as e:
         _handle_error(str(e), args.write_to_history, args.arg_string, exit_on_error)
     except configparser.Error as e:
-        message = 'Error reading or writing mdev.properties: %s' % str(e)
+        message = 'Error reading or writing mcmd.properties: %s' % str(e)
         _handle_error(message, args.write_to_history, args.arg_string, exit_on_error)
     else:
         if args.write_to_history:

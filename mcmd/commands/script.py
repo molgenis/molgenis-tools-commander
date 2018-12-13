@@ -1,8 +1,8 @@
-from mdev import history, io
-from mdev.config.home import get_scripts_folder
-from mdev.io import confirm, highlight
-from mdev.logging import get_logger
-from mdev.utils import MdevError
+from mcmd import history, io
+from mcmd.config.home import get_scripts_folder
+from mcmd.io import confirm, highlight
+from mcmd.logging import get_logger
+from mcmd.utils import McmdError
 
 
 # =========
@@ -67,7 +67,7 @@ def _remove_script(script_name):
         io.start('Removing script %s' % highlight(script_name))
         path.unlink()
     except OSError as e:
-        raise MdevError('Error removing script: %s' % str(e))
+        raise McmdError('Error removing script: %s' % str(e))
 
 
 def _read_script(script_name):
@@ -78,7 +78,7 @@ def _read_script(script_name):
             for line in f.readlines():
                 log.info(line.strip())
     except OSError as e:
-        raise MdevError('Error reading script: %s' % str(e))
+        raise McmdError('Error reading script: %s' % str(e))
 
 
 def _list_scripts():
@@ -101,12 +101,12 @@ def _create_script(args):
         for command in commands:
             script_file.write(command + '\n')
     except OSError as e:
-        raise MdevError("Error writing to script: %s" % str(e))
+        raise McmdError("Error writing to script: %s" % str(e))
 
 
 def _check_script_exists(path):
     if not path.exists():
-        raise MdevError("Script %s doesn't exist" % path.name)
+        raise McmdError("Script %s doesn't exist" % path.name)
 
 
 def _input_script_name():
