@@ -4,20 +4,65 @@ by the user, the give command will try to figure out the principal- and resource
 principal doesn't exist, the program will terminate.
 """
 
-from mdev import io
-from mdev.client.molgenis_client import login, grant, user_exists, PrincipalType, role_exists, principal_exists, \
-    resource_exists, ResourceType
-from mdev.io import multi_choice, highlight
-from mdev.utils import MdevError
+from mcmd import io
+from mcmd.client.molgenis_client import login, grant, user_exists, PrincipalType, role_exists, principal_exists, \
+    resource_exists, ResourceType, ensure_resource_exists
+from mcmd.io import multi_choice, highlight
+from mcmd.utils import McmdError
+
+
+# =========
+# Arguments
+# =========
+
+def arguments(subparsers):
+    p_give = subparsers.add_parser('give',
+                                   help='Give permissions on resources to roles or users.')
+    p_give.set_defaults(func=give,
+                        write_to_history=True)
+    p_give_resource = p_give.add_mutually_exclusive_group()
+    p_give_resource.add_argument('--entity-type', '-e',
+                                 action='store_true',
+                                 help='Flag to specify that the resource is an entity type')
+    p_give_resource.add_argument('--package', '-p',
+                                 action='store_true',
+                                 help='Flag to specify that the resource is a package')
+    p_give_resource.add_argument('--plugin', '-pl',
+                                 action='store_true',
+                                 help='Flag to specify that the resource is a plugin')
+    p_give_receiver = p_give.add_mutually_exclusive_group()
+    p_give_receiver.add_argument('--user', '-u',
+                                 action='store_true',
+                                 help='Flag to specify that the receiver is a user')
+    p_give_receiver.add_argument('--role', '-r',
+                                 action='store_true',
+                                 help='Flag to specify that the receiver is a role')
+    p_give.add_argument('receiver',
+                        type=str,
+                        help='The role (or user) to give the permission to')
+    p_give.add_argument('permission',
+                        choices=['none', 'writemeta', 'readmeta', 'write', 'edit', 'read', 'view', 'count'],
+                        help='The permission type to give. Synonyms are allowed (e.g. write/edit).')
+    p_give.add_argument('resource',
+                        type=str,
+                        help='The resource to which permission is given')
+
+
+# =======
+# Globals
+# =======
 
 
 _PERMISSION_MAP = {'view': 'read',
                    'edit': 'write'}
 
 
-def give(args):
-    login(args)
+# =======
+# Methods
+# =======
 
+@login
+def give(args):
     # Convert synonyms to correct permission type
     if args.permission in _PERMISSION_MAP:
         args.permission = _PERMISSION_MAP[args.permission]
@@ -38,11 +83,11 @@ def _get_principal_type(args):
     principal_name = args.receiver
     if args.user:
         if not user_exists(principal_name):
-            raise MdevError('No user found with name %s' % principal_name)
+            raise McmdError('No user found with name %s' % principal_name)
         return PrincipalType.USER
     elif args.role:
         if not role_exists(principal_name):
-            raise MdevError('No role found with name %s' % principal_name)
+            raise McmdError('No role found with name %s' % principal_name)
         return PrincipalType.ROLE
     else:
         # No principal type specified, let's guess it
@@ -52,7 +97,7 @@ def _get_principal_type(args):
                 results[principal_type.value] = principal_name
 
         if len(results) == 0:
-            raise MdevError('No principals found with name %s' % principal_name)
+            raise McmdError('No principals found with name %s' % principal_name)
         elif len(results) > 1:
             choices = results.keys()
             answer = multi_choice('Multiple principals found with name %s. Choose one:' % principal_name, choices)
@@ -64,16 +109,13 @@ def _get_principal_type(args):
 def _get_resource_type(args):
     resource_id = args.resource
     if args.entity_type:
-        if not resource_exists(resource_id, ResourceType.ENTITY_TYPE):
-            raise MdevError('No Entity Type found with id %s' % resource_id)
+        ensure_resource_exists(resource_id, ResourceType.ENTITY_TYPE)
         return ResourceType.ENTITY_TYPE
     elif args.package:
-        if not resource_exists(resource_id, ResourceType.PACKAGE):
-            raise MdevError('No Package found with id %s' % resource_id)
+        ensure_resource_exists(resource_id, ResourceType.PACKAGE)
         return ResourceType.PACKAGE
     elif args.plugin:
-        if not resource_exists(resource_id, ResourceType.PLUGIN):
-            raise MdevError('No Plugin found with id %s' % resource_id)
+        ensure_resource_exists(resource_id, ResourceType.PLUGIN)
         return ResourceType.PLUGIN
     else:
         # No resource type specified, let's guess it
@@ -83,7 +125,7 @@ def _get_resource_type(args):
                 results[resource_type.get_label()] = resource_id
 
         if len(results) == 0:
-            raise MdevError('No resources found with id %s' % resource_id)
+            raise McmdError('No resources found with id %s' % resource_id)
         elif len(results) > 1:
             choices = results.keys()
             answer = multi_choice('Multiple resources found for id %s. Choose one:' % resource_id, choices)

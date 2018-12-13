@@ -5,20 +5,52 @@ from urllib.parse import urljoin
 import polling
 import requests
 
-from mdev import io
-from mdev.client import github_client as github
-from mdev.client.molgenis_client import login, post_file, get, import_by_url
-from mdev.config.config import get_config
-from mdev.config.struct import get_issues_folder
-from mdev.io import highlight
-from mdev.utils import MdevError, config_string_to_paths
-
-config = get_config()
+from mcmd import io
+from mcmd.client import github_client as github
+from mcmd.client.molgenis_client import login, post_file, get, import_by_url
+from mcmd.config.config import config
+from mcmd.config.home import get_issues_folder
+from mcmd.io import highlight
+from mcmd.utils import McmdError, config_string_to_paths
 
 
+# =========
+# Arguments
+# =========
+
+def arguments(subparsers):
+    p_import = subparsers.add_parser('import',
+                                     help='Import a file')
+    p_import.set_defaults(func=import_,
+                          write_to_history=True)
+    p_import.add_argument('file',
+                          nargs='?',
+                          help='The file to upload')
+    p_import_source = p_import.add_mutually_exclusive_group()
+    p_import_source.add_argument('--from-path', '-p',
+                                 action='store_true',
+                                 help='Import a file the old school way (by path)')
+    p_import_source.add_argument('--from-issue', '-i',
+                                 metavar='ISSUE_NUMBER',
+                                 help='Import a file from a GitHub issue')
+    p_import_source.add_argument('--from-url',
+                                 metavar='URL',
+                                 help='Import a file from a URL. Uses the importByUrl endpoint of the MOLGENIS '
+                                      'importer.')
+    p_import.add_argument('--in',
+                          dest='to_package',
+                          type=str,
+                          metavar='PACKAGE_ID',
+                          help='The package to import to')
+    return p_import
+
+
+# =======
+# Methods
+# =======
+
+@login
 def import_(args):
-    login(args)
-
     if args.from_path:
         _import_from_path(args)
     elif args.from_url:
@@ -30,7 +62,6 @@ def import_(args):
 
 
 def _import_from_url(args):
-    login(args)
     file_url = args.from_url
     file_name = file_url.split("/")[-1]
     io.start('Importing from URL %s' % highlight(file_url))
@@ -44,10 +75,10 @@ def _import_from_url(args):
     params['url'] = file_url
 
     response = import_by_url(params)
-    import_run_url = urljoin(config.get('api', 'host'), response.text)
+    import_run_url = urljoin(config().get('api', 'host'), response.text)
     status, message = _poll_for_completion(import_run_url)
     if status == 'FAILED':
-        raise MdevError(message)
+        raise McmdError(message)
 
 
 def _import_from_quick_folders(args):
@@ -68,7 +99,7 @@ def _import_from_path(args):
     io.start('Importing from path %s' % highlight(args.file))
     file = Path(args.file)
     if not file.is_file():
-        raise MdevError("File %s doesn't exist" % str(file.resolve()))
+        raise McmdError("File %s doesn't exist" % str(file.resolve()))
     _do_import(file, args.to_package)
 
 
@@ -80,7 +111,7 @@ def _select_path(file_map, file_name):
         else:
             path = paths[0]
     else:
-        raise MdevError('No file found for %s' % file_name)
+        raise McmdError('No file found for %s' % file_name)
     return path
 
 
@@ -88,14 +119,14 @@ def _select_attachment(issue_num, wanted_attachment):
     """Gets attachments from a GitHub issue. If wanted_attachment is specified it will try to select that attachment."""
     attachments = github.get_attachments(issue_num)
     if len(attachments) == 0:
-        raise MdevError("Issue #%s doesn't contain any files" % issue_num)
+        raise McmdError("Issue #%s doesn't contain any files" % issue_num)
 
     if wanted_attachment:
         selected = [a for a in attachments if a.name == wanted_attachment]
         if len(selected) == 0:
-            raise MdevError('There are no attachments named %s.' % wanted_attachment)
+            raise McmdError('There are no attachments named %s.' % wanted_attachment)
         if len(selected) > 1:
-            raise MdevError('Multiple attachments with name %s found.' % wanted_attachment)
+            raise McmdError('Multiple attachments with name %s found.' % wanted_attachment)
         return selected[0]
     else:
         if len(attachments) > 1:
@@ -154,7 +185,7 @@ def _download_attachment(attachment, issue_num):
         with file_path.open('wb') as f:
             f.write(r.content)
     except (OSError, requests.RequestException, requests.HTTPError) as e:
-        raise MdevError('Error downloading GitHub attachment: %s' % str(e))
+        raise McmdError('Error downloading GitHub attachment: %s' % str(e))
     io.succeed()
     return file_path
 
@@ -168,18 +199,18 @@ def _do_import(file_path, package):
     if package:
         params['packageId'] = package
 
-    response = post_file(config.get('api', 'import'), file_path.resolve(), params)
-    import_run_url = urljoin(config.get('api', 'host'), response.text)
+    response = post_file(config().get('api', 'import'), file_path.resolve(), params)
+    import_run_url = urljoin(config().get('api', 'host'), response.text)
     status, message = _poll_for_completion(import_run_url)
     if status == 'FAILED':
-        raise MdevError(message)
+        raise McmdError(message)
 
 
 def _get_import_action(file_name):
     if '.owl' in file_name or '.obo' in file_name:
         return 'add'
     else:
-        return config.get('set', 'import_action')
+        return config().get('set', 'import_action')
 
 
 def _poll_for_completion(url):
@@ -202,15 +233,15 @@ def _scan_folders_for_files(folders):
 
 
 def _get_molgenis_folders():
-    if not config.has_option('data', 'git_root') or not config.has_option('data', 'git_paths'):
-        io.info('Molgenis git paths not configured. Edit the mdev.ini file to include the test data.')
+    if not config().has_option('data', 'git_root') or not config().has_option('data', 'git_paths'):
+        io.info('Molgenis git paths not configured. Edit the mcmd.properties file to include the test data.')
         return list()
     else:
-        return config_string_to_paths(config.get('data', 'git_paths'))
+        return config_string_to_paths(config().get('data', 'git_paths'))
 
 
 def _get_quick_folders():
-    if not config.has_option('data', 'quick_folders'):
+    if not config().has_option('data', 'quick_folders'):
         return list()
     else:
-        return config_string_to_paths(config.get('data', 'quick_folders'))
+        return config_string_to_paths(config().get('data', 'quick_folders'))
