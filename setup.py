@@ -14,5 +14,6 @@ setup(
             'mdev = mdev.__main__:main'
         ]
     },
-    install_requires=['requests', 'rainbow_logging_handler', 'PyInquirer', 'halo', 'polling', 'PyGithub', 'colorama==0.3.9'],
+    install_requires=['requests', 'rainbow_logging_handler', 'PyInquirer', 'halo', 'polling', 'PyGithub',
+                      'colorama==0.3.9'],
 )
