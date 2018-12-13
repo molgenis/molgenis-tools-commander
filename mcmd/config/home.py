@@ -1,6 +1,6 @@
-"""Module containing the structure and paths of the .mdev folder. Creates folders if they don't exist.
+"""Module containing the structure and paths of the .mcmd folder. Creates folders if they don't exist.
 
-.mdev/
+.mcmd/
     scripts/
         ...
     datasets/
@@ -12,51 +12,51 @@
             ...
         ...
     history.log
-    mdev.properties
+    mcmd.properties
 """
 
 from pathlib import Path
 
-_MDEV_FOLDER = '.mdev'
+_MCMD_FOLDER = '.mcmd'
 _SCRIPT_FOLDER = 'scripts'
 _DATASET_FOLDER = 'datasets'
 _BACKUP_FOLDER = 'backups'
 _ISSUE_FOLDER = 'issues'
-_PROPERTIES_FILE = 'mdev.properties'
+_PROPERTIES_FILE = 'mcmd.properties'
 _HISTORY_FILE = 'history.log'
 
 
-def get_mdev_home():
-    mdev_home = Path().home().joinpath(_MDEV_FOLDER)
-    return _mkdir_if_not_exists(mdev_home)
+def get_mcmd_home():
+    mcmd_home = Path().home().joinpath(_MCMD_FOLDER)
+    return _mkdir_if_not_exists(mcmd_home)
 
 
 def get_scripts_folder():
-    scripts_folder = get_mdev_home().joinpath(_SCRIPT_FOLDER)
+    scripts_folder = get_mcmd_home().joinpath(_SCRIPT_FOLDER)
     return _mkdir_if_not_exists(scripts_folder)
 
 
 def get_datasets_folder():
-    datasets_folder = get_mdev_home().joinpath(_DATASET_FOLDER)
+    datasets_folder = get_mcmd_home().joinpath(_DATASET_FOLDER)
     return _mkdir_if_not_exists(datasets_folder)
 
 
 def get_backups_folder():
-    backups_folder = get_mdev_home().joinpath(_BACKUP_FOLDER)
+    backups_folder = get_mcmd_home().joinpath(_BACKUP_FOLDER)
     return _mkdir_if_not_exists(backups_folder)
 
 
 def get_issues_folder():
-    issues_folder = get_mdev_home().joinpath(_ISSUE_FOLDER)
+    issues_folder = get_mcmd_home().joinpath(_ISSUE_FOLDER)
     return _mkdir_if_not_exists(issues_folder)
 
 
 def get_history_file():
-    return get_mdev_home().joinpath(_HISTORY_FILE)
+    return get_mcmd_home().joinpath(_HISTORY_FILE)
 
 
 def get_properties_file():
-    return get_mdev_home().joinpath(_PROPERTIES_FILE)
+    return get_mcmd_home().joinpath(_PROPERTIES_FILE)
 
 
 def _mkdir_if_not_exists(path):

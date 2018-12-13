@@ -2,8 +2,8 @@ from PyInquirer import prompt
 from colorama import Fore
 from halo import Halo
 
-from mdev.config.config import config
-from mdev.logging import get_logger
+from mcmd.config.config import config
+from mcmd.logging import get_logger
 
 log = get_logger()
 

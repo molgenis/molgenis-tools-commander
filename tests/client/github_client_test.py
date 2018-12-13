@@ -1,6 +1,6 @@
 import unittest
 
-from mdev.client import github_client
+from mcmd.client import github_client
 
 
 class GithubTest(unittest.TestCase):

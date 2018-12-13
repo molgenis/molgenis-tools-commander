@@ -1,8 +1,8 @@
 from collections import deque
 from os import path
 
-from mdev.config.home import get_history_file
-from mdev.utils import MdevError
+from mcmd.config.home import get_history_file
+from mcmd.utils import McmdError
 
 _USER_HISTORY = get_history_file()
 
@@ -20,7 +20,7 @@ def write(arg_string, success):
 
         history.write('%s %s\n' % (indicator, arg_string))
     except OSError as e:
-        raise MdevError("Error writing to history: %s" % str(e))
+        raise McmdError("Error writing to history: %s" % str(e))
 
 
 def read(num_lines, include_fails):
@@ -43,7 +43,7 @@ def read(num_lines, include_fails):
                 if len(lines) > num_lines:
                     lines.popleft()
     except OSError as e:
-        raise MdevError("Error reading from history: %s" % str(e))
+        raise McmdError("Error reading from history: %s" % str(e))
 
     return lines
 
@@ -52,4 +52,4 @@ def clear():
     try:
         open(_USER_HISTORY, 'w').close()
     except OSError as e:
-        raise MdevError("Error clearing history: %s" % str(e))
+        raise McmdError("Error clearing history: %s" % str(e))

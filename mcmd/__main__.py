@@ -2,12 +2,12 @@ import logging
 import signal
 import sys
 
-from mdev import io
-from mdev.arguments import parse_args
-from mdev.commands.run import run
-from mdev.executor import execute
-from mdev.io import set_debug
-from mdev.logging import set_level
+from mcmd import io
+from mcmd.arguments import parse_args
+from mcmd.commands.run import run
+from mcmd.executor import execute
+from mcmd.io import set_debug
+from mcmd.logging import set_level
 
 
 def main():

@@ -55,7 +55,7 @@ pipeline {
                 branch 'master'
             }
             environment {
-                REPOSITORY = 'molgenis/molgenis-tools-mdev'
+                REPOSITORY = 'molgenis/molgenis-tools-commander'
             }
             steps {
                 timeout(time: 30, unit: 'MINUTES') {
