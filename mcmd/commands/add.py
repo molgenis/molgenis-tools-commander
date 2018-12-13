@@ -1,8 +1,8 @@
-from mdev import io
-from mdev.client.molgenis_client import login, post, get
-from mdev.config.config import config
-from mdev.io import highlight
-from mdev.utils import MdevError
+from mcmd import io
+from mcmd.client.molgenis_client import login, post, get
+from mcmd.config.config import config
+from mcmd.io import highlight
+from mcmd.utils import McmdError
 
 
 # =========
@@ -12,7 +12,7 @@ from mdev.utils import MdevError
 def arguments(subparsers):
     p_add = subparsers.add_parser('add',
                                   help='Add users and groups',
-                                  description="Run 'mdev add group -h' or 'mdev add user -h' to view the help for those"
+                                  description="Run 'mcmd add group -h' or 'mcmd add user -h' to view the help for those"
                                               " sub-commands")
     p_add_subparsers = p_add.add_subparsers(dest="type")
 
@@ -122,7 +122,7 @@ def add_token(args):
 
     user = get(config().get('api', 'rest2') + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
     if user.json()['total'] == 0:
-        raise MdevError('Unknown user %s' % args.user)
+        raise McmdError('Unknown user %s' % args.user)
 
     user_id = user.json()['items'][0]['id']
 

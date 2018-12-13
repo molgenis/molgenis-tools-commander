@@ -1,6 +1,6 @@
-from mdev import history as hist
-from mdev import io
-from mdev.logging import get_logger
+from mcmd import history as hist
+from mcmd import io
+from mcmd.logging import get_logger
 
 
 # =========

@@ -4,11 +4,11 @@ by the user, the give command will try to figure out the principal- and resource
 principal doesn't exist, the program will terminate.
 """
 
-from mdev import io
-from mdev.client.molgenis_client import login, grant, user_exists, PrincipalType, role_exists, principal_exists, \
+from mcmd import io
+from mcmd.client.molgenis_client import login, grant, user_exists, PrincipalType, role_exists, principal_exists, \
     resource_exists, ResourceType, ensure_resource_exists
-from mdev.io import multi_choice, highlight
-from mdev.utils import MdevError
+from mcmd.io import multi_choice, highlight
+from mcmd.utils import McmdError
 
 
 # =========
@@ -83,11 +83,11 @@ def _get_principal_type(args):
     principal_name = args.receiver
     if args.user:
         if not user_exists(principal_name):
-            raise MdevError('No user found with name %s' % principal_name)
+            raise McmdError('No user found with name %s' % principal_name)
         return PrincipalType.USER
     elif args.role:
         if not role_exists(principal_name):
-            raise MdevError('No role found with name %s' % principal_name)
+            raise McmdError('No role found with name %s' % principal_name)
         return PrincipalType.ROLE
     else:
         # No principal type specified, let's guess it
@@ -97,7 +97,7 @@ def _get_principal_type(args):
                 results[principal_type.value] = principal_name
 
         if len(results) == 0:
-            raise MdevError('No principals found with name %s' % principal_name)
+            raise McmdError('No principals found with name %s' % principal_name)
         elif len(results) > 1:
             choices = results.keys()
             answer = multi_choice('Multiple principals found with name %s. Choose one:' % principal_name, choices)
@@ -125,7 +125,7 @@ def _get_resource_type(args):
                 results[resource_type.get_label()] = resource_id
 
         if len(results) == 0:
-            raise MdevError('No resources found with id %s' % resource_id)
+            raise McmdError('No resources found with id %s' % resource_id)
         elif len(results) > 1:
             choices = results.keys()
             answer = multi_choice('Multiple resources found for id %s. Choose one:' % resource_id, choices)

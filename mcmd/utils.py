@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-class MdevError(Exception):
+class McmdError(Exception):
     def __init__(self, message):
         self.message = message
 
