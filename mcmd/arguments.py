@@ -60,3 +60,8 @@ def parse_args():
 
 def parse_arg_string(argument_string):
     return _get_parser().parse_args(argument_string)
+
+
+def print_help():
+    _get_parser().print_help()
+    exit(1)
