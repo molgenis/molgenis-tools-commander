@@ -14,10 +14,6 @@ def main():
     # setup friendly interrupt message
     signal.signal(signal.SIGINT, interrupt_handler)
 
-    # show help when no arguments are supplied
-    if len(sys.argv) == 1:
-        sys.argv.append('--help')
-
     args = parse_args()
     if not args.command:
         print_help()
