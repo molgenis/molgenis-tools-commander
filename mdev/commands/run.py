@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import mdev.arguments as arg_parser
+from mdev import arguments as arg_parser
 from mdev import io
 from mdev.executor import execute
 
