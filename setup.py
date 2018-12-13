@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='mdev',
-    version='0.0.4',
+    version='0.0.5',
     packages=['mdev', 'mdev.client', 'mdev.commands', 'mdev.config'],
     description='The MOLGENIS command line development tool',
     url='https://github.com/molgenis/molgenis-tools-mdev',
@@ -14,5 +14,6 @@ setup(
             'mdev = mdev.__main__:main'
         ]
     },
-    install_requires=['requests', 'rainbow_logging_handler', 'PyInquirer', 'halo', 'polling', 'PyGithub', 'colorama==0.3.9'],
+    install_requires=['requests', 'rainbow_logging_handler', 'PyInquirer', 'halo', 'polling', 'PyGithub',
+                      'colorama==0.3.9'],
 )

@@ -1,22 +1,23 @@
 import shutil
 from configparser import ConfigParser
-from pathlib import Path
+
+import pkg_resources
 
 from mdev import io
 from mdev.config.home import get_properties_file
+from mdev.utils import MdevError
 
-_INSTALL_DIR = Path(__file__)
-_DEFAULT_CONFIG = _INSTALL_DIR.parents[0].joinpath('default.properties')
+_DEFAULT_PROPERTIES = pkg_resources.resource_stream('mdev.config', 'default.properties')
 
 _config = None
 
 
 def _create_user_config():
     try:
-        shutil.copyfile(_DEFAULT_CONFIG, get_properties_file())
+        with get_properties_file().open('wb') as properties_file:
+            shutil.copyfileobj(_DEFAULT_PROPERTIES, properties_file)
     except OSError as err:
-        io.error("Error setting up user configuration: %s" % err.strerror)
-        exit(1)
+        raise MdevError("Error creating properties file: %s" % err)
 
 
 def _check_user_config():
