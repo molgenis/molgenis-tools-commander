@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='mdev',
-    version='0.0.3',
+    version='0.0.4',
     packages=['mdev', 'mdev.client', 'mdev.commands', 'mdev.config'],
     description='The MOLGENIS command line development tool',
     url='https://github.com/molgenis/molgenis-tools-mdev',
