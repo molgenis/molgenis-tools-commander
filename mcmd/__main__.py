@@ -2,30 +2,29 @@ import logging
 import signal
 import sys
 
-from mdev import io
-from mdev.arguments import parse_args
-from mdev.commands.run import run
-from mdev.executor import execute
-from mdev.io import set_debug
-from mdev.logging import set_level
+from mcmd import io
+from mcmd.arguments import parse_args, print_help
+from mcmd.commands.run import run
+from mcmd.executor import execute
+from mcmd.io import set_debug
+from mcmd.logging import set_level
 
 
 def main():
     # setup friendly interrupt message
     signal.signal(signal.SIGINT, interrupt_handler)
 
-    # show help when no arguments are supplied
-    if len(sys.argv) == 1:
-        sys.argv.append('--help')
-
     args = parse_args()
+    if not args.command:
+        print_help()
+
     setattr(args, 'arg_string', ' '.join(sys.argv[1:]))
     set_log_level(args)
 
     if args.command == 'run':
         run(args)
     else:
-        execute(args, exit_on_error=True)
+        execute(args)
 
 
 def set_log_level(args):

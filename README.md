@@ -1,9 +1,19 @@
-The MOLGENIS command line development tool
-
+# Molgenis Commander
 
 ### Development
-Go to the root of the project and run:
+Go to the root of the project and create a virtual environment:
 
-```pip install -e .```
+```
+python3 -m virtualenv env
+```
 
-Now the `mdev` command will be available in your shell.
+Now enter the environment and install Molgenis Commander in development mode:
+
+
+```
+source env/bin/activate
+pip install -e .
+```
+
+Now the `mcmd` command will be available in this virtual environment. If you want to
+leave the environment, use `deactivate`.

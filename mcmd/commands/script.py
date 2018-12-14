@@ -1,8 +1,8 @@
-from mdev import history, io
-from mdev.config.home import get_scripts_folder
-from mdev.io import confirm, highlight
-from mdev.logging import get_logger
-from mdev.utils import MdevError
+from mcmd import history, io
+from mcmd.config.home import get_scripts_folder
+from mcmd.io import confirm, highlight
+from mcmd.logging import get_logger
+from mcmd.utils import McmdError
 
 
 # =========
@@ -21,7 +21,7 @@ def arguments(subparsers):
     p_script_action.add_argument('--list', '-l',
                                  action='store_true',
                                  help='List the stored scripts.')
-    p_script_action.add_argument('--remove', '-rm',
+    p_script_action.add_argument('--delete', '-D',
                                  metavar='SCRIPT NAME',
                                  type=str,
                                  help='Remove a script.')
@@ -52,8 +52,8 @@ log = get_logger()
 def script(args):
     if args.list:
         _list_scripts()
-    elif args.remove:
-        _remove_script(args.remove)
+    elif args.delete:
+        _remove_script(args.delete)
     elif args.read:
         _read_script(args.read)
     else:
@@ -62,27 +62,23 @@ def script(args):
 
 def _remove_script(script_name):
     path = get_scripts_folder().joinpath(script_name)
-    if not path.exists():
-        raise MdevError("Script %s doesn't exist" % script_name)
-    else:
-        try:
-            io.start('Removing script %s' % highlight(script_name))
-            path.unlink()
-        except OSError as e:
-            raise MdevError('Error removing script: %s' % str(e))
+    _check_script_exists(path)
+    try:
+        io.start('Removing script %s' % highlight(script_name))
+        path.unlink()
+    except OSError as e:
+        raise McmdError('Error removing script: %s' % str(e))
 
 
 def _read_script(script_name):
     path = get_scripts_folder().joinpath(script_name)
-    if not path.exists():
-        raise MdevError("Script %s doesn't exist" % script_name)
-    else:
-        try:
-            with path.open() as f:
-                for line in f.readlines():
-                    log.info(line.strip())
-        except OSError as e:
-            raise MdevError('Error reading script: %s' % str(e))
+    _check_script_exists(path)
+    try:
+        with path.open() as f:
+            for line in f.readlines():
+                log.info(line.strip())
+    except OSError as e:
+        raise McmdError('Error reading script: %s' % str(e))
 
 
 def _list_scripts():
@@ -93,6 +89,10 @@ def _list_scripts():
 
 def _create_script(args):
     lines = history.read(args.number, args.show_fails)
+    if len(lines) == 0:
+        log.info('History is empty.')
+        return
+
     options = [line[1] for line in lines]
     commands = io.checkbox('Pick the lines that will form the script:', options)
     file_name = _input_script_name()
@@ -101,7 +101,12 @@ def _create_script(args):
         for command in commands:
             script_file.write(command + '\n')
     except OSError as e:
-        raise MdevError("Error writing to script: %s" % str(e))
+        raise McmdError("Error writing to script: %s" % str(e))
+
+
+def _check_script_exists(path):
+    if not path.exists():
+        raise McmdError("Script %s doesn't exist" % path.name)
 
 
 def _input_script_name():

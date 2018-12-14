@@ -1,8 +1,8 @@
 from pathlib import Path
 
-import mdev.arguments as arg_parser
-from mdev import io
-from mdev.executor import execute
+from mcmd import arguments as arg_parser
+from mcmd import io
+from mcmd.executor import execute
 
 
 # =========
@@ -11,11 +11,11 @@ from mdev.executor import execute
 
 def arguments(subparsers):
     p_run = subparsers.add_parser('run',
-                                  help='Run an mdev script')
+                                  help='Run an mcmd script')
     p_run.set_defaults(write_to_history=False)
     p_run.add_argument('script',
                        type=str,
-                       help='The .mdev script to run')
+                       help='The .mcmd script to run')
     p_run.add_argument('--ignore-errors', '-i',
                        action='store_true',
                        help='Let the script continue when one or more commands throw an error')
@@ -26,7 +26,7 @@ def arguments(subparsers):
 # =======
 
 def run(args):
-    script = Path().home().joinpath('.mdev', 'scripts', args.script)
+    script = Path().home().joinpath('.mcmd', 'scripts', args.script)
 
     lines = list()
     try:

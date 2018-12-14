@@ -2,7 +2,7 @@ import re
 
 from github import Github, UnknownObjectException
 
-from mdev.utils import MdevError
+from mcmd.utils import McmdError
 
 _MOLGENIS_FILES_URL = 'https://github.com/molgenis/molgenis/files/'
 
@@ -34,9 +34,9 @@ def get_attachments(issue_num):
     try:
         issue = _molgenis_repo().get_issue(int(issue_num))
     except UnknownObjectException:
-        raise MdevError("Issue #%s doesn't exist" % issue_num)
+        raise McmdError("Issue #%s doesn't exist" % issue_num)
 
-    # GitHub has no API for downloading attachments yet so we get them from the issue description
+    # GitHub has no API for downloading attachments so we get them from the issue description
     urls = _parse_attachment_urls(issue.body)
     return [Attachment(url.strip('()')) for url in urls]
 
@@ -57,4 +57,4 @@ def validate_issue_number(issue_num):
     try:
         int(issue_num)
     except ValueError:
-        raise MdevError('Not a valid issue number: %s' % issue_num)
+        raise McmdError('Not a valid issue number: %s' % issue_num)

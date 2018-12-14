@@ -1,8 +1,8 @@
-from mdev import io
-from mdev.client.molgenis_client import login, post, get
-from mdev.config.config import config
-from mdev.io import highlight
-from mdev.utils import MdevError
+from mcmd import io
+from mcmd.client.molgenis_client import login, post, get
+from mcmd.config.config import config
+from mcmd.io import highlight
+from mcmd.utils import McmdError
 
 
 # =========
@@ -12,7 +12,7 @@ from mdev.utils import MdevError
 def arguments(subparsers):
     p_add = subparsers.add_parser('add',
                                   help='Add users and groups',
-                                  description="Run 'mdev add group -h' or 'mdev add user -h' to view the help for those"
+                                  description="Run 'mcmd add group -h' or 'mcmd add user -h' to view the help for those"
                                               " sub-commands")
     p_add_subparsers = p_add.add_subparsers(dest="type")
 
@@ -31,7 +31,7 @@ def arguments(subparsers):
     p_add_user.add_argument('username',
                             type=str,
                             help="The user's name")
-    p_add_user.add_argument('--with-password', '-p',
+    p_add_user.add_argument('--set-password', '-p',
                             metavar='PASSWORD',
                             type=str,
                             help="The user's password")
@@ -39,11 +39,15 @@ def arguments(subparsers):
                             metavar='EMAIL',
                             type=str,
                             help="The user's e-mail address")
-    p_add_user.add_argument('--is-active', '-a',
-                            metavar='TRUE/FALSE',
-                            type=bool,
-                            default=True,
-                            help="Is the user active? (default: true)")
+    p_add_user.add_argument('--is-inactive', '-a',
+                            action='store_true',
+                            help="Make user inactive")
+    p_add_user.add_argument('--is-superuser', '-s',
+                            action='store_true',
+                            help="Make user superuser")
+    p_add_user.add_argument('--change-password', '-c',
+                            action='store_true',
+                            help="Set change password to true for user")
 
     p_add_package = p_add_subparsers.add_parser('package',
                                                 help='Add a package')
@@ -77,20 +81,26 @@ def arguments(subparsers):
 def add_user(args):
     io.start('Adding user %s' % highlight(args.username))
 
-    password = args.with_password if args.with_password else args.username
+    password = args.set_password if args.set_password else args.username
     email = args.with_email if args.with_email else args.username + '@molgenis.org'
+    active = not args.is_inactive
+    superuser = args.is_superuser
+    ch_pwd = args.change_password
 
     post(config().get('api', 'rest1') + 'sys_sec_User',
          {'username': args.username,
           'password_': password,
+          'changePassword': ch_pwd,
           'Email': email,
-          'active': args.is_active})
+          'active': active,
+          'superuser': superuser
+          })
 
 
 @login
 def add_group(args):
     io.start('Adding group %s' % highlight(args.name))
-    post(config().get('api', 'group'), {'name': args.name, 'label': args.name})
+    post(config().get('api', 'group'), {'name': args.name.lower(), 'label': args.name})
 
 
 @login
@@ -112,7 +122,7 @@ def add_token(args):
 
     user = get(config().get('api', 'rest2') + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
     if user.json()['total'] == 0:
-        raise MdevError('Unknown user %s' % args.user)
+        raise McmdError('Unknown user %s' % args.user)
 
     user_id = user.json()['items'][0]['id']
 
