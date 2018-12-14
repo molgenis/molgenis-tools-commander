@@ -17,6 +17,7 @@ pipeline {
                         env.PYPI_LOCAL_USERNAME = sh(script: 'vault read -field=username secret/ops/account/nexus', returnStdout: true)
                         env.PYPI_LOCAL_PASSWORD = sh(script: 'vault read -field=password secret/ops/account/nexus', returnStdout: true)
                         env.GITHUB_TOKEN = sh(script: 'vault read -field=value secret/ops/token/github', returnStdout: true)
+                        env.SONAR_TOKEN = sh(script: 'vault read -field=value secret/ops/token/sonar', returnStdout: true)
                     }
                 }
                 container('python') {
@@ -36,6 +37,9 @@ pipeline {
                     sh "pip install ."
                     sh "python -m unittest discover . '*_test.py'"
                 }
+                container('sonar') {
+                    sh "sonar-scanner -Dsonar.github.oauth=${env.GITHUB_TOKEN} -Dsonar.pullrequest.base=${CHANGE_TARGET} -Dsonar.pullrequest.branch=${BRANCH_NAME} -Dsonar.pullrequest.key=${env.CHANGE_ID} -Dsonar.pullrequest.provider=GitHub -Dsonar.pullrequest.github.repository=molgenis/molgenis-tools-commander"
+                }
             }
         }
         stage('Build: [ master ]') {
@@ -47,6 +51,9 @@ pipeline {
                 container('python') {
                     sh "pip install ."
                     sh "python -m unittest discover . '*_test.py'"
+                }
+                container('sonar') {
+                    sh "sonar-scanner"
                 }
             }
         }
