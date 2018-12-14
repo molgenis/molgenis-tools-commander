@@ -5,8 +5,8 @@ principal doesn't exist, the program will terminate.
 """
 
 from mcmd import io
-from mcmd.client.molgenis_client import login, grant, user_exists, PrincipalType, role_exists, principal_exists, \
-    resource_exists, ResourceType, ensure_resource_exists
+from mcmd.client.molgenis_client import login, grant, PrincipalType, principal_exists, \
+    resource_exists, ResourceType, ensure_resource_exists, ensure_principal_exists
 from mcmd.io import multi_choice, highlight
 from mcmd.utils import McmdError
 
@@ -53,8 +53,8 @@ def arguments(subparsers):
 # =======
 
 
-_PERMISSION_MAP = {'view': 'read',
-                   'edit': 'write'}
+_PERMISSION_SYNONYMS = {'view': 'read',
+                        'edit': 'write'}
 
 
 # =======
@@ -64,8 +64,8 @@ _PERMISSION_MAP = {'view': 'read',
 @login
 def give(args):
     # Convert synonyms to correct permission type
-    if args.permission in _PERMISSION_MAP:
-        args.permission = _PERMISSION_MAP[args.permission]
+    if args.permission in _PERMISSION_SYNONYMS:
+        args.permission = _PERMISSION_SYNONYMS[args.permission]
 
     # The PermissionManagerController always gives 200 OK so we need to validate everything ourselves
     resource_type = _get_resource_type(args)
@@ -82,28 +82,29 @@ def give(args):
 def _get_principal_type(args):
     principal_name = args.receiver
     if args.user:
-        if not user_exists(principal_name):
-            raise McmdError('No user found with name %s' % principal_name)
+        ensure_principal_exists(args.user, principal_name)
         return PrincipalType.USER
     elif args.role:
-        if not role_exists(principal_name):
-            raise McmdError('No role found with name %s' % principal_name)
+        ensure_principal_exists(args.role, principal_name)
         return PrincipalType.ROLE
     else:
-        # No principal type specified, let's guess it
-        results = dict()
-        for principal_type in PrincipalType:
-            if principal_exists(principal_name, principal_type):
-                results[principal_type.value] = principal_name
+        return _guess_principal_type(principal_name)
 
-        if len(results) == 0:
-            raise McmdError('No principals found with name %s' % principal_name)
-        elif len(results) > 1:
-            choices = results.keys()
-            answer = multi_choice('Multiple principals found with name %s. Choose one:' % principal_name, choices)
-            return PrincipalType[answer.upper()]
-        else:
-            return PrincipalType[list(results)[0].upper()]
+
+def _guess_principal_type(principal_name):
+    results = dict()
+    for principal_type in PrincipalType:
+        if principal_exists(principal_name, principal_type):
+            results[principal_type.value] = principal_name
+
+    if len(results) == 0:
+        raise McmdError('No principals found with name %s' % principal_name)
+    elif len(results) > 1:
+        choices = results.keys()
+        answer = multi_choice('Multiple principals found with name %s. Choose one:' % principal_name, choices)
+        return PrincipalType[answer.upper()]
+    else:
+        return PrincipalType[list(results)[0].upper()]
 
 
 def _get_resource_type(args):
@@ -118,17 +119,20 @@ def _get_resource_type(args):
         ensure_resource_exists(resource_id, ResourceType.PLUGIN)
         return ResourceType.PLUGIN
     else:
-        # No resource type specified, let's guess it
-        results = dict()
-        for resource_type in ResourceType:
-            if resource_exists(resource_id, resource_type):
-                results[resource_type.get_label()] = resource_id
+        return _guess_resource_type(resource_id)
 
-        if len(results) == 0:
-            raise McmdError('No resources found with id %s' % resource_id)
-        elif len(results) > 1:
-            choices = results.keys()
-            answer = multi_choice('Multiple resources found for id %s. Choose one:' % resource_id, choices)
-            return ResourceType.of_label(answer)
-        else:
-            return ResourceType.of_label(list(results)[0])
+
+def _guess_resource_type(resource_id):
+    results = dict()
+    for resource_type in ResourceType:
+        if resource_exists(resource_id, resource_type):
+            results[resource_type.get_label()] = resource_id
+
+    if len(results) == 0:
+        raise McmdError('No resources found with id %s' % resource_id)
+    elif len(results) > 1:
+        choices = results.keys()
+        answer = multi_choice('Multiple resources found for id %s. Choose one:' % resource_id, choices)
+        return ResourceType.of_label(answer)
+    else:
+        return ResourceType.of_label(list(results)[0])

@@ -123,18 +123,24 @@ def _handle_request(request):
         response.raise_for_status()
         return response
     except requests.HTTPError as e:
-        if response.headers.get('Content-Type'):
-            if 'application/json' in response.headers.get('Content-Type'):
-                response_json = response.json()
-                if 'errors' in response_json:
-                    for error in response_json['errors']:
-                        # TODO capture multiple error messages
-                        raise McmdError(error['message'])
-                elif 'errorMessage' in response_json:
-                    raise McmdError(response_json['errorMessage'])
+        if _is_json(response):
+            _handle_json_error(response.json())
         raise McmdError(str(e))
     except requests.RequestException as e:
         raise McmdError(str(e))
+
+
+def _handle_json_error(response_json):
+    if 'errors' in response_json:
+        for error in response_json['errors']:
+            # TODO capture multiple error messages
+            raise McmdError(error['message'])
+    elif 'errorMessage' in response_json:
+        raise McmdError(response_json['errorMessage'])
+
+
+def _is_json(response):
+    return response.headers.get('Content-Type') and 'application/json' in response.headers.get('Content-Type')
 
 
 def resource_exists(resource_id, resource_type):
@@ -146,6 +152,11 @@ def resource_exists(resource_id, resource_type):
 def ensure_resource_exists(resource_id, resource_type):
     if not resource_exists(resource_id, resource_type):
         raise McmdError('No %s found with id %s' % (resource_type.get_label(), resource_id))
+
+
+def ensure_principal_exists(principal_name, principal_type):
+    if not principal_exists(principal_name, principal_type):
+        raise McmdError('No {} found with id {}'.format(principal_type, principal_name))
 
 
 def principal_exists(principal_name, principal_type):
