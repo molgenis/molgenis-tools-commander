@@ -84,7 +84,7 @@ pipeline {
 
                     sh "bumpversion ${RELEASE_SCOPE} setup.py"
 
-                    sh "python setup.py sdist"
+                    sh "python setup.py sdist bdist_wheel"
 
                     sh "git push --tags origin master"
 
