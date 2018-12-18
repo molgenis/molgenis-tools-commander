@@ -1,6 +1,6 @@
+import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import login, ResourceType, post, ensure_resource_exists
-from mcmd.config.config import config
 from mcmd.io import highlight
 
 
@@ -33,5 +33,5 @@ def enable_rls(args):
     io.start('Enabling row level security on entity type %s' % highlight(args.entity))
 
     ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
-    post(config().get('api', 'rls'), data={'id': args.entity,
-                                           'rlsEnabled': True})
+    post(config.api('rls'), data={'id': args.entity,
+                                  'rlsEnabled': True})

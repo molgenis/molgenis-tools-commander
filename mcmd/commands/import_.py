@@ -5,13 +5,13 @@ from urllib.parse import urljoin
 import polling
 import requests
 
+import mcmd.config.config as config
 from mcmd import io
 from mcmd.client import github_client as github
 from mcmd.client.molgenis_client import login, post_file, get, import_by_url
-from mcmd.config.config import config
 from mcmd.config.home import get_issues_folder
 from mcmd.io import highlight
-from mcmd.utils import McmdError, config_string_to_paths
+from mcmd.utils import McmdError
 
 
 # =========
@@ -83,7 +83,7 @@ def _import_from_url(args):
 
 def _import_from_quick_folders(args):
     file_name = args.file
-    file_map = _scan_folders_for_files(_get_molgenis_folders() + _get_quick_folders())
+    file_map = _scan_folders_for_files(config.git_paths() + _get_dataset_folders())
     path = _select_path(file_map, file_name)
     _do_import(path, args.to_package)
 
@@ -199,8 +199,8 @@ def _do_import(file_path, package):
     if package:
         params['packageId'] = package
 
-    response = post_file(config().get('api', 'import'), file_path.resolve(), params)
-    import_run_url = urljoin(config().get('api', 'host'), response.text)
+    response = post_file(config.api('import'), file_path.resolve(), params)
+    import_run_url = urljoin(config.get('host', 'selected'), response.text)
     status, message = _poll_for_completion(import_run_url)
     if status == 'FAILED':
         raise McmdError(message)
@@ -210,7 +210,7 @@ def _get_import_action(file_name):
     if '.owl' in file_name or '.obo' in file_name:
         return 'add'
     else:
-        return config().get('set', 'import_action')
+        return config.get('settings', 'import_action')
 
 
 def _poll_for_completion(url):
@@ -232,15 +232,5 @@ def _scan_folders_for_files(folders):
     return files
 
 
-def _get_molgenis_folders():
-    if not config().has_option('data', 'git_root') or not config().has_option('data', 'git_paths'):
-        return list()
-    else:
-        return config_string_to_paths(config().get('data', 'git_paths'))
-
-
-def _get_quick_folders():
-    if not config().has_option('data', 'quick_folders'):
-        return list()
-    else:
-        return config_string_to_paths(config().get('data', 'quick_folders'))
+def _get_dataset_folders():
+    return [Path(folder) for folder in config.get('resources', 'dataset_folders')]

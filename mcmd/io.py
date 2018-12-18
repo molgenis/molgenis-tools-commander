@@ -2,7 +2,7 @@ from PyInquirer import prompt
 from colorama import Fore
 from halo import Halo
 
-from mcmd.config.config import config
+import mcmd.config.config as config
 from mcmd.logging import get_logger
 
 log = get_logger()
@@ -20,7 +20,7 @@ def start(message):
 def succeed():
     global spinner
     if spinner:
-        if config().has_option('set', 'unicorn_mode') and config().getboolean('set', 'unicorn_mode'):
+        if config.has_option('settings', 'unicorn_mode') and config.get('settings', 'unicorn_mode'):
             spinner.stop_and_persist(symbol='🦄'.encode('utf-8'))
         else:
             spinner.succeed()
@@ -141,6 +141,10 @@ def _new_spinner():
 def set_debug():
     global _debug_mode
     _debug_mode = True
+
+
+def newline():
+    print()
 
 
 def highlight(string):

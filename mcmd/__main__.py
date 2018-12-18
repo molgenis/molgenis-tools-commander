@@ -5,6 +5,7 @@ import sys
 from mcmd import io
 from mcmd.arguments import parse_args, print_help
 from mcmd.commands.run import run
+from mcmd.config.loader import load_config
 from mcmd.executor import execute
 from mcmd.io import set_debug
 from mcmd.logging import set_level
@@ -13,6 +14,8 @@ from mcmd.logging import set_level
 def main():
     # setup friendly interrupt message
     signal.signal(signal.SIGINT, interrupt_handler)
+
+    load_config()
 
     args = parse_args()
     if not args.command:
