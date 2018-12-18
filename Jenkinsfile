@@ -84,12 +84,16 @@ pipeline {
 
                     sh "bumpversion ${RELEASE_SCOPE} setup.py"
 
+                    script {
+                        env.MCMD_VERSION = sh(script: "grep current_version .bumpversion.cfg | cut -d'=' -f2", returnStdout: true).trim()
+                    }
+
                     sh "python setup.py sdist bdist_wheel"
 
                     sh "twine upload --repository-url ${PYPI_REGISTRY} -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} dist/*"
 
                     sh "git push --tags origin master"
-                    hubotSend(message: '${env.REPOSITORY} has been successfully deployed on ${env.PYPI_LOCAL_REGISTRY}.', status:'SUCCESS')
+                    hubotSend(message: "Molgenis Commander ${MCMD_VERSION} has been successfully released! :tada: https://pypi.org/project/molgenis-commander/", status:'SUCCESS')
                 }
             }
         }
