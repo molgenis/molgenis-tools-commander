@@ -86,9 +86,9 @@ pipeline {
 
                     sh "python setup.py sdist bdist_wheel"
 
-                    sh "git push --tags origin master"
-
                     sh "twine upload --repository-url ${PYPI_REGISTRY} -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} dist/*"
+
+                    sh "git push --tags origin master"
                     hubotSend(message: '${env.REPOSITORY} has been successfully deployed on ${env.PYPI_LOCAL_REGISTRY}.', status:'SUCCESS')
                 }
             }
