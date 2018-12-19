@@ -144,7 +144,7 @@ def set_debug():
 
 
 def highlight(string):
-    return Fore.BLUE + string + Fore.RESET
+    return Fore.LIGHTBLUE_EX + string + Fore.RESET
 
 
 def _handle_question(question):
