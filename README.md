@@ -1,3 +1,5 @@
+[![Quality Status](https://sonarcloud.io/api/project_badges/measure?project=org.molgenis%3Acommander&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.molgenis%3Acommander)
+
 # Molgenis Commander [BETA]
 
 ### Installing
