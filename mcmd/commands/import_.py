@@ -225,7 +225,7 @@ def _scan_folders_for_files(folders):
     files = defaultdict(list)
     for folder in folders:
         if not folder.is_dir():
-            io.warn('Folder %s is not a valid folder, skipping it...' % folder)
+            io.warn("Folder %s doesn't exist" % folder)
 
         for file in list(folder.glob('*.*')):
             files[file.stem].append(file)
