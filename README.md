@@ -2,7 +2,31 @@
 
 # Molgenis Commander [BETA]
 
-### Installing
+Molgenis Commander makes managing your Molgenis application a breeze! It offers a rich set of commands for oft-repeated actions
+like importing datasets and managing groups and users. Besides catering to the data oriented user it also aims to provide 
+an extensive toolkit for developers working on Molgenis.
+
+### Teaser
+
+Easily add groups and users and configure their roles:
+
+![](docs/add.gif)
+
+Import datasets with a single command:
+
+![](docs/import.gif)
+
+Tie it all together by creating a script:
+
+![](docs/script.gif)
+
+For a full list of features, go:
+
+```
+mcmd --help
+```
+
+### How to install
 
 In a terminal, run:
 
