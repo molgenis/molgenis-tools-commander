@@ -2,7 +2,7 @@
 
 # MOLGENIS Commander [BETA]
 
-MOLGENIS Commander makes managing your [MOLGENIS application](https://github.com/molgenis/molgenis) a breeze! It offers a rich set of commands for oft-repeated actions
+MOLGENIS Commander makes managing your [MOLGENIS application](https://molgenis.github.io//) a breeze! It offers a rich set of commands for oft-repeated actions
 like importing datasets and managing groups and users. Besides catering to the data oriented user it also aims to provide 
 an extensive toolkit for developers working on MOLGENIS.
 
