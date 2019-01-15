@@ -3,7 +3,7 @@ import signal
 import sys
 
 from mcmd import io
-from mcmd.arguments import parse_args, print_help
+from mcmd.arguments import parse_args, print_help, is_intermediate_subcommand
 from mcmd.commands.run import run
 from mcmd.executor import execute
 from mcmd.io import set_debug
@@ -15,8 +15,7 @@ def main():
     signal.signal(signal.SIGINT, interrupt_handler)
 
     args = parse_args()
-    if not args.command:
-        print_help()
+    show_help(args)
 
     setattr(args, 'arg_string', ' '.join(sys.argv[1:]))
     set_log_level(args)
@@ -25,6 +24,17 @@ def main():
         run(args)
     else:
         execute(args)
+
+
+def show_help(args):
+    if not args.command:
+        print_help()
+        exit(1)
+    elif is_intermediate_subcommand(args):
+        # we can't access the subparser from here, so we parse the arguments again with the --help flag
+        sys.argv.append('--help')
+        parse_args()
+        exit(1)
 
 
 def set_log_level(args):
