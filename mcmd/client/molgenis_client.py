@@ -1,5 +1,6 @@
 import json
 from enum import Enum
+from urllib.parse import urljoin
 
 import requests
 
@@ -166,6 +167,11 @@ def principal_exists(principal_name, principal_type):
         return role_exists(principal_name)
     else:
         raise McmdError('Unknown principal type: %s' % principal_type)
+
+
+def get_version():
+    response = get(urljoin(config.api('rest2'), 'version'))
+    return response.json()['molgenisVersion']
 
 
 def user_exists(username):

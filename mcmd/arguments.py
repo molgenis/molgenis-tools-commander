@@ -7,6 +7,7 @@ from mcmd.commands.give import arguments as give_args
 from mcmd.commands.history import arguments as history_args
 from mcmd.commands.import_ import arguments as import_args
 from mcmd.commands.make import arguments as make_args
+from mcmd.commands.ping import arguments as ping_args
 from mcmd.commands.run import arguments as run_args
 from mcmd.commands.script import arguments as script_args
 
@@ -50,6 +51,7 @@ def _create_parser():
     run_args(subparsers)
     script_args(subparsers)
     history_args(subparsers)
+    ping_args(subparsers)
 
     return parser
 
