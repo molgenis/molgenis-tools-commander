@@ -21,10 +21,10 @@ def set_config(config):
         raise ValueError('config already set')
 
     _config = config
-    persist()
+    _persist()
 
 
-def persist():
+def _persist():
     """Writes the config to disk."""
     YAML().dump(_config, get_properties_file())
 
@@ -66,6 +66,16 @@ def has_option(*args):
         return True
     except KeyError:
         return False
+
+
+def set_host(url):
+    hosts = _config['host']['auth']
+    if url in [host['url'] for host in hosts]:
+        _config['host']['selected'] = url
+    else:
+        raise McmdError("There is no host with url {}".format(url))
+
+    _persist()
 
 
 def _get_selected_host_auth():
