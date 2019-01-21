@@ -36,9 +36,13 @@ def password():
 
 
 def git_paths():
-    root = Path(_config['git']['root'])
-    paths = _config['git']['paths']
-    return [root.joinpath(path) for path in paths]
+    root = _config['git']['root']
+    if root is None or len(root) == 0:
+        return []
+    else:
+        root_path = Path(root)
+        paths = _config['git']['paths']
+        return [root_path.joinpath(path) for path in paths]
 
 
 def api(endpoint):
