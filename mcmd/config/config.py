@@ -7,6 +7,9 @@ from functools import reduce
 from pathlib import Path
 from urllib.parse import urljoin
 
+from ruamel.yaml import YAML
+
+from mcmd.config.home import get_properties_file
 from mcmd.utils import McmdError
 
 _config = None
@@ -18,6 +21,12 @@ def set_config(config):
         raise ValueError('config already set')
 
     _config = config
+    persist()
+
+
+def persist():
+    """Writes the config to disk."""
+    YAML().dump(_config, get_properties_file())
 
 
 def get(*args):
