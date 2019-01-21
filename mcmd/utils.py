@@ -27,6 +27,6 @@ def lower_kebab(string):
 
 def config_string_to_paths(config_string):
     """Strips and splits comma separated, multi-line configuration variables and converts them to Path objects."""
-    clean_string = ''.join(config_string.split())
+    clean_string = ''.join(config_string.splitlines())
     paths = clean_string.split(',')
     return [Path(path_string) for path_string in paths]

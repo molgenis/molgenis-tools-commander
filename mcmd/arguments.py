@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from mcmd.commands.add import arguments as add_args
 from mcmd.commands.disable import arguments as disable_args
@@ -63,5 +64,17 @@ def parse_arg_string(argument_string):
 
 
 def print_help():
-    _get_parser().print_help()
+    _get_parser().print_help(sys.stderr)
     exit(1)
+
+
+def is_intermediate_subcommand(args):
+    """
+    Some commands have nested subcommands. These intermediate commands are not executable and don't have a 'func'
+    property.
+
+    For example:
+    > mcmd add user
+    Here, 'add' is the intermediate command.
+    """
+    return not hasattr(args, 'func')
