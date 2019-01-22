@@ -10,18 +10,18 @@ from mcmd.io import highlight
 
 
 def arguments(subparsers):
-    p_add = subparsers.add_parser('disable',
-                                  help='Disable resources/functionality',
-                                  description="Run 'mcmd disable rls -h' to view the help for those sub-commands")
-    p_add_subparsers = p_add.add_subparsers(dest="type")
+    p_disable = subparsers.add_parser('disable',
+                                      help='Disable resources/functionality',
+                                      description="Run 'mcmd disable rls -h' to view the help for those sub-commands")
+    p_disable_subparsers = p_disable.add_subparsers(dest="type")
 
-    p_add_group = p_add_subparsers.add_parser('rls',
-                                              help='Disables row level security on an entity type')
-    p_add_group.set_defaults(func=enable_rls,
-                             write_to_history=True)
-    p_add_group.add_argument('entity',
-                             type=str,
-                             help="The entity type to remove the row level security from")
+    p_disable_rls = p_disable_subparsers.add_parser('rls',
+                                                    help='Disables row level security on an entity type')
+    p_disable_rls.set_defaults(func=enable_rls,
+                               write_to_history=True)
+    p_disable_rls.add_argument('entity',
+                               type=str,
+                               help="The entity type to remove the row level security from")
 
 
 # =======
