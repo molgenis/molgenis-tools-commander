@@ -78,6 +78,19 @@ def set_host(url):
     _persist()
 
 
+def add_host(url, name, pw):
+    auth = {'url': url,
+            'username': name,
+            'password': pw}
+
+    _config['host']['auth'].append(auth)
+    _persist()
+
+
+def host_exists(url):
+    return url in [auth['url'] for auth in _config['host']['auth']]
+
+
 def _get_selected_host_auth():
     selected = _config['host']['selected']
     hosts = _config['host']['auth']
