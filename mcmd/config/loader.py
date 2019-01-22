@@ -111,22 +111,6 @@ def _configure_password(values):
         values['host']['auth'][0]['password'] = password
 
 
-def _merge(yaml_a, yaml_b):
-    """Recursively merge YAML B into YAML A.
-
-    Lists will be combined. Values in YAML B will overwrite values in YAML A.
-    """
-    for key, section in yaml_b.items():
-        if isinstance(section, OrderedDict) or isinstance(section, dict):
-            _merge(yaml_a[key], yaml_b[key])
-        elif isinstance(section, list):
-            combined_list = yaml_a[key]
-            combined_list.extend(x for x in section if x not in combined_list)
-            yaml_a[key] = combined_list
-        else:
-            yaml_a[key] = yaml_b[key]
-
-
 def _is_install_required():
     return not get_properties_file().exists() or get_properties_file().stat().st_size == 0
 
@@ -136,3 +120,46 @@ def _is_upgrade_required(user_config):
         if prop not in user_config:
             return True
     return False
+
+
+def _merge(yaml_a, yaml_b):
+    """Recursively merge YAML B into YAML A.
+
+    Lists will be combined. Values in YAML B will overwrite values in YAML A.
+    """
+    for key, section in yaml_b.items():
+        if isinstance(section, OrderedDict):
+            _merge(yaml_a[key], yaml_b[key])
+        elif isinstance(section, list):
+            if _is_list_of_objects(section):
+                yaml_a[key] = _combine_object_lists(yaml_a[key], section)
+            else:
+                yaml_a[key] = _combine_lists(yaml_a[key], section)
+        else:
+            yaml_a[key] = yaml_b[key]
+
+
+def _combine_object_lists(list_a, list_b):
+    """Combines lists of objects by ID."""
+    items_by_id_a = {_get_object_id(item): item for item in list_a}
+    items_by_id_b = {_get_object_id(item): item for item in list_b}
+    items_by_id_a.update(items_by_id_b)
+    return [items_by_id_a[key] for key in sorted(items_by_id_a.keys())]
+
+
+def _get_object_id(ordered_dict):
+    """
+    Gets the first value of the ordered dict (that represents a YAML object).
+    ruamel.YAML uses a CommentedMapValuesView as OrderedDict which doesn't support indexing, so we iterate.
+    """
+    return next(iter(ordered_dict.values()))
+
+
+def _combine_lists(list_a, list_b):
+    combined_list = list_a
+    combined_list.extend(x for x in list_b if x not in list_a)
+    return combined_list
+
+
+def _is_list_of_objects(list_section):
+    return len(list_section) > 0 and isinstance(list_section[0], OrderedDict)
