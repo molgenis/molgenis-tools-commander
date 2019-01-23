@@ -1,6 +1,6 @@
+import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import login, post, get
-from mcmd.config.config import config
 from mcmd.io import highlight
 from mcmd.utils import lower_kebab, McmdError, upper_snake
 
@@ -32,13 +32,13 @@ def make(args):
 
     group_name = _find_group(args.role)
 
-    url = config().get('api', 'member') % group_name
+    url = config.api('member') % group_name
     post(url, {'username': args.user, 'roleName': args.role.upper()})
 
 
 def _find_group(role):
     io.debug('Fetching groups')
-    groups = get(config().get('api', 'rest2') + 'sys_sec_Group?attrs=name')
+    groups = get(config.api('rest2') + 'sys_sec_Group?attrs=name')
     role = lower_kebab(role)
 
     matches = {len(group['name']): group['name'] for group in groups.json()['items'] if role.startswith(group['name'])}
