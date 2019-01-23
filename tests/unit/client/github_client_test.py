@@ -1,8 +1,11 @@
 import unittest
 
+import pytest
+
 from mcmd.client import github_client
 
 
+@pytest.mark.unit
 class GithubTest(unittest.TestCase):
     def test_get_attachments(self):
         body = """
