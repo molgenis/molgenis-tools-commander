@@ -1,6 +1,6 @@
+import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import login, post, get
-from mcmd.config.config import config
 from mcmd.io import highlight
 from mcmd.utils import McmdError
 
@@ -87,7 +87,7 @@ def add_user(args):
     superuser = args.is_superuser
     ch_pwd = args.change_password
 
-    post(config().get('api', 'rest1') + 'sys_sec_User',
+    post(config.api('rest1') + 'sys_sec_User',
          {'username': args.username,
           'password_': password,
           'changePassword': ch_pwd,
@@ -100,7 +100,7 @@ def add_user(args):
 @login
 def add_group(args):
     io.start('Adding group %s' % highlight(args.name))
-    post(config().get('api', 'group'), {'name': args.name.lower(), 'label': args.name})
+    post(config.api('group'), {'name': args.name.lower(), 'label': args.name})
 
 
 @login
@@ -113,14 +113,14 @@ def add_package(args):
     if args.parent:
         data['parent'] = args.parent
 
-    post(config().get('api', 'rest1') + 'sys_md_Package', data)
+    post(config.api('rest1') + 'sys_md_Package', data)
 
 
 @login
 def add_token(args):
     io.start('Adding token %s for user %s' % (highlight(args.token), highlight(args.user)))
 
-    user = get(config().get('api', 'rest2') + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
+    user = get(config.api('rest2') + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
     if user.json()['total'] == 0:
         raise McmdError('Unknown user %s' % args.user)
 
@@ -129,4 +129,4 @@ def add_token(args):
     data = {'User': user_id,
             'token': args.token}
 
-    post(config().get('api', 'rest1') + 'sys_sec_Token', data)
+    post(config.api('rest1') + 'sys_sec_Token', data)

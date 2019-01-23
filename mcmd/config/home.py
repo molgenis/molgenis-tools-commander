@@ -22,7 +22,7 @@ _SCRIPT_FOLDER = 'scripts'
 _DATASET_FOLDER = 'datasets'
 _BACKUP_FOLDER = 'backups'
 _ISSUE_FOLDER = 'issues'
-_PROPERTIES_FILE = 'mcmd.properties'
+_PROPERTIES_FILE = 'mcmd.yaml'
 _HISTORY_FILE = 'history.log'
 
 

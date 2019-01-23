@@ -1,10 +1,11 @@
 import json
 from enum import Enum
+from urllib.parse import urljoin
 
 import requests
 
+import mcmd.config.config as config
 from mcmd import io
-from mcmd.config.config import config
 from mcmd.logging import get_logger
 from mcmd.utils import McmdError
 
@@ -42,19 +43,19 @@ def login(func):
     def wrapper(args):
         global token
         if args.as_user is None:
-            username = config().get('auth', 'username')
+            username = config.username()
         else:
             username = args.as_user
 
         if args.with_password is None:
             if args.as_user is None:
-                password = config().get('auth', 'password')
+                password = config.password()
             else:
                 password = args.as_user
         else:
             password = args.with_password
 
-        login_url = config().get('api', 'login')
+        login_url = config.api('login')
 
         io.debug('Logging in as user %s' % username)
 
@@ -82,7 +83,7 @@ def grant(principal_type, principal_name, resource_type, identifier, permission)
     else:
         raise McmdError('Unknown principal type: %s' % principal_type)
 
-    url = config().get('api', 'perm') + resource_type.get_resource_name() + '/' + principal_type.value
+    url = config.api('perm') + resource_type.get_resource_name() + '/' + principal_type.value
     return _handle_request(lambda: requests.post(url,
                                                  headers={
                                                      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -114,7 +115,7 @@ def delete_data(url, data):
 
 
 def import_by_url(params):
-    return _handle_request(lambda: requests.post(config().get('api', 'import_url'),
+    return _handle_request(lambda: requests.post(config.api('import_url'),
                                                  headers=_get_default_headers(),
                                                  params=params))
 
@@ -155,7 +156,7 @@ def _is_json(response):
 
 def resource_exists(resource_id, resource_type):
     log.debug('Checking if %s %s exists' % (resource_type.get_label(), resource_id))
-    response = get(config().get('api', 'rest2') + resource_type.get_entity_id() + '?q=id==' + resource_id)
+    response = get(config.api('rest2') + resource_type.get_entity_id() + '?q=id==' + resource_id)
     return int(response.json()['total']) > 0
 
 
@@ -178,13 +179,18 @@ def principal_exists(principal_name, principal_type):
         raise McmdError('Unknown principal type: %s' % principal_type)
 
 
+def get_version():
+    response = get(urljoin(config.api('rest2'), 'version'))
+    return response.json()['molgenisVersion']
+
+
 def user_exists(username):
     log.debug('Checking if user %s exists' % username)
-    response = get(config().get('api', 'rest2') + 'sys_sec_User?q=username==' + username)
+    response = get(config.api('rest2') + 'sys_sec_User?q=username==' + username)
     return int(response.json()['total']) > 0
 
 
 def role_exists(rolename):
     log.debug('Checking if role %s exists' % rolename)
-    response = get(config().get('api', 'rest2') + 'sys_sec_Role?q=name==' + rolename.upper())
+    response = get(config.api('rest2') + 'sys_sec_Role?q=name==' + rolename.upper())
     return int(response.json()['total']) > 0

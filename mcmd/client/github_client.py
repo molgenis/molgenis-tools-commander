@@ -42,7 +42,7 @@ def get_attachments(issue_num):
 
 
 def _parse_attachment_urls(issue_body):
-    return re.findall('\((%s.*?)\)' % re.escape(_MOLGENIS_FILES_URL), issue_body)
+    return re.findall(r'\((%s.*?)\)' % re.escape(_MOLGENIS_FILES_URL), issue_body)
 
 
 def _molgenis_repo():
