@@ -73,10 +73,10 @@ def print_help():
 def is_intermediate_subcommand(args):
     """
     Some commands have nested subcommands. These intermediate commands are not executable and don't have a 'func'
-    property.
+    property. (The 'run' command is the exception, it doesn't have a 'func' but is executable.)
 
     For example:
     > mcmd add user
     Here, 'add' is the intermediate command.
     """
-    return not hasattr(args, 'func')
+    return not hasattr(args, 'func') and not args.command == 'run'

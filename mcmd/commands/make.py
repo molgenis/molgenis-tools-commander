@@ -32,7 +32,7 @@ def make(args):
 
     group_name = _find_group(args.role)
 
-    url = config.api('member') % group_name
+    url = config.api('member').format(group_name)
     post(url, {'username': args.user, 'roleName': args.role.upper()})
 
 

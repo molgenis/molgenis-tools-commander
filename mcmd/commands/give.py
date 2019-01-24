@@ -82,10 +82,10 @@ def give(args):
 def _get_principal_type(args):
     principal_name = args.receiver
     if args.user:
-        ensure_principal_exists(args.user, principal_name)
+        ensure_principal_exists(principal_name, PrincipalType.USER)
         return PrincipalType.USER
     elif args.role:
-        ensure_principal_exists(args.role, principal_name)
+        ensure_principal_exists(principal_name, PrincipalType.ROLE)
         return PrincipalType.ROLE
     else:
         return _guess_principal_type(principal_name)
