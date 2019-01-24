@@ -75,7 +75,7 @@ def _import_from_url(args):
     params['url'] = file_url
 
     response = import_by_url(params)
-    import_run_url = urljoin(config().get('api', 'host'), response.text)
+    import_run_url = urljoin(config.get('api', 'host'), response.text)
     status, message = _poll_for_completion(import_run_url)
     if status == 'FAILED':
         raise McmdError(message)
