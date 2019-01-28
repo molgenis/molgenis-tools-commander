@@ -1,6 +1,6 @@
 [![Quality Status](https://sonarcloud.io/api/project_badges/measure?project=org.molgenis%3Acommander&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.molgenis%3Acommander)
 
-# MOLGENIS Commander [BETA]
+# MOLGENIS Commander
 
 MOLGENIS Commander makes managing your [MOLGENIS application](https://molgenis.github.io//) a breeze! It offers a rich set of commands for oft-repeated actions
 like importing datasets and managing groups and users. Besides catering to the data oriented user it also aims to provide 
