@@ -157,7 +157,7 @@ def ensure_resource_exists(resource_id, resource_type):
 
 def ensure_principal_exists(principal_name, principal_type):
     if not principal_exists(principal_name, principal_type):
-        raise McmdError('No {} found with id {}'.format(principal_type, principal_name))
+        raise McmdError('No {} found with id {}'.format(principal_type.value, principal_name))
 
 
 def principal_exists(principal_name, principal_type):
