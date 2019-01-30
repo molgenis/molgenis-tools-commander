@@ -1,6 +1,9 @@
+"""
+Deletes an entityType or data from an entityType.
+"""
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, delete, delete_data, resource_exists, ResourceType
+from mcmd.client.molgenis_client import login, delete, delete_data, ensure_resource_exists, ResourceType
 from mcmd.io import highlight
 from mcmd.utils import McmdError
 
@@ -14,25 +17,24 @@ def arguments(subparsers):
                                      help='Delete entities or data',
                                      description="Run 'mcmd delete entity -h' or 'mcmd delete data -h' to view the help"
                                                  " for those sub-commands")
+    p_delete.add_argument('--force', '-f',
+                          action='store_true',
+                          help="Does your delete action without asking if you know it for sure")
     p_delete_subparsers = p_delete.add_subparsers(dest="type")
     p_delete_entity = p_delete_subparsers.add_parser('entity',
                                                      help='Delete an entity(type)')
     p_delete_entity.add_argument('entity_type',
                                  type=str,
-                                 help="The name of the entity you want to delete")
-    p_delete_entity.add_argument('--force', '-f',
-                                 action='store_true',
-                                 help="Does your delete action without asking if you know it for sure")
+                                 metavar='ID',
+                                 help="The ID of the entity type you want to delete")
     p_delete_entity.set_defaults(func=delete_entity,
                                  write_to_history=True)
     p_delete_data = p_delete_subparsers.add_parser('data',
                                                    help='Delete data from an entity(type)')
     p_delete_data.add_argument('entity_type',
+                               metavar='ID',
                                type=str,
-                               help="The name of the entity you want to delete all data from")
-    p_delete_data.add_argument('--force', '-f',
-                               action='store_true',
-                               help="Does your delete action without asking if you know it for sure")
+                               help="The ID of the entity type you want to delete all data from")
     p_delete_data.set_defaults(func=delete_all_data,
                                write_to_history=True)
 
@@ -41,13 +43,8 @@ def arguments(subparsers):
 # Methods
 # =======
 
-"""
-Deletes an entityType or data from an entityType.
-"""
 
-
-def _delete_row(entity, row, msg):
-    io.start(msg)
+def _delete_row(entity, row):
     url = '{}{}'.format(config.api('rest2'), entity)
     delete_data(url, [row])
 
@@ -60,13 +57,12 @@ def _delete_all_data(entity):
 
 def _delete_entity_type(entity):
     io.start('Deleting entity: {}'.format(highlight(entity)))
-    _delete_row('sys_md_EntityType', entity, 'Deleting: {}'.format(highlight(entity)))
+    _delete_row('sys_md_EntityType', entity)
 
 
 @login
 def delete_all_data(args):
-    if not resource_exists(args.entity_type, ResourceType.ENTITY_TYPE):
-        raise McmdError("Entity type {} doesn't exist".format(args.entity_type))
+    ensure_resource_exists(args.entity_type, ResourceType.ENTITY_TYPE)
     if args.force or (not args.force and io.confirm(
             'Are you sure you want to remove all data from entity: {}?'.format(args.entity_type))):
         _delete_all_data(args.entity_type)
@@ -74,8 +70,7 @@ def delete_all_data(args):
 
 @login
 def delete_entity(args):
-    if not resource_exists(args.entity_type, ResourceType.ENTITY_TYPE):
-        raise McmdError("Entity type {} doesn't exist".format(args.entity_type))
+    ensure_resource_exists(args.entity_type, ResourceType.ENTITY_TYPE)
     if args.force or (not args.force and io.confirm(
             'Are you sure you want to remove the complete entity: {}?'.format(args.entity_type))):
         _delete_entity_type(args.entity_type)
