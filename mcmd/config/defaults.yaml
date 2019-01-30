@@ -1,17 +1,17 @@
 git:
   root:
   paths:
-    - molgenis-platform-integration-tests/src/test/resources/xls
-    - molgenis-platform-integration-tests/src/test/resources/csv
-    - molgenis-platform-integration-tests/src/test/resources/obo
+  - molgenis-platform-integration-tests/src/test/resources/xls
+  - molgenis-platform-integration-tests/src/test/resources/csv
+  - molgenis-platform-integration-tests/src/test/resources/obo
 resources:
   dataset_folders: []
 host:
   selected: http://localhost:8080/
   auth:
-    - url: http://localhost:8080/
-      username: admin
-      password: admin
+  - url: http://localhost:8080/
+    username: admin
+    password: admin
 settings:
   import_action: add_update_existing
 api:
