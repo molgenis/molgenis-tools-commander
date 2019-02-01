@@ -50,13 +50,13 @@ def _delete_row(entity, row):
 
 
 def _delete_all_data(entity):
-    io.start('Deleting all data from entity: {}'.format(entity))
+    io.start('Deleting all data from entity {}'.format(highlight(entity)))
     url = '{}{}'.format(config.api('rest1'), entity)
     delete(url)
 
 
 def _delete_entity_type(entity):
-    io.start('Deleting entity: {}'.format(highlight(entity)))
+    io.start('Deleting entity {}'.format(highlight(entity)))
     _delete_row('sys_md_EntityType', entity)
 
 
