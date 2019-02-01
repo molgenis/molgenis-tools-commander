@@ -103,6 +103,16 @@ def post_file(url, file_path, params):
                                                  files={'file': open(file_path, 'rb')},
                                                  params=params))
 
+def delete(url):
+    return _handle_request(lambda: requests.delete(url,
+                                                 headers=_get_default_headers()))
+
+
+def delete_data(url, data):
+    return _handle_request(lambda: requests.delete(url,
+                                                 headers=_get_default_headers(),
+                                                 data=json.dumps({"entityIds": data})))
+
 
 def import_by_url(params):
     return _handle_request(lambda: requests.post(config.api('import_url'),
