@@ -55,6 +55,8 @@ def import_(args):
 
 
 def _validate_args(args):
+    """The 'file' argument can't be made required because the '--from-issue' argument can be used with or without
+    specifying a file name."""
     if not args.file and not args.from_issue:
         raise ArgumentError()
 

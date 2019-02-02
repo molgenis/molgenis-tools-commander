@@ -32,7 +32,6 @@ def main():
 def show_help(args):
     if not args.command:
         print_help_and_exit()
-        exit(1)
     elif is_intermediate_subcommand(args):
         # we can't access the subparser from here, so we parse the arguments again with the --help flag
         sys.argv.append('--help')
