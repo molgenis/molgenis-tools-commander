@@ -1,5 +1,6 @@
 import configparser
 
+import mcmd.arguments
 from mcmd import history, io
 from mcmd.errors import ArgumentError, McmdError
 
@@ -12,6 +13,8 @@ def execute(args, exit_on_error=True):
     except configparser.Error as e:
         message = 'Error reading or writing mcmd.properties: %s' % str(e)
         _handle_error(message, args.write_to_history, args.arg_string, exit_on_error)
+    except ArgumentError:
+        mcmd.arguments.print_help_and_exit()
     else:
         if args.write_to_history:
             history.write(args.arg_string, success=True)

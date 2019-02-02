@@ -3,7 +3,7 @@ import signal
 import sys
 
 from mcmd import io
-from mcmd.arguments import parse_args, print_help, is_intermediate_subcommand
+from mcmd.arguments import parse_args, print_help_and_exit, is_intermediate_subcommand
 from mcmd.commands.run import run
 from mcmd.config.loader import load_config
 from mcmd.executor import execute
@@ -31,7 +31,7 @@ def main():
 
 def show_help(args):
     if not args.command:
-        print_help()
+        print_help_and_exit()
         exit(1)
     elif is_intermediate_subcommand(args):
         # we can't access the subparser from here, so we parse the arguments again with the --help flag

@@ -65,7 +65,7 @@ def parse_arg_string(argument_string):
     return _get_parser().parse_args(argument_string)
 
 
-def print_help():
+def print_help_and_exit():
     _get_parser().print_help(sys.stderr)
     exit(1)
 
