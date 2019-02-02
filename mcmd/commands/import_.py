@@ -13,44 +13,62 @@ from mcmd.config.home import get_issues_folder
 from mcmd.io import highlight
 from mcmd.utils import McmdError
 
-
 # =========
 # Arguments
 # =========
 
+# Store a reference to the parser so that we can show an error message for the custom validation rule
+_p_import = None
+
+
 def arguments(subparsers):
-    p_import = subparsers.add_parser('import',
-                                     help='Import a file')
-    p_import.set_defaults(func=import_,
-                          write_to_history=True)
-    p_import.add_argument('file',
-                          nargs='?',
-                          help='The file to upload')
-    p_import_source = p_import.add_mutually_exclusive_group()
+    global _p_import
+    _p_import = subparsers.add_parser('import',
+                                      help='Import a file')
+    _p_import.set_defaults(func=import_,
+                           write_to_history=True)
+    _p_import.add_argument('resource',
+                           nargs='?',
+                           help='The resource to import. Depending on the other options this can be a path, file name, '
+                                'or URL.')
+    p_import_source = _p_import.add_mutually_exclusive_group()
     p_import_source.add_argument('--from-path', '-p',
                                  action='store_true',
-                                 help='Import a file the old school way (by path)')
+                                 help='Import a file the old school way: by path.')
     p_import_source.add_argument('--from-issue', '-i',
-                                 metavar='ISSUE_NUMBER',
-                                 help='Import a file from a GitHub issue')
-    p_import_source.add_argument('--from-url',
-                                 metavar='URL',
+                                 metavar='NUMBER',
+                                 help="Import a file attachment from a GitHub issue. It's possible (but not required) "
+                                      "to specify the file name of the attachment.")
+    p_import_source.add_argument('--from-url', '-u',
+                                 action='store_true',
                                  help='Import a file from a URL. Uses the importByUrl endpoint of the MOLGENIS '
-                                      'importer.')
-    p_import.add_argument('--in',
-                          dest='to_package',
-                          type=str,
-                          metavar='PACKAGE_ID',
-                          help='The package to import to')
-    return p_import
+                                      'importer, without downloading the file first.')
+    _p_import.add_argument('--in',
+                           dest='to_package',
+                           type=str,
+                           metavar='PACKAGE_ID',
+                           help='The package to import to.')
+    return _p_import
 
 
 # =======
 # Methods
 # =======
 
-@login
 def import_(args):
+    _validate_args(args)
+    _choose_import_method(args)
+
+
+def _validate_args(args):
+    """The 'resource' argument can't be made required at the parser level because the '--from-issue' argument can be
+    used with or without specifying a file name."""
+    if not args.resource and not args.from_issue:
+        _p_import.error("the following argument is required: resource")
+
+
+@login
+def _choose_import_method(args):
     if args.from_path:
         _import_from_path(args)
     elif args.from_url:
@@ -62,7 +80,7 @@ def import_(args):
 
 
 def _import_from_url(args):
-    file_url = args.from_url
+    file_url = args.resource
     file_name = file_url.split("/")[-1]
     io.start('Importing from URL %s' % highlight(file_url))
 
@@ -82,7 +100,7 @@ def _import_from_url(args):
 
 
 def _import_from_quick_folders(args):
-    file_name = args.file
+    file_name = args.resource
     file_map = _scan_folders_for_files(config.git_paths() + _get_dataset_folders())
     path = _select_path(file_map, file_name)
     _do_import(path, args.to_package)
@@ -90,14 +108,14 @@ def _import_from_quick_folders(args):
 
 def _import_from_issue(args):
     issue_num = args.from_issue
-    attachment = _select_attachment(issue_num, args.file)
+    attachment = _select_attachment(issue_num, args.resource)
     file_path = _download_attachment(attachment, issue_num)
     _do_import(file_path, args.to_package)
 
 
 def _import_from_path(args):
-    io.start('Importing from path %s' % highlight(args.file))
-    file = Path(args.file)
+    io.start('Importing from path %s' % highlight(args.resource))
+    file = Path(args.resource)
     if not file.is_file():
         raise McmdError("File %s doesn't exist" % str(file.resolve()))
     _do_import(file, args.to_package)
