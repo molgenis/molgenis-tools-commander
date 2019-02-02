@@ -33,7 +33,7 @@ def arguments(subparsers):
     p_import_source.add_argument('--from-issue', '-i',
                                  metavar='ISSUE_NUMBER',
                                  help='Import a file from a GitHub issue')
-    p_import_source.add_argument('--from-url',
+    p_import_source.add_argument('--from-url', '-u',
                                  metavar='URL',
                                  help='Import a file from a URL. Uses the importByUrl endpoint of the MOLGENIS '
                                       'importer.')
@@ -49,8 +49,18 @@ def arguments(subparsers):
 # Methods
 # =======
 
-@login
 def import_(args):
+    _validate_args(args)
+    _choose_import_method(args)
+
+
+def _validate_args(args):
+    if not args.file and not args.from_issue:
+        raise ArgumentError()
+
+
+@login
+def _choose_import_method(args):
     if args.from_path:
         _import_from_path(args)
     elif args.from_url:
