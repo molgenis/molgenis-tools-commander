@@ -7,7 +7,7 @@ from functools import reduce
 from pathlib import Path
 from urllib.parse import urljoin
 
-from mcmd.utils import McmdError
+from mcmd.errors import McmdError
 
 _config = None
 

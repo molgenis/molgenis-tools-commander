@@ -10,8 +10,8 @@ from mcmd import io
 from mcmd.client import github_client as github
 from mcmd.client.molgenis_client import login, post_file, get, import_by_url
 from mcmd.config.home import get_issues_folder
+from mcmd.errors import ArgumentError, McmdError
 from mcmd.io import highlight
-from mcmd.utils import McmdError
 
 
 # =========

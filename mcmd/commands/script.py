@@ -2,7 +2,7 @@ from mcmd import history, io
 from mcmd.config.home import get_scripts_folder
 from mcmd.io import confirm, highlight
 from mcmd.logging import get_logger
-from mcmd.utils import McmdError
+from mcmd.errors import McmdError
 
 
 # =========

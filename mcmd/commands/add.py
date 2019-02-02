@@ -2,7 +2,7 @@ import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import login, post, get
 from mcmd.io import highlight
-from mcmd.utils import McmdError
+from mcmd.errors import McmdError
 
 
 # =========
