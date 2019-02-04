@@ -114,8 +114,7 @@ def _import_from_issue(args):
 
 
 def _import_from_path(args):
-    io.start('Importing from path %s' % highlight(args.resource))
-    file = Path(args.resource)
+    file = Path(args.file)
     if not file.is_file():
         raise McmdError("File %s doesn't exist" % str(file.resolve()))
     _do_import(file, args.to_package)
