@@ -1,1 +1,1 @@
-include mcmd/config/default.properties
+include mcmd/config/defaults.yaml
