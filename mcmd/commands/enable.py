@@ -2,6 +2,7 @@ import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import login, ResourceType, post, ensure_resource_exists
 from mcmd.io import highlight
+from mcmd.utils import McmdError
 
 
 # =========
@@ -23,6 +24,15 @@ def arguments(subparsers):
                               type=str,
                               help="The entity type to secure")
 
+    p_enable_theme = p_enable_subparsers.add_parser('theme',
+                                                    help='Enables the bootstrap theme which changes the styling of your molgenis')
+    p_enable_theme.set_defaults(func=enable_theme,
+                                write_to_history=True)
+    p_enable_theme.add_argument('theme',
+                                metavar='THEME',
+                                type=str,
+                                help='The bootstrap theme you want to enable (without .css)')
+
 
 # =======
 # Methods
@@ -35,3 +45,18 @@ def enable_rls(args):
     ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
     post(config.api('rls'), data={'id': args.entity,
                                   'rlsEnabled': True})
+
+
+@login
+def enable_theme(args):
+    """
+    enable_theme enables a bootstrap theme
+    :param args: commandline arguments containing the id of the theme (without .css)
+    :return: McmdError: when applying the theme fails
+    """
+    io.start('Applying theme: {}'.format(highlight(args.theme)))
+    try:
+        post(config.api('set_theme'), args.theme)
+    except McmdError:
+        raise McmdError(
+            'Applying theme failed. Does theme [{}] exist in the [{}] table?'.format(args.theme, 'sys_set_StyleSheet'))
