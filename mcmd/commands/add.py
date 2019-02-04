@@ -1,8 +1,8 @@
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, post, get
+from mcmd.client.molgenis_client import login, post, get, import_bootstrap_theme
 from mcmd.io import highlight
-from mcmd.utils import McmdError
+from mcmd.utils import McmdError, get_file_name_from_path
 
 
 # =========
@@ -72,6 +72,20 @@ def arguments(subparsers):
                              type=str,
                              help="The token")
 
+    p_add_theme = p_add_subparsers.add_parser('theme',
+                                              help='Upload a bootstrap theme')
+    p_add_theme.set_defaults(func=add_theme,
+                             write_to_history=True)
+    p_add_theme.add_argument('bs3',
+                             type=str,
+                             metavar='Bootstrap 3 theme',
+                             help="The bootstrap 3 css theme file")
+    p_add_theme.add_argument('--bs4',
+                             type=str,
+                             metavar='Bootstrap 4 theme',
+                             help="The bootstrap4 css theme file (when not specified, the default molgenis theme will "
+                                  "be applied on bootstrap4 pages")
+
 
 # =======
 # Methods
@@ -130,3 +144,45 @@ def add_token(args):
             'token': args.token}
 
     post(config.api('rest1') + 'sys_sec_Token', data)
+
+
+@login
+def add_theme(args):
+    """
+    add_theme adds a theme to the stylesheet table
+    :param args: commandline arguments containing bootstrap3_theme and optionally bootstrap4_theme
+    :return: None
+    :exception MdevError: when provided path to one of the files is not a file
+    """
+    bs3 = args.bs3
+    bs3_name = get_file_name_from_path(bs3)
+    bs4 = args.bs4
+    extension = 'css'
+    content_type = 'text/css'
+
+    if not bs3_name.endswith(extension):
+        raise McmdError('Bootstrap 3 file: [{}] is not a valid css file.'.format(bs3_name))
+    try:
+        files = {'bootstrap3-style': (bs3_name, open(bs3, 'rb'), content_type)}
+    except FileNotFoundError:
+        raise McmdError('Bootstrap 3 file: [{}] does not exist on path: [{}]'.format(bs3_name, bs3.strip(bs3_name)))
+
+    if bs4:
+        bs4_name = get_file_name_from_path(bs4)
+        if not bs4_name.endswith(extension):
+            raise McmdError('Bootstrap 4 file: [{}] is not a valid css file.'.format(bs4_name))
+        else:
+            io.start(
+                'Adding bootstrap 3 theme: {} and bootstrap 4 theme: {} to bootstrap themes'.format(
+                    highlight(bs3_name),
+                    highlight(bs4_name)))
+            try:
+                files['bootstrap4-style'] = (bs4_name, open(bs4, 'rb'), content_type)
+            except FileNotFoundError:
+                raise McmdError(
+                    'Bootstrap 4 file: [{}] does not exist on path: [{}]'.format(bs4_name, bs4.strip(bs4_name)))
+    else:
+        io.start(
+            'Adding bootstrap 3 theme: {} to bootstrap themes (default molgenis style will be applied on pages using bootstrap 4)'.format(
+                highlight(bs3_name)))
+    import_bootstrap_theme(files)

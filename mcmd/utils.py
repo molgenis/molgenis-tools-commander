@@ -1,3 +1,6 @@
+import os
+
+
 class McmdError(Exception):
     def __init__(self, message):
         self.message = message
@@ -20,3 +23,12 @@ def lower_kebab(string):
     E.g. 'SCREAMING_SNAKE' becomes 'screaming-snake'.
     """
     return string.lower().replace('_', '-')
+
+
+def get_file_name_from_path(path):
+    """
+    get_file_name returns a file name from a path to the file
+    :param path: path to the file (i.e. /Users/henk/Desktop/example.xlsx)
+    :return: filename (i.e. example.xlsx)
+    """
+    return path.split(os.sep)[-1]
