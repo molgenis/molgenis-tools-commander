@@ -25,7 +25,8 @@ def arguments(subparsers):
                               help="The entity type to secure")
 
     p_enable_theme = p_enable_subparsers.add_parser('theme',
-                                                    help='Enables the bootstrap theme which changes the styling of your molgenis')
+                                                    help='Enables the bootstrap theme which changes the styling of your'
+                                                         ' MOLGENIS')
     p_enable_theme.set_defaults(func=enable_theme,
                                 write_to_history=True)
     p_enable_theme.add_argument('theme',
@@ -52,9 +53,10 @@ def enable_theme(args):
     """
     enable_theme enables a bootstrap theme
     :param args: commandline arguments containing the id of the theme (without .css)
-    :return: McmdError: when applying the theme fails
+    :exception McmdError: when applying the theme fails
+    :return None
     """
-    io.start('Applying theme: {}'.format(highlight(args.theme)))
+    io.start('Applying theme {}'.format(highlight(args.theme)))
     try:
         post(config.api('set_theme'), args.theme)
     except McmdError:
