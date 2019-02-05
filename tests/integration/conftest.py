@@ -1,13 +1,16 @@
 import random
 import string
+import sys
 
 import molgenis.client
 import pytest
 
-# noinspection PyUnresolvedReferences
-import tests.integration.fake_home
-# noinspection PyUnresolvedReferences
-import tests.integration.fake_loader
+from tests.integration import fake_loader, fake_home
+
+sys.modules['mcmd.config.loader'] = fake_loader
+sys.modules['mcmd.config.home'] = fake_home
+
+# IMPORTANT: importing __main__ must come last!
 from mcmd.__main__ import start
 
 

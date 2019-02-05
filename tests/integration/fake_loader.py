@@ -1,7 +1,6 @@
 from ruamel.yaml import YAML
 
 import mcmd.config.config as config
-import mcmd.config.loader
 
 _TEST_CONFIG = """
 git:
@@ -33,10 +32,7 @@ api:
 """
 
 
-def load_test_config():
+def load_config():
     yaml = YAML()
     test_config = yaml.load(_TEST_CONFIG)
     config._config = test_config
-
-
-mcmd.config.loader.load_config = load_test_config
