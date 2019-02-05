@@ -13,6 +13,7 @@ from mcmd.__main__ import start
 
 @pytest.fixture
 def session():
+    # TODO get from config
     session = molgenis.client.Session('http://localhost:8080/api/')
     session.login('admin', 'admin')
     return session
