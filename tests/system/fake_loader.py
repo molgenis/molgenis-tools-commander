@@ -1,16 +1,42 @@
-import pkg_resources
 from ruamel.yaml import YAML
 
+import mcmd.config.config as config
 import mcmd.config.loader
-from mcmd.config.config import set_config
 
-_TEST_CONFIG = pkg_resources.resource_stream('tests.system', 'test.yaml')
+_TEST_CONFIG = """
+git:
+  root:
+  paths:
+  - molgenis-platform-integration-tests/src/test/resources/xls
+  - molgenis-platform-integration-tests/src/test/resources/csv
+  - molgenis-platform-integration-tests/src/test/resources/obo
+resources:
+  dataset_folders: []
+host:
+  selected: http://localhost:8080/
+  auth:
+  - url: http://localhost:8080/
+    username: admin
+    password: admin
+settings:
+  import_action: add_update_existing
+api:
+  rest1: api/v1/
+  rest2: api/v2/
+  login: api/v1/login/
+  group: api/plugin/security/group/
+  member: api/plugin/security/group/{}/member
+  import: plugin/importwizard/importFile/
+  import_url: plugin/importwizard/importByUrl
+  perm: menu/admin/permissionmanager/update/
+  rls: menu/admin/permissionmanager/update/entityclass/rls
+"""
 
 
 def load_test_config():
     yaml = YAML()
     test_config = yaml.load(_TEST_CONFIG)
-    set_config(test_config)
+    config._config = test_config
 
 
 mcmd.config.loader.load_config = load_test_config
