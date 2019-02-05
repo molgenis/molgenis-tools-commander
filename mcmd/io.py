@@ -100,22 +100,37 @@ def checkbox(message, choices):
         'name': 'answer',
         'message': message,
         'choices': checks,
-        'validate': lambda answer: 'You must choose at least one option.' \
-            if len(answer) == 0 else True
+        'validate': lambda answer: 'You must choose at least one option.' if len(answer) == 0 else True
     }
 
     answer_ids = _handle_question(message)
     return [choices[idx] for idx in answer_ids]
 
 
-def input_(message):
+def input_(message, required=False):
     if spinner:
         spinner.stop_and_persist()
 
     message = {
         'type': 'input',
         'name': 'answer',
-        'message': message
+        'message': message,
+    }
+
+    if required:
+        message['validate'] = lambda answer: "This field can't be empty." if len(answer) == 0 else True
+
+    return _handle_question(message)
+
+
+def password(message):
+    if spinner:
+        spinner.stop_and_persist()
+
+    message = {
+        'type': 'password',
+        'name': 'answer',
+        'message': message,
     }
 
     return _handle_question(message)

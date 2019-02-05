@@ -7,6 +7,9 @@ from functools import reduce
 from pathlib import Path
 from urllib.parse import urljoin
 
+from ruamel.yaml import YAML
+
+from mcmd.config.home import get_properties_file
 from mcmd.utils import McmdError
 
 _config = None
@@ -18,6 +21,12 @@ def set_config(config):
         raise ValueError('config already set')
 
     _config = config
+    _persist()
+
+
+def _persist():
+    """Writes the config to disk."""
+    YAML().dump(_config, get_properties_file())
 
 
 def get(*args):
@@ -57,6 +66,29 @@ def has_option(*args):
         return True
     except KeyError:
         return False
+
+
+def set_host(url):
+    hosts = _config['host']['auth']
+    if url in [host['url'] for host in hosts]:
+        _config['host']['selected'] = url
+    else:
+        raise McmdError("There is no host with url {}".format(url))
+
+    _persist()
+
+
+def add_host(url, name, pw):
+    auth = {'url': url,
+            'username': name,
+            'password': pw}
+
+    _config['host']['auth'].append(auth)
+    _persist()
+
+
+def host_exists(url):
+    return url in [auth['url'] for auth in _config['host']['auth']]
 
 
 def _get_selected_host_auth():
