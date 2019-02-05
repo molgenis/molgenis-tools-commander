@@ -7,7 +7,7 @@ import pytest
 from requests import HTTPError
 
 # noinspection PyUnresolvedReferences
-import tests.system.fake_loader
+import tests.integration.fake_loader
 from mcmd.__main__ import start
 
 
@@ -44,7 +44,7 @@ def user_can_login(username, password):
         return True
 
 
-@pytest.mark.system
+@pytest.mark.integration
 def test_add_user(session):
     name = random_name()
     exit_code = run_commander('add user {}'.format(name))
@@ -62,7 +62,7 @@ def test_add_user(session):
     assert user['changePassword'] is False
 
 
-@pytest.mark.system
+@pytest.mark.integration
 def test_add_user_email(session):
     name = random_name()
     exit_code = run_commander('add user {} --with-email {}@test.nl'.format(name, name))
@@ -80,7 +80,7 @@ def test_add_user_email(session):
     assert user['changePassword'] is False
 
 
-@pytest.mark.system
+@pytest.mark.integration
 def test_add_user_superuser_change_password(session):
     name = random_name()
     exit_code = run_commander('add user {} --is-superuser --change-password'.format(name))
@@ -98,7 +98,7 @@ def test_add_user_superuser_change_password(session):
     assert user['changePassword'] is True
 
 
-@pytest.mark.system
+@pytest.mark.integration
 def test_add_user_inactive(session):
     name = random_name()
     exit_code = run_commander('add user {} --is-inactive'.format(name))
@@ -116,7 +116,7 @@ def test_add_user_inactive(session):
     assert user['changePassword'] is False
 
 
-@pytest.mark.system
+@pytest.mark.integration
 def test_add_user_set_password(session):
     name = random_name()
     password = 's3cr3tp4ssw0rd'
