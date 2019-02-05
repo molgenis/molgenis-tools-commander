@@ -1,11 +1,8 @@
-import random
-import string
-
 import molgenis.client
 import pytest
 from requests import HTTPError
 
-from tests.integration.conftest import run_commander
+from tests.integration.conftest import run_commander, random_name
 
 
 def _user_by_name_query(name):
@@ -14,10 +11,6 @@ def _user_by_name_query(name):
         "operator": "EQUALS",
         "value": name
     }]
-
-
-def _random_name():
-    return ''.join(random.choices(string.ascii_uppercase, k=6))
 
 
 def _user_can_login(username, password):
@@ -32,7 +25,7 @@ def _user_can_login(username, password):
 
 @pytest.mark.integration
 def test_add_user(session):
-    name = _random_name()
+    name = random_name()
     exit_code = run_commander('add user {}'.format(name))
     assert exit_code == 1
 
@@ -50,7 +43,7 @@ def test_add_user(session):
 
 @pytest.mark.integration
 def test_add_user_email(session):
-    name = _random_name()
+    name = random_name()
     exit_code = run_commander('add user {} --with-email {}@test.nl'.format(name, name))
     assert exit_code == 1
 
@@ -68,7 +61,7 @@ def test_add_user_email(session):
 
 @pytest.mark.integration
 def test_add_user_superuser_change_password(session):
-    name = _random_name()
+    name = random_name()
     exit_code = run_commander('add user {} --is-superuser --change-password'.format(name))
     assert exit_code == 1
 
@@ -86,7 +79,7 @@ def test_add_user_superuser_change_password(session):
 
 @pytest.mark.integration
 def test_add_user_inactive(session):
-    name = _random_name()
+    name = random_name()
     exit_code = run_commander('add user {} --is-inactive'.format(name))
     assert exit_code == 1
 
@@ -104,7 +97,7 @@ def test_add_user_inactive(session):
 
 @pytest.mark.integration
 def test_add_user_set_password(session):
-    name = _random_name()
+    name = random_name()
     password = 's3cr3tp4ssw0rd'
     exit_code = run_commander('add user {} --set-password {}'.format(name, password))
     assert exit_code == 1

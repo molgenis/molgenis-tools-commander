@@ -1,3 +1,6 @@
+import random
+import string
+
 import molgenis.client
 import pytest
 
@@ -17,3 +20,7 @@ def session():
 
 def run_commander(arg_string):
     return start(['mcmd'] + arg_string.split(' '))
+
+
+def random_name():
+    return ''.join(random.choices(string.ascii_uppercase, k=6))
