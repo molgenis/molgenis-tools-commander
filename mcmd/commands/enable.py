@@ -1,6 +1,6 @@
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, ResourceType, post, ensure_resource_exists
+from mcmd.client.molgenis_client import login, ResourceType, post, ensure_resource_exists, one_resource_exists
 from mcmd.io import highlight
 from mcmd.utils import McmdError
 
@@ -56,9 +56,16 @@ def enable_theme(args):
     :exception McmdError: when applying the theme fails
     :return None
     """
-    io.start('Applying theme {}'.format(highlight(args.theme)))
-    try:
-        post(config.api('set_theme'), args.theme)
-    except McmdError:
+    theme = args.theme.replace('.css', '').replace('.min', '')
+    io.start('Applying theme {}'.format(highlight(theme)))
+    # Resource can be bootstrap-name.min.css (if molgenis theme), or name.min.css (if uploaded .min.css), or
+    # name.css (if uploaded as .css).
+    if one_resource_exists([theme + '.min.css', theme + '.css', 'bootstrap-' + theme + '.min.css'], ResourceType.THEME):
+        # Molgenis themes start with bootstrap- but this is stripped from the name in the theme manager
+        try:
+            post(config.api('set_theme'), theme)
+        except:
+            post(config.api('set_theme'), theme.split('bootstrap-')[1])
+    else:
         raise McmdError(
             'Applying theme failed. Does theme [{}] exist in the [{}] table?'.format(args.theme, 'sys_set_StyleSheet'))
