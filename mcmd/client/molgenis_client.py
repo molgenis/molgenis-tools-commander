@@ -121,8 +121,8 @@ def import_by_url(params):
                                                  params=params))
 
 
-def import_bootstrap_theme(files):
-    return _handle_request(lambda: requests.post(config.api('add_theme'),
+def import_files(files, api):
+    return _handle_request(lambda: requests.post(api,
                                                  headers={'x-molgenis-token': token},
                                                  files=files))
 

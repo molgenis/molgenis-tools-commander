@@ -1,6 +1,6 @@
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, post, get, import_bootstrap_theme
+from mcmd.client.molgenis_client import login, post, get, import_files
 from mcmd.io import highlight
 from mcmd.utils import McmdError, get_file_name_from_path
 
@@ -159,6 +159,7 @@ def add_theme(args):
     bs4 = args.bs4
     extension = 'css'
     content_type = 'text/css'
+    api = config.api('add_theme')
 
     if not bs3_name.endswith(extension):
         raise McmdError('Bootstrap 3 file: [{}] is not a valid css file.'.format(bs3_name))
@@ -185,4 +186,4 @@ def add_theme(args):
         io.start(
             'Adding bootstrap 3 theme: {} to bootstrap themes (default molgenis style will be applied on pages using bootstrap 4)'.format(
                 highlight(bs3_name)))
-    import_bootstrap_theme(files)
+    import_files(files, api)
