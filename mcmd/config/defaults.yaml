@@ -25,3 +25,4 @@ api:
   perm: menu/admin/permissionmanager/update/
   rls: menu/admin/permissionmanager/update/entityclass/rls
   add_theme: plugin/thememanager/add-bootstrap-theme
+  logo: plugin/menumanager/upload-logo

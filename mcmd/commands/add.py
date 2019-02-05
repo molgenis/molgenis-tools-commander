@@ -86,6 +86,15 @@ def arguments(subparsers):
                              help="The bootstrap4 css theme file (when not specified, the default molgenis theme will "
                                   "be applied on bootstrap4 pages")
 
+    p_add_logo = p_add_subparsers.add_parser('logo',
+                                             help='Upload a logo to be placed on the left top of the menu')
+    p_add_logo.set_defaults(func=add_logo,
+                            write_to_history=True)
+    p_add_logo.add_argument('logo',
+                            type=str,
+                            metavar='LOGO IMAGE',
+                            help="The image you want to use as logo")
+
 
 # =======
 # Methods
@@ -152,38 +161,69 @@ def add_theme(args):
     add_theme adds a theme to the stylesheet table
     :param args: commandline arguments containing bootstrap3_theme and optionally bootstrap4_theme
     :return: None
-    :exception MdevError: when provided path to one of the files is not a file
     """
-    bs3 = args.bs3
-    bs3_name = get_file_name_from_path(bs3)
-    bs4 = args.bs4
-    extension = 'css'
-    content_type = 'text/css'
+    bs3_name = get_file_name_from_path(args.bs3)
+    valid_types = {'css': 'text/css'}
     api = config.api('add_theme')
-
-    if not bs3_name.endswith(extension):
-        raise McmdError('Bootstrap 3 file: [{}] is not a valid css file.'.format(bs3_name))
-    try:
-        files = {'bootstrap3-style': (bs3_name, open(bs3, 'rb'), content_type)}
-    except FileNotFoundError:
-        raise McmdError('Bootstrap 3 file: [{}] does not exist on path: [{}]'.format(bs3_name, bs3.strip(bs3_name)))
-
-    if bs4:
-        bs4_name = get_file_name_from_path(bs4)
-        if not bs4_name.endswith(extension):
-            raise McmdError('Bootstrap 4 file: [{}] is not a valid css file.'.format(bs4_name))
-        else:
-            io.start(
-                'Adding bootstrap 3 theme: {} and bootstrap 4 theme: {} to bootstrap themes'.format(
-                    highlight(bs3_name),
-                    highlight(bs4_name)))
-            try:
-                files['bootstrap4-style'] = (bs4_name, open(bs4, 'rb'), content_type)
-            except FileNotFoundError:
-                raise McmdError(
-                    'Bootstrap 4 file: [{}] does not exist on path: [{}]'.format(bs4_name, bs4.strip(bs4_name)))
+    paths = [args.bs3]
+    names = ['bootstrap3-style']
+    if args.bs4:
+        paths.append(args.bs4)
+        names.append('bootstrap4-style')
+        bs4_name = get_file_name_from_path(args.bs4)
+        io.start(
+            'Adding bootstrap 3 theme: {} and bootstrap 4 theme: {} to bootstrap themes'.format(
+                highlight(bs3_name),
+                highlight(bs4_name)))
     else:
         io.start(
-            'Adding bootstrap 3 theme: {} to bootstrap themes (default molgenis style will be applied on pages using bootstrap 4)'.format(
+            'Adding bootstrap 3 theme: {} to bootstrap themes'.format(
                 highlight(bs3_name)))
+    files = _prepare_files_for_upload(paths, names, valid_types)
     import_files(files, api)
+
+
+@login
+def add_logo(args):
+    """
+    add_logo uploads a logo to add to the left top of the menu
+    :param args: commandline arguments containing path to logo
+    :return: None
+    """
+    io.start('Adding logo from path: {}'.format(highlight(args.logo)))
+    api = config.api('logo')
+    valid_types = {'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png', 'gif': 'image/gif'}
+    files = _prepare_files_for_upload([args.logo], ['logo'], valid_types)
+    import_files(files, api)
+
+
+def _prepare_files_for_upload(paths, names, valid_content_types):
+    """
+    _prepare_files_for_upload takes the paths to the files to upload, the names of them and a dict of valid extensions
+    to translate to content types and generates a dictionary which can be uploaded in a post request
+    :param paths: a list of paths to the files to upload
+    :param names: the names of files to upload
+    :param valid_content_types: a dictionary of the possible valid extensions as key with their content types as values
+    :return: a dictionary with as key the name of the file and as value a tuple with: filename, file to upload, and
+    content type
+
+    :exception McmdError when the file on the given path does not exist and when the extension of the file is invalid.
+    """
+    files = {}
+    for name, path in zip(names, paths):
+        file_name = get_file_name_from_path(path)
+        extension = file_name.split('.')[-1]
+        if extension in valid_content_types:
+            content_type = valid_content_types[extension]
+            try:
+                files[name] = (file_name, open(path, 'rb'), content_type)
+            except FileNotFoundError:
+                raise McmdError(
+                    'File: [{}] does not exist on path: [{}]'.format(file_name, path.strip(file_name)))
+        else:
+            raise McmdError(
+                'File [{}] does not have valid extension [{}], extension should be in [{}]'.format(file_name,
+                                                                                                   extension,
+                                                                                                   dict.keys(
+                                                                                                       valid_content_types)))
+    return files
