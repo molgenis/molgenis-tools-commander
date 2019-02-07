@@ -1,5 +1,6 @@
 from pathlib import Path
 from urllib.parse import urljoin
+from os import path as os_path
 
 import polling
 import requests
@@ -81,7 +82,7 @@ def _import_from_url(args):
 
 
 def _import_from_quick_folders(args):
-    file_name = args.file
+    file_name = os_path.splitext(args.file)[0]
     file_map = scan_folders_for_files(config.git_paths() + _get_dataset_folders())
     path = select_path(file_map, file_name)
     _do_import(path, args.to_package)
