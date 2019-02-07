@@ -57,3 +57,36 @@ pip install -e .
 
 The `mcmd` command will now be available in this virtual environment! If you want to
 leave the environment, use `deactivate`.
+
+### Running tests
+The project contains unit- and integration tests. 
+
+#### Running tests from the command line
+To run all the unit tests from the command line, go:
+
+```
+python setup.py test --addopts "-m unit --ignore=tests/integration/" 
+```
+
+The integration tests require a running MOLGENIS application to test against. They can be run like this:
+ 
+```
+python setup.py test --addopts "-m integration --ignore=tests/unit/"
+```
+ 
+By default the localhost is chosen (username: admin, password: admin), but it's possible to configure a different server:
+
+```
+python setup.py test --addopts "-m integration --ignore=tests/unit/ --url=<your_url> --username=<admins username> --password=<admins password>" 
+```
+
+#### Running tests in PyCharm
+To run the tests in PyCharm, first set the default test runner to 'pytest'. 
+
+![Configure default test runner](docs/default_test_runner.png)
+
+Then create pytest run configurations using the same arguments as above:
+
+![Setting up run configuration](docs/run_configuration.png)
+
+
