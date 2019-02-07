@@ -30,9 +30,9 @@ def arguments(subparsers):
     p_enable_theme.set_defaults(func=enable_theme,
                                 write_to_history=True)
     p_enable_theme.add_argument('theme',
-                                metavar='THEME',
                                 type=str,
-                                help='The bootstrap theme you want to enable (without .css)')
+                                help='The bootstrap theme you want to enable, specify the name with or without '
+                                     '(.min).css and with or without bootstrap- prefix.')
 
 
 # =======
@@ -68,4 +68,4 @@ def enable_theme(args):
             post(config.api('set_theme'), theme.split('bootstrap-')[1])
     else:
         raise McmdError(
-            'Applying theme failed. Does theme [{}] exist in the [{}] table?'.format(args.theme, 'sys_set_StyleSheet'))
+            'Applying theme failed. No themes found containing {} in the name'.format(args.theme, 'sys_set_StyleSheet'))
