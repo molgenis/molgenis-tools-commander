@@ -1,3 +1,8 @@
+"""
+Pytest command line options that make it possible to set the server to use when running the integration tests.
+"""
+
+
 def pytest_addoption(parser):
     parser.addoption('--url',
                      action='store',

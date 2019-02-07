@@ -26,3 +26,15 @@ def get_scripts_folder():
 def get_properties_file():
     _raise_exception(
         "The properties file is not available from within tests")
+
+
+def get_mcmd_home():
+    return _raise_exception("")
+
+
+def get_datasets_folder():
+    return _raise_exception("")
+
+
+def get_backups_folder():
+    return _raise_exception("")

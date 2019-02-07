@@ -6,10 +6,12 @@ import molgenis.client
 import pytest
 
 from mcmd.__main__ import start
-from tests.integration.fake_loader import set_login
+from tests.integration.loader_mock import set_login
 
 
 def pytest_configure(config):
+    """Sets the host config values before any tests are run."""
+
     url = config.getoption('url')
     username = config.getoption('username')
     password = config.getoption('password')
