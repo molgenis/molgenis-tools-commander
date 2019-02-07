@@ -89,6 +89,7 @@ def arguments(subparsers):
                              help="The bootstrap 3 css theme file")
     p_add_theme.add_argument('--bootstrap4', '-4',
                              type=str,
+                             metavar='STYLESHEET',
                              help="The bootstrap4 css theme file (when not specified, the default molgenis theme will "
                                   "be applied on bootstrap4 pages)")
 
@@ -101,7 +102,6 @@ def arguments(subparsers):
                             help='Add a logo by specifying a path')
     p_add_logo.add_argument('logo',
                             type=str,
-                            metavar='LOGO IMAGE',
                             help="The image you want to use as logo")
 
 
@@ -183,12 +183,12 @@ def add_theme(args):
         names.append('bootstrap4-style')
         bs4_name = get_file_name_from_path(bs4)
         io.start(
-            'Adding bootstrap 3 theme: {} and bootstrap 4 theme: {} to bootstrap themes'.format(
+            'Adding bootstrap 3 theme {} and bootstrap 4 theme {} to bootstrap themes'.format(
                 highlight(bs3_name),
                 highlight(bs4_name)))
     else:
         io.start(
-            'Adding bootstrap 3 theme: {} to bootstrap themes'.format(
+            'Adding bootstrap 3 theme {} to bootstrap themes'.format(
                 highlight(bs3_name)))
     if not args.from_path:
         paths = [_get_path_from_quick_folders(theme) for theme in paths]
@@ -203,7 +203,7 @@ def add_logo(args):
     :param args: commandline arguments containing path to logo
     :return: None
     """
-    io.start('Adding logo from path: {}'.format(highlight(args.logo)))
+    io.start('Adding logo from path {}'.format(highlight(args.logo)))
     api = config.api('logo')
     valid_types = {'image/jpeg', 'image/png', 'image/gif'}
     logo = [args.logo]
@@ -229,12 +229,15 @@ def _prepare_files_for_upload(paths, names, valid_content_types):
     for name, path in zip(names, paths):
         file_name = get_file_name_from_path(path)
         content_type = mimetypes.guess_type(path)[0]
-        if content_type in valid_content_types:
+        if not os_path.exists(path):
+            raise McmdError(
+                'File [{}] does not exist on path [{}]'.format(file_name, path.strip(file_name)))
+        elif content_type in valid_content_types:
             try:
                 files[name] = (file_name, open(path, 'rb'), content_type)
             except FileNotFoundError:
                 raise McmdError(
-                    'File: [{}] does not exist on path: [{}]'.format(file_name, path.strip(file_name)))
+                    'File [{}] does not exist on path [{}]'.format(file_name, path.strip(file_name)))
         else:
             raise McmdError(
                 'File [{}] does not have valid content type [{}], content type should be in {}'.format(file_name,
