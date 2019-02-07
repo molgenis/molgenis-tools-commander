@@ -7,7 +7,7 @@ import requests
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.logging import get_logger
-from mcmd.utils import McmdError
+from mcmd.utils.utils import McmdError
 
 log = get_logger()
 token = ''

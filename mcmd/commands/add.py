@@ -6,7 +6,8 @@ import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import login, post, get, post_files
 from mcmd.io import highlight
-from mcmd.utils import McmdError, get_file_name_from_path, scan_folders_for_files, select_path
+from mcmd.utils.utils import McmdError
+from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
 
 
 # =========

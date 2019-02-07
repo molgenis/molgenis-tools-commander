@@ -1,32 +1,9 @@
-from os import path
 from collections.__init__ import defaultdict
+from os import path
 from pathlib import Path
 
 from mcmd import io
-
-
-class McmdError(Exception):
-    def __init__(self, message):
-        self.message = message
-
-    def __str__(self):
-        return repr(self.message)
-
-
-def upper_snake(string):
-    """
-    Transforms a string to uppercase snake style.
-    E.g. 'lower-kebab-style' becomes 'LOWER_KEBAB_STYLE'.
-    """
-    return string.upper().replace('-', '_')
-
-
-def lower_kebab(string):
-    """
-    Transforms a string to lowercase kebab style.
-    E.g. 'SCREAMING_SNAKE' becomes 'screaming-snake'.
-    """
-    return string.lower().replace('_', '-')
+from mcmd.utils.utils import McmdError
 
 
 def get_file_name_from_path(file_path):

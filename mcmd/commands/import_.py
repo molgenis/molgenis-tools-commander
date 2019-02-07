@@ -11,7 +11,8 @@ from mcmd.client import github_client as github
 from mcmd.client.molgenis_client import login, post_file, get, import_by_url
 from mcmd.config.home import get_issues_folder
 from mcmd.io import highlight
-from mcmd.utils import McmdError, scan_folders_for_files, select_path
+from mcmd.utils.utils import McmdError
+from mcmd.utils.file_helpers import scan_folders_for_files, select_path
 
 
 # =========
