@@ -1,6 +1,7 @@
 """
 Alter settings
 """
+import json
 
 import mcmd.config.config as config
 from mcmd import io
@@ -57,21 +58,29 @@ def _get_settings_entity(setting):
     else:
         return setting_entity[0]
 
+
 def _quick_get(entity, q):
     rest = config.api('rest2')
     url = '{}{}?{}'.format(rest, entity, q)
     return get(url).json()['items']
+
 
 def _get_row_id(entity):
     query = 'attrs=~id'
     settings = _quick_get(entity, query)
     return settings[0]['id']
 
+
 @login
 def set(args):
+    """
+    set sets the given setting of the given settings type to the given value
+    :param args: commanline arguments containing: the settings type, the setting to set, and the value to set it to
+    :return: None
+    """
     entity = _get_settings_entity(args.type)
     io.start(
         'Updating {} of {} settings to {}'.format(highlight(args.setting), highlight(args.type), highlight(args.value)))
     row = _get_row_id(entity)
     url = '{}{}/{}/{}'.format(config.api('rest1'), entity, row, args.setting)
-    put(url, args.value)
+    put(url, json.dumps(args.value))
