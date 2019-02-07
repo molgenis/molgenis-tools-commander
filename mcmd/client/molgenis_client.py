@@ -104,6 +104,12 @@ def post_file(url, file_path, params):
                                                  params=params))
 
 
+def post_files(files, url):
+    return _handle_request(lambda: requests.post(url,
+                                                 headers={'x-molgenis-token': token},
+                                                 files=files))
+
+
 def delete(url):
     return _handle_request(lambda: requests.delete(url,
                                                    headers=_get_default_headers()))
@@ -119,12 +125,6 @@ def import_by_url(params):
     return _handle_request(lambda: requests.post(config.api('import_url'),
                                                  headers=_get_default_headers(),
                                                  params=params))
-
-
-def import_files(files, api):
-    return _handle_request(lambda: requests.post(api,
-                                                 headers={'x-molgenis-token': token},
-                                                 files=files))
 
 
 def _get_default_headers():

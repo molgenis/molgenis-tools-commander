@@ -1,8 +1,12 @@
+from pathlib import Path
+from os import path as os_path
+import mimetypes
+
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, post, get, import_files
+from mcmd.client.molgenis_client import login, post, get, post_files
 from mcmd.io import highlight
-from mcmd.utils import McmdError, get_file_name_from_path
+from mcmd.utils import McmdError, get_file_name_from_path, scan_folders_for_files, select_path
 
 
 # =========
@@ -76,6 +80,9 @@ def arguments(subparsers):
                                               help='Upload a bootstrap theme')
     p_add_theme.set_defaults(func=add_theme,
                              write_to_history=True)
+    p_add_theme.add_argument('--from-path', '-p',
+                             action='store_true',
+                             help='Add a bootstrap theme by specifying a path')
     p_add_theme.add_argument('bs3',
                              type=str,
                              metavar='Bootstrap 3 theme',
@@ -90,6 +97,9 @@ def arguments(subparsers):
                                              help='Upload a logo to be placed on the left top of the menu')
     p_add_logo.set_defaults(func=add_logo,
                             write_to_history=True)
+    p_add_logo.add_argument('--from-path', '-p',
+                            action='store_true',
+                            help='Add a logo by specifying a path')
     p_add_logo.add_argument('logo',
                             type=str,
                             metavar='LOGO IMAGE',
@@ -162,9 +172,10 @@ def add_theme(args):
     :param args: commandline arguments containing bootstrap3_theme and optionally bootstrap4_theme
     :return: None
     """
-    bs3_name = get_file_name_from_path(args.bs3)
-    valid_types = {'css': 'text/css'}
+    valid_types = {'text/css'}
     api = config.api('add_theme')
+    paths = []
+    bs3_name = args.bs3
     paths = [args.bs3]
     names = ['bootstrap3-style']
     if args.bs4:
@@ -179,8 +190,10 @@ def add_theme(args):
         io.start(
             'Adding bootstrap 3 theme: {} to bootstrap themes'.format(
                 highlight(bs3_name)))
+    if not args.from_path:
+        paths = [_get_path_from_quick_folders(theme) for theme in paths]
     files = _prepare_files_for_upload(paths, names, valid_types)
-    import_files(files, api)
+    post_files(files, api)
 
 
 @login
@@ -192,29 +205,31 @@ def add_logo(args):
     """
     io.start('Adding logo from path: {}'.format(highlight(args.logo)))
     api = config.api('logo')
-    valid_types = {'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png', 'gif': 'image/gif'}
-    files = _prepare_files_for_upload([args.logo], ['logo'], valid_types)
-    import_files(files, api)
+    valid_types = {'image/jpeg', 'image/png', 'image/gif'}
+    logo = [args.logo]
+    if not args.from_path:
+        logo = [_get_path_from_quick_folders(args.logo)]
+    files = _prepare_files_for_upload(logo, ['logo'], valid_types)
+    post_files(files, api)
 
 
 def _prepare_files_for_upload(paths, names, valid_content_types):
     """
-    _prepare_files_for_upload takes the paths to the files to upload, the names of them and a dict of valid extensions
-    to translate to content types and generates a dictionary which can be uploaded in a post request
+    _prepare_files_for_upload takes the paths to the files to upload, the names of them and a list of valid content
+    types to translate to content types and generates a dictionary which can be uploaded in a post request
     :param paths: a list of paths to the files to upload
     :param names: the names of files to upload
-    :param valid_content_types: a dictionary of the possible valid extensions as key with their content types as values
+    :param valid_content_types: set of the possible valid content types
     :return: a dictionary with as key the name of the file and as value a tuple with: filename, file to upload, and
     content type
 
-    :exception McmdError when the file on the given path does not exist and when the extension of the file is invalid.
+    :exception McmdError when the file on the given path does not exist and when the content type of the file is invalid.
     """
     files = {}
     for name, path in zip(names, paths):
         file_name = get_file_name_from_path(path)
-        extension = file_name.split('.')[-1]
-        if extension in valid_content_types:
-            content_type = valid_content_types[extension]
+        content_type = mimetypes.guess_type(path)[0]
+        if content_type in valid_content_types:
             try:
                 files[name] = (file_name, open(path, 'rb'), content_type)
             except FileNotFoundError:
@@ -222,8 +237,18 @@ def _prepare_files_for_upload(paths, names, valid_content_types):
                     'File: [{}] does not exist on path: [{}]'.format(file_name, path.strip(file_name)))
         else:
             raise McmdError(
-                'File [{}] does not have valid extension [{}], extension should be in [{}]'.format(file_name,
-                                                                                                   extension,
-                                                                                                   dict.keys(
-                                                                                                       valid_content_types)))
+                'File [{}] does not have valid content type [{}], content type should be in {}'.format(file_name,
+                                                                                                       content_type,
+                                                                                                       valid_content_types))
     return files
+
+
+def _get_resource_folders():
+    return [Path(folder) for folder in config.get('resources', 'resource_folders')]
+
+
+def _get_path_from_quick_folders(file_name):
+    file_name = os_path.splitext(file_name)[0]
+    file_map = scan_folders_for_files(config.git_paths() + _get_resource_folders())
+    path = select_path(file_map, file_name)
+    return str(path)
