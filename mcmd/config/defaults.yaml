@@ -27,3 +27,4 @@ api:
   rls: menu/admin/permissionmanager/update/entityclass/rls
   add_theme: plugin/thememanager/add-bootstrap-theme
   logo: plugin/menumanager/upload-logo
+  set_theme: plugin/thememanager/set-bootstrap-theme

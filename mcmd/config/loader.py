@@ -12,8 +12,8 @@ from collections import OrderedDict
 import pkg_resources
 from ruamel.yaml import YAML
 
+import mcmd.config.config as config
 import mcmd.io
-from mcmd.config.config import set_config
 from mcmd.config.home import get_properties_file
 from mcmd.io import highlight
 
@@ -42,11 +42,8 @@ def load_config():
     # merge the configs so that new properties and list items are added
     _merge(default_config, user_config)
 
-    # write the merged config to the user's config file
-    yaml.dump(default_config, get_properties_file())
-
-    # pass result to the config module
-    set_config(default_config)
+    # pass result to the config module and save to disk
+    config.set_config(default_config)
 
 
 def _upgrade(default_config, user_config):
@@ -57,7 +54,8 @@ def _upgrade(default_config, user_config):
         if prop not in user_config:
             configurer(default_config)
 
-    YAML().dump(default_config, get_properties_file())
+    config.set_config(default_config)
+
     mcmd.io.newline()
     mcmd.io.info(
         'The configuration file has been updated succesfully ({})'.format(highlight(str(get_properties_file()))))
@@ -73,7 +71,8 @@ def _install(default_config):
     for configurer in property_configurers().values():
         configurer(default_config)
 
-    YAML().dump(default_config, get_properties_file())
+    config.set_config(default_config)
+
     mcmd.io.newline()
     mcmd.io.info('The configuration file has been created at {}'.format(highlight(str(get_properties_file()))))
     exit(0)

@@ -2,6 +2,7 @@ import argparse
 import sys
 
 from mcmd.commands.add import arguments as add_args
+from mcmd.commands.config import arguments as config_args
 from mcmd.commands.disable import arguments as disable_args
 from mcmd.commands.enable import arguments as enable_args
 from mcmd.commands.give import arguments as give_args
@@ -55,6 +56,7 @@ def _create_parser():
     history_args(subparsers)
     delete_args(subparsers)
     ping_args(subparsers)
+    config_args(subparsers)
 
     return parser
 
