@@ -12,15 +12,19 @@ from mcmd.logging import set_level
 
 
 def main():
+    sys.exit(start(sys.argv))
+
+
+def start(argv):
     # setup friendly interrupt message
     signal.signal(signal.SIGINT, interrupt_handler)
 
     load_config()
 
-    args = parse_args()
-    show_help(args)
+    args = parse_args(argv[1:])
+    show_help(args, argv)
 
-    setattr(args, 'arg_string', ' '.join(sys.argv[1:]))
+    setattr(args, 'arg_string', ' '.join(argv[1:]))
     set_log_level(args)
 
     if args.command == 'run':
@@ -28,15 +32,17 @@ def main():
     else:
         execute(args)
 
+    return 1
 
-def show_help(args):
+
+def show_help(args, argv):
     if not args.command:
         print_help()
         exit(1)
     elif is_intermediate_subcommand(args):
         # we can't access the subparser from here, so we parse the arguments again with the --help flag
-        sys.argv.append('--help')
-        parse_args()
+        argv.append('--help')
+        parse_args(argv[1:])
         exit(1)
 
 
