@@ -83,15 +83,13 @@ def arguments(subparsers):
     p_add_theme.add_argument('--from-path', '-p',
                              action='store_true',
                              help='Add a bootstrap theme by specifying a path')
-    p_add_theme.add_argument('bs3',
+    p_add_theme.add_argument('bootstrap3',
                              type=str,
-                             metavar='Bootstrap 3 theme',
                              help="The bootstrap 3 css theme file")
-    p_add_theme.add_argument('--bs4',
+    p_add_theme.add_argument('--bootstrap4', '-4',
                              type=str,
-                             metavar='Bootstrap 4 theme',
                              help="The bootstrap4 css theme file (when not specified, the default molgenis theme will "
-                                  "be applied on bootstrap4 pages")
+                                  "be applied on bootstrap4 pages)")
 
     p_add_logo = p_add_subparsers.add_parser('logo',
                                              help='Upload a logo to be placed on the left top of the menu')
@@ -175,13 +173,14 @@ def add_theme(args):
     valid_types = {'text/css'}
     api = config.api('add_theme')
     paths = []
-    bs3_name = args.bs3
-    paths = [args.bs3]
+    bs3_name = args.bootstrap3
+    bs4 = args.bootstrap4
+    paths = [bs3_name]
     names = ['bootstrap3-style']
-    if args.bs4:
-        paths.append(args.bs4)
+    if bs4:
+        paths.append(bs4)
         names.append('bootstrap4-style')
-        bs4_name = get_file_name_from_path(args.bs4)
+        bs4_name = get_file_name_from_path(bs4)
         io.start(
             'Adding bootstrap 3 theme: {} and bootstrap 4 theme: {} to bootstrap themes'.format(
                 highlight(bs3_name),
