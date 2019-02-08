@@ -85,7 +85,8 @@ To run the tests in PyCharm, first set the default test runner to 'pytest'.
 
 ![Configure default test runner](docs/default_test_runner.png)
 
-Then create pytest run configurations using the same arguments as above:
+Then create pytest run configurations, by going to `Edit Configurations -> + -> Python tests -> pytest` and using
+the same arguments as above:
 
 ![Setting up run configuration](docs/run_configuration.png)
 
