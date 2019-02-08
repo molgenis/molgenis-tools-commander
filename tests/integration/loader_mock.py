@@ -1,3 +1,8 @@
+from ruamel.yaml import YAML
+
+import mcmd.config.config as config
+
+_TEST_CONFIG = """
 git:
   root:
   paths:
@@ -6,13 +11,12 @@ git:
   - molgenis-platform-integration-tests/src/test/resources/obo
 resources:
   dataset_folders: []
-  resource_folders: []
 host:
-  selected: http://localhost:8080/
+  selected: {}
   auth:
   - url: http://localhost:8080/
-    username: admin
-    password: admin
+    username: {}
+    password: {}
 settings:
   import_action: add_update_existing
 api:
@@ -25,6 +29,15 @@ api:
   import_url: plugin/importwizard/importByUrl
   perm: menu/admin/permissionmanager/update/
   rls: menu/admin/permissionmanager/update/entityclass/rls
-  add_theme: plugin/thememanager/add-bootstrap-theme
-  logo: plugin/menumanager/upload-logo
-  set_theme: plugin/thememanager/set-bootstrap-theme
+"""
+
+
+def load_config():
+    yaml = YAML()
+    test_config = yaml.load(_TEST_CONFIG)
+    config._config = test_config
+
+
+def set_login(url, username, password):
+    global _TEST_CONFIG
+    _TEST_CONFIG = _TEST_CONFIG.format(url, username, password, '{}')

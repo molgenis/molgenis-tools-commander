@@ -1,7 +1,7 @@
 import configparser
 
 from mcmd import history, io
-from mcmd.utils import McmdError
+from mcmd.utils.utils import McmdError
 
 
 def execute(args, exit_on_error=True):

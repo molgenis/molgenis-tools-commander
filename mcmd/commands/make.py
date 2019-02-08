@@ -2,7 +2,7 @@ import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import login, post, get
 from mcmd.io import highlight
-from mcmd.utils import lower_kebab, McmdError, upper_snake
+from mcmd.utils.utils import lower_kebab, McmdError, upper_snake
 
 
 # =========

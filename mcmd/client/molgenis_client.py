@@ -7,7 +7,7 @@ import requests
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.logging import get_logger
-from mcmd.utils import McmdError
+from mcmd.utils.utils import McmdError
 
 log = get_logger()
 token = ''
@@ -103,6 +103,12 @@ def post_file(url, file_path, params):
                                                  headers={'x-molgenis-token': token},
                                                  files={'file': open(file_path, 'rb')},
                                                  params=params))
+
+
+def post_files(files, url):
+    return _handle_request(lambda: requests.post(url,
+                                                 headers={'x-molgenis-token': token},
+                                                 files=files))
 
 
 def delete(url):

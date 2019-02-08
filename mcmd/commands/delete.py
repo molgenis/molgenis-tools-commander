@@ -5,8 +5,6 @@ import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import login, delete, delete_data, ensure_resource_exists, ResourceType
 from mcmd.io import highlight
-from mcmd.utils import McmdError
-
 
 # =========
 # Arguments

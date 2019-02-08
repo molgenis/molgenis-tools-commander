@@ -1,11 +1,13 @@
 import unittest
 
+import pytest
 from mock import patch
 
 from mcmd.client.github_client import Attachment
 from mcmd.commands import import_
 
 
+@pytest.mark.unit
 class ImportMethodsTest(unittest.TestCase):
     @patch('mcmd.io.multi_choice')
     def test_choose_attachments(self, multi_choice):

@@ -63,12 +63,8 @@ def _create_parser():
     return parser
 
 
-def parse_args():
-    return _get_parser().parse_args()
-
-
-def parse_arg_string(argument_string):
-    return _get_parser().parse_args(argument_string)
+def parse_args(arg_list):
+    return _get_parser().parse_args(arg_list)
 
 
 def print_help():
