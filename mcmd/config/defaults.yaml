@@ -24,3 +24,4 @@ api:
   import_url: plugin/importwizard/importByUrl
   perm: menu/admin/permissionmanager/update/
   rls: menu/admin/permissionmanager/update/entityclass/rls
+  set_theme: plugin/thememanager/set-bootstrap-theme

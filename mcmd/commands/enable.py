@@ -1,7 +1,8 @@
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, ResourceType, post, ensure_resource_exists
+from mcmd.client.molgenis_client import login, ResourceType, post, ensure_resource_exists, one_resource_exists
 from mcmd.io import highlight
+from mcmd.utils import McmdError
 
 
 # =========
@@ -23,6 +24,16 @@ def arguments(subparsers):
                               type=str,
                               help="The entity type to secure")
 
+    p_enable_theme = p_enable_subparsers.add_parser('theme',
+                                                    help='Enables the bootstrap theme which changes the styling of your'
+                                                         ' MOLGENIS')
+    p_enable_theme.set_defaults(func=enable_theme,
+                                write_to_history=True)
+    p_enable_theme.add_argument('theme',
+                                type=str,
+                                help='The bootstrap theme you want to enable, specify the name with or without '
+                                     '(.min).css and with or without bootstrap- prefix.')
+
 
 # =======
 # Methods
@@ -35,3 +46,26 @@ def enable_rls(args):
     ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
     post(config.api('rls'), data={'id': args.entity,
                                   'rlsEnabled': True})
+
+
+@login
+def enable_theme(args):
+    """
+    enable_theme enables a bootstrap theme
+    :param args: commandline arguments containing the id of the theme (without .css)
+    :exception McmdError: when applying the theme fails
+    :return None
+    """
+    theme = args.theme.replace('.css', '').replace('.min', '')
+    io.start('Applying theme {}'.format(highlight(theme)))
+    # Resource can be bootstrap-name.min.css (if molgenis theme), or name.min.css (if uploaded .min.css), or
+    # name.css (if uploaded as .css).
+    if one_resource_exists([theme + '.min.css', theme + '.css', 'bootstrap-' + theme + '.min.css'], ResourceType.THEME):
+        # Molgenis themes start with bootstrap- but this is stripped from the name in the theme manager
+        try:
+            post(config.api('set_theme'), theme)
+        except:
+            post(config.api('set_theme'), theme.split('bootstrap-')[1])
+    else:
+        raise McmdError(
+            'Applying theme failed. No themes found containing {} in the name'.format(args.theme, 'sys_set_StyleSheet'))
