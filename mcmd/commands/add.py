@@ -89,8 +89,8 @@ def arguments(subparsers):
                              action='store_true',
                              help='Add a bootstrap theme by specifying a path')
 
-    requiredNamed = p_add_theme.add_argument_group('required named arguments')
-    requiredNamed.add_argument('--bootstrap3', '-3',
+    required_named = p_add_theme.add_argument_group('required named arguments')
+    required_named.add_argument('--bootstrap3', '-3',
                                type=str,
                                metavar='STYLESHEET',
                                help="The bootstrap3 css theme file (when not specified, the default molgenis theme will "
