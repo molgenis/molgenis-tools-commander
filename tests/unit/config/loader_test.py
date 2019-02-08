@@ -1,5 +1,6 @@
 import unittest
 
+import pytest
 from ruamel.yaml import YAML
 
 # noinspection PyProtectedMember
@@ -52,6 +53,7 @@ host:
 """
 
 
+@pytest.mark.unit
 class ConfigLoaderTest(unittest.TestCase):
     def test_merge_list(self):
         yaml = YAML()
