@@ -9,12 +9,16 @@ from mcmd.io import highlight
 from mcmd.utils.utils import McmdError
 from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
 
+# Store a reference to the parser so that we can show an error message for the custom validation rule
+p_add_theme = None
+
 
 # =========
 # Arguments
 # =========
 
 def arguments(subparsers):
+    global p_add_theme
     p_add = subparsers.add_parser('add',
                                   help='Add users and groups',
                                   description="Run 'mcmd add group -h' or 'mcmd add user -h' to view the help for those"
@@ -84,9 +88,14 @@ def arguments(subparsers):
     p_add_theme.add_argument('--from-path', '-p',
                              action='store_true',
                              help='Add a bootstrap theme by specifying a path')
-    p_add_theme.add_argument('bootstrap3',
-                             type=str,
-                             help="The bootstrap 3 css theme file")
+
+    requiredNamed = p_add_theme.add_argument_group('required named arguments')
+    requiredNamed.add_argument('--bootstrap3', '-3',
+                               type=str,
+                               metavar='STYLESHEET',
+                               help="The bootstrap3 css theme file (when not specified, the default molgenis theme will "
+                                    "be applied on bootstrap3 pages)")
+
     p_add_theme.add_argument('--bootstrap4', '-4',
                              type=str,
                              metavar='STYLESHEET',
@@ -171,6 +180,7 @@ def add_theme(args):
     :param args: commandline arguments containing bootstrap3_theme and optionally bootstrap4_theme
     :return: None
     """
+    _validate_args(args)
     valid_types = {'text/css'}
     api = config.api('add_theme')
     paths = []
@@ -252,6 +262,13 @@ def _get_resource_folders():
 
 def _get_path_from_quick_folders(file_name):
     file_name = os_path.splitext(file_name)[0]
-    file_map = scan_folders_for_files(config.git_paths() + _get_resource_folders())
+    file_map = scan_folders_for_files(_get_resource_folders())
     path = select_path(file_map, file_name)
     return str(path)
+
+
+def _validate_args(args):
+    """To make the bootstrap themes as backwards compatible as possible make both bootstrap3 and 4 named, but only
+    bootstrap3 required, in future 4 will be required and 3 will be removed eventually."""
+    if args.type == 'theme' and not args.bootstrap3:
+        p_add_theme.error("the following argument is required: bootstrap3")
