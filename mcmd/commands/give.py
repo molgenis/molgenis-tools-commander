@@ -8,7 +8,7 @@ from mcmd import io
 from mcmd.client.molgenis_client import login, grant, PrincipalType, principal_exists, \
     resource_exists, ResourceType, ensure_resource_exists, ensure_principal_exists
 from mcmd.io import multi_choice, highlight
-from mcmd.utils import McmdError
+from mcmd.utils.utils import McmdError
 
 
 # =========

@@ -7,10 +7,10 @@ from functools import reduce
 from pathlib import Path
 from urllib.parse import urljoin
 
+from mcmd.utils.utils import McmdError
 from ruamel.yaml import YAML
 
 from mcmd.config.home import get_properties_file
-from mcmd.utils import McmdError
 
 _config = None
 
