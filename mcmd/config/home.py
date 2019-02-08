@@ -12,7 +12,7 @@
             ...
         ...
     history.log
-    mcmd.properties
+    mcmd.yaml
 """
 
 from pathlib import Path
