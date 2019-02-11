@@ -69,7 +69,7 @@ def _get_settings_entity(setting):
         if len(settings_entity) == 1:
             return settings_entity[0]
         else:
-            raise McmdError('Setting: [{}] is not a valid setting'.format(setting))
+            raise McmdError('Setting [{}] is not a valid settings entity'.format(setting))
 
 
 def _quick_get(entity, q):
