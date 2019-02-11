@@ -31,7 +31,9 @@ def session(request):
 
 
 def run_commander(arg_string):
-    return start(['mcmd'] + arg_string.split(' '))
+    """Runs the commander and asserts that the exit code was 1."""
+    exit_code = start(['mcmd'] + arg_string.split(' '))
+    assert exit_code == 1
 
 
 def random_name():

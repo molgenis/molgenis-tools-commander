@@ -8,8 +8,7 @@ from tests.integration.conftest import run_commander
 
 @pytest.mark.integration
 def test_ping_online(capsys):
-    exit_code = run_commander('ping')
-    assert exit_code == 1
+    run_commander('ping')
 
     captured = capsys.readouterr().out
     assert 'Online' in captured
@@ -22,8 +21,7 @@ def test_ping_online(capsys):
 @pytest.mark.integration
 @mock.patch('mcmd.config.config.api', return_value='https://nonexisting.url')
 def test_ping_offline(api_mock, capsys):
-    exit_code = run_commander('ping')
-    assert exit_code == 1
+    run_commander('ping')
 
     captured = capsys.readouterr().out
     assert 'Offline' in captured

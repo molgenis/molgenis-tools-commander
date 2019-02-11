@@ -29,8 +29,7 @@ def _user_can_login(username, password):
 @pytest.mark.integration
 def test_add_user(session):
     name = random_name()
-    exit_code = run_commander('add user {}'.format(name))
-    assert exit_code == 1
+    run_commander('add user {}'.format(name))
 
     assert _user_can_login(name, name)
 
@@ -47,8 +46,7 @@ def test_add_user(session):
 @pytest.mark.integration
 def test_add_user_email(session):
     name = random_name()
-    exit_code = run_commander('add user {} --with-email {}@test.nl'.format(name, name))
-    assert exit_code == 1
+    run_commander('add user {} --with-email {}@test.nl'.format(name, name))
 
     assert _user_can_login(name, name)
 
@@ -65,8 +63,7 @@ def test_add_user_email(session):
 @pytest.mark.integration
 def test_add_user_superuser_change_password(session):
     name = random_name()
-    exit_code = run_commander('add user {} --is-superuser --change-password'.format(name))
-    assert exit_code == 1
+    run_commander('add user {} --is-superuser --change-password'.format(name))
 
     assert _user_can_login(name, name) is False
 
@@ -83,8 +80,7 @@ def test_add_user_superuser_change_password(session):
 @pytest.mark.integration
 def test_add_user_inactive(session):
     name = random_name()
-    exit_code = run_commander('add user {} --is-inactive'.format(name))
-    assert exit_code == 1
+    run_commander('add user {} --is-inactive'.format(name))
 
     assert _user_can_login(name, name) is False
 
@@ -102,8 +98,7 @@ def test_add_user_inactive(session):
 def test_add_user_set_password(session):
     name = random_name()
     password = 's3cr3tp4ssw0rd'
-    exit_code = run_commander('add user {} --set-password {}'.format(name, password))
-    assert exit_code == 1
+    run_commander('add user {} --set-password {}'.format(name, password))
 
     assert _user_can_login(name, password)
 

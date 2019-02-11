@@ -21,8 +21,7 @@ def test_make(session):
     run_commander('add group {}'.format(group_name))
 
     role_name = '{}_MANAGER'.format(group_name.upper())
-    exit_code = run_commander('make {} {}'.format(username, role_name))
-    assert exit_code == 1
+    run_commander('make {} {}'.format(username, role_name))
 
     memberships = _get_memberships_by_name_and_role(username, role_name, session)
 
