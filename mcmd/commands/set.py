@@ -88,7 +88,7 @@ def _get_row_id(entity):
 def set(args):
     """
     set sets the given setting of the given settings type to the given value
-    :param args: commanline arguments containing: the settings type, the setting to set, and the value to set it to
+    :param args: command line arguments containing: the settings type, the setting to set, and the value to set it to
     :return: None
     """
     entity = _get_settings_entity(args.type)
