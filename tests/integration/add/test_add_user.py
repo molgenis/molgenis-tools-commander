@@ -1,7 +1,10 @@
+from urllib.parse import urljoin
+
 import molgenis.client
 import pytest
 from requests import HTTPError
 
+import mcmd.config.config as config
 from tests.integration.conftest import run_commander, random_name
 
 
@@ -14,7 +17,7 @@ def _user_by_name_query(name):
 
 
 def _user_can_login(username, password):
-    session = molgenis.client.Session('http://localhost:8080/api/')
+    session = molgenis.client.Session(urljoin(config.get('host', 'selected'), '/api/'))
     try:
         session.login(username, password)
     except HTTPError:

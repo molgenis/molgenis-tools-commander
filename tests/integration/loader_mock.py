@@ -14,7 +14,7 @@ resources:
 host:
   selected: {}
   auth:
-  - url: http://localhost:8080/
+  - url: {}
     username: {}
     password: {}
 settings:
@@ -40,4 +40,4 @@ def load_config():
 
 def set_login(url, username, password):
     global _TEST_CONFIG
-    _TEST_CONFIG = _TEST_CONFIG.format(url, username, password, '{}')
+    _TEST_CONFIG = _TEST_CONFIG.format(url, url, username, password, '{}')
