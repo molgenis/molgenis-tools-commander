@@ -36,6 +36,19 @@ def arguments(subparsers):
 
 
 # =======
+# Globals
+# =======
+
+
+_SETTING_SYNONYMS = {'mail': 'sys_set_MailSettings',
+                     'opencpu': 'sys_set_OpenCpuSettings',
+                     'app': 'sys_set_app',
+                     'auth': 'sys_set_auth',
+                     'dataexplorer': 'sys_set_dataexplorer'
+                     }
+
+
+# =======
 # Methods
 # =======
 
@@ -47,16 +60,16 @@ def _get_settings():
 
 
 def _get_settings_entity(setting):
-    possible_settings = _get_settings()
-    setting_entity = [set for set in possible_settings if (setting.lower() == set.lower() or
-                                                           setting.lower() == set.lower().replace('sys_set_', '') or
-                                                           setting.lower() == set.lower().replace('sys_set_',
-                                                                                                  '').replace(
-                'settings', ''))]
-    if len(setting_entity) == 0:
-        raise McmdError('Setting: [{}] is not a valid setting'.format(setting))
+    if setting.lower() in _SETTING_SYNONYMS:
+        return _SETTING_SYNONYMS[setting.lower()]
     else:
-        return setting_entity[0]
+        possible_settings = _get_settings()
+        settings_entity = [selected_setting for selected_setting in possible_settings if
+                           setting.lower() == selected_setting.lower()]
+        if len(settings_entity) == 1:
+            return settings_entity[0]
+        else:
+            raise McmdError('Setting: [{}] is not a valid setting'.format(setting))
 
 
 def _quick_get(entity, q):
