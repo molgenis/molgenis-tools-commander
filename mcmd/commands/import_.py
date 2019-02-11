@@ -1,6 +1,6 @@
-from collections import defaultdict
 from pathlib import Path
 from urllib.parse import urljoin
+from os import path as os_path
 
 import polling
 import requests
@@ -11,7 +11,8 @@ from mcmd.client import github_client as github
 from mcmd.client.molgenis_client import login, post_file, get, import_by_url
 from mcmd.config.home import get_issues_folder
 from mcmd.io import highlight
-from mcmd.utils import McmdError
+from mcmd.utils.utils import McmdError
+from mcmd.utils.file_helpers import scan_folders_for_files, select_path
 
 # =========
 # Arguments
@@ -100,9 +101,9 @@ def _import_from_url(args):
 
 
 def _import_from_quick_folders(args):
-    file_name = args.resource
-    file_map = _scan_folders_for_files(config.git_paths() + _get_dataset_folders())
-    path = _select_path(file_map, file_name)
+    file_name = os_path.splitext(args.resource)[0]
+    file_map = scan_folders_for_files(config.git_paths() + _get_dataset_folders())
+    path = select_path(file_map, file_name)
     _do_import(path, args.to_package)
 
 
@@ -118,18 +119,6 @@ def _import_from_path(args):
     if not file.is_file():
         raise McmdError("File %s doesn't exist" % str(file.resolve()))
     _do_import(file, args.to_package)
-
-
-def _select_path(file_map, file_name):
-    if file_name in file_map:
-        paths = file_map[file_name]
-        if len(paths) > 1:
-            path = _choose_file(paths, file_name)
-        else:
-            path = paths[0]
-    else:
-        raise McmdError('No file found for %s' % file_name)
-    return path
 
 
 def _select_attachment(issue_num, wanted_attachment):
@@ -177,12 +166,6 @@ def _choose_attachment(attachments):
 
     answer = io.multi_choice('Multiple attachments found. Choose which one to import:', choices)
     return attachment_map[answer]
-
-
-def _choose_file(paths, name):
-    choices = [str(path) for path in paths]
-    answer = io.multi_choice('Multiple files found for %s. Pick one:' % name, choices)
-    return Path(answer)
 
 
 def _download_attachment(attachment, issue_num):
@@ -236,17 +219,6 @@ def _poll_for_completion(url):
                  poll_forever=True)
     import_run = get(url).json()
     return import_run['status'], import_run['message']
-
-
-def _scan_folders_for_files(folders):
-    files = defaultdict(list)
-    for folder in folders:
-        if not folder.is_dir():
-            io.warn("Folder %s doesn't exist" % folder)
-
-        for file in list(folder.glob('*.*')):
-            files[file.stem].append(file)
-    return files
 
 
 def _get_dataset_folders():

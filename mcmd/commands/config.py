@@ -1,7 +1,7 @@
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.io import highlight
-from mcmd.utils import McmdError
+from mcmd.utils.utils import McmdError
 
 
 # =========

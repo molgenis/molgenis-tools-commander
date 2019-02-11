@@ -1,8 +1,16 @@
+from pathlib import Path
+from os import path as os_path
+import mimetypes
+
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, post, get
+from mcmd.client.molgenis_client import login, post, get, post_files
 from mcmd.io import highlight
-from mcmd.utils import McmdError
+from mcmd.utils.utils import McmdError
+from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
+
+# Store a reference to the parser so that we can show an error message for the custom validation rule
+p_add_theme = None
 
 
 # =========
@@ -10,6 +18,7 @@ from mcmd.utils import McmdError
 # =========
 
 def arguments(subparsers):
+    global p_add_theme
     p_add = subparsers.add_parser('add',
                                   help='Add users and groups',
                                   description="Run 'mcmd add group -h' or 'mcmd add user -h' to view the help for those"
@@ -72,6 +81,38 @@ def arguments(subparsers):
                              type=str,
                              help="The token")
 
+    p_add_theme = p_add_subparsers.add_parser('theme',
+                                              help='Upload a bootstrap theme')
+    p_add_theme.set_defaults(func=add_theme,
+                             write_to_history=True)
+    p_add_theme.add_argument('--from-path', '-p',
+                             action='store_true',
+                             help='Add a bootstrap theme by specifying a path')
+
+    required_named = p_add_theme.add_argument_group('required named arguments')
+    required_named.add_argument('--bootstrap3', '-3',
+                               type=str,
+                               metavar='STYLESHEET',
+                               help="The bootstrap3 css theme file (when not specified, the default molgenis theme will "
+                                    "be applied on bootstrap3 pages)")
+
+    p_add_theme.add_argument('--bootstrap4', '-4',
+                             type=str,
+                             metavar='STYLESHEET',
+                             help="The bootstrap4 css theme file (when not specified, the default molgenis theme will "
+                                  "be applied on bootstrap4 pages)")
+
+    p_add_logo = p_add_subparsers.add_parser('logo',
+                                             help='Upload a logo to be placed on the left top of the menu')
+    p_add_logo.set_defaults(func=add_logo,
+                            write_to_history=True)
+    p_add_logo.add_argument('--from-path', '-p',
+                            action='store_true',
+                            help='Add a logo by specifying a path')
+    p_add_logo.add_argument('logo',
+                            type=str,
+                            help="The image you want to use as logo")
+
 
 # =======
 # Methods
@@ -130,3 +171,104 @@ def add_token(args):
             'token': args.token}
 
     post(config.api('rest1') + 'sys_sec_Token', data)
+
+
+@login
+def add_theme(args):
+    """
+    add_theme adds a theme to the stylesheet table
+    :param args: commandline arguments containing bootstrap3_theme and optionally bootstrap4_theme
+    :return: None
+    """
+    _validate_args(args)
+    valid_types = {'text/css'}
+    api = config.api('add_theme')
+    paths = []
+    bs3_name = args.bootstrap3
+    bs4 = args.bootstrap4
+    paths = [bs3_name]
+    names = ['bootstrap3-style']
+    if bs4:
+        paths.append(bs4)
+        names.append('bootstrap4-style')
+        bs4_name = get_file_name_from_path(bs4)
+        io.start(
+            'Adding bootstrap 3 theme {} and bootstrap 4 theme {} to bootstrap themes'.format(
+                highlight(bs3_name),
+                highlight(bs4_name)))
+    else:
+        io.start(
+            'Adding bootstrap 3 theme {} to bootstrap themes'.format(
+                highlight(bs3_name)))
+    if not args.from_path:
+        paths = [_get_path_from_quick_folders(theme) for theme in paths]
+    files = _prepare_files_for_upload(paths, names, valid_types)
+    post_files(files, api)
+
+
+@login
+def add_logo(args):
+    """
+    add_logo uploads a logo to add to the left top of the menu
+    :param args: commandline arguments containing path to logo
+    :return: None
+    """
+    io.start('Adding logo from path {}'.format(highlight(args.logo)))
+    api = config.api('logo')
+    valid_types = {'image/jpeg', 'image/png', 'image/gif'}
+    logo = [args.logo]
+    if not args.from_path:
+        logo = [_get_path_from_quick_folders(args.logo)]
+    files = _prepare_files_for_upload(logo, ['logo'], valid_types)
+    post_files(files, api)
+
+
+def _prepare_files_for_upload(paths, names, valid_content_types):
+    """
+    _prepare_files_for_upload takes the paths to the files to upload, the names of them and a list of valid content
+    types to translate to content types and generates a dictionary which can be uploaded in a post request
+    :param paths: a list of paths to the files to upload
+    :param names: the names of files to upload
+    :param valid_content_types: set of the possible valid content types
+    :return: a dictionary with as key the name of the file and as value a tuple with: filename, file to upload, and
+    content type
+
+    :exception McmdError when the file on the given path does not exist and when the content type of the file is invalid.
+    """
+    files = {}
+    for name, path in zip(names, paths):
+        file_name = get_file_name_from_path(path)
+        content_type = mimetypes.guess_type(path)[0]
+        if not os_path.exists(path):
+            raise McmdError(
+                'File [{}] does not exist on path [{}]'.format(file_name, path.strip(file_name)))
+        elif content_type in valid_content_types:
+            try:
+                files[name] = (file_name, open(path, 'rb'), content_type)
+            except FileNotFoundError:
+                raise McmdError(
+                    'File [{}] does not exist on path [{}]'.format(file_name, path.strip(file_name)))
+        else:
+            raise McmdError(
+                'File [{}] does not have valid content type [{}], content type should be in {}'.format(file_name,
+                                                                                                       content_type,
+                                                                                                       valid_content_types))
+    return files
+
+
+def _get_resource_folders():
+    return [Path(folder) for folder in config.get('resources', 'resource_folders')]
+
+
+def _get_path_from_quick_folders(file_name):
+    file_name = os_path.splitext(file_name)[0]
+    file_map = scan_folders_for_files(_get_resource_folders())
+    path = select_path(file_map, file_name)
+    return str(path)
+
+
+def _validate_args(args):
+    """To make the bootstrap themes as backwards compatible as possible make both bootstrap3 and 4 named, but only
+    bootstrap3 required, in future 4 will be required and 3 will be removed eventually."""
+    if args.type == 'theme' and not args.bootstrap3:
+        p_add_theme.error("the following argument is required: bootstrap3")
