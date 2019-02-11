@@ -1,7 +1,8 @@
 import tempfile
 from pathlib import Path
 
-_TEMP_FILE = None
+_TEMP_HISTORY = None
+_TEMP_ISSUES_FOLDER = None
 
 
 def _raise_exception(msg):
@@ -9,14 +10,17 @@ def _raise_exception(msg):
 
 
 def get_history_file():
-    global _TEMP_FILE
-    if not _TEMP_FILE:
-        _TEMP_FILE = Path(tempfile.mkstemp()[1])
-    return _TEMP_FILE
+    global _TEMP_HISTORY
+    if not _TEMP_HISTORY:
+        _TEMP_HISTORY = Path(tempfile.mkstemp()[1])
+    return _TEMP_HISTORY
 
 
 def get_issues_folder():
-    return _raise_exception("")
+    global _TEMP_ISSUES_FOLDER
+    if not _TEMP_ISSUES_FOLDER:
+        _TEMP_ISSUES_FOLDER = Path(tempfile.mkdtemp())
+    return _TEMP_ISSUES_FOLDER
 
 
 def get_scripts_folder():
@@ -29,10 +33,6 @@ def get_properties_file():
 
 
 def get_mcmd_home():
-    return _raise_exception("")
-
-
-def get_datasets_folder():
     return _raise_exception("")
 
 

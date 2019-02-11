@@ -6,7 +6,7 @@ import molgenis.client
 import pytest
 
 from mcmd.__main__ import start
-from tests.integration.loader_mock import set_login
+from tests.integration.loader_mock import mock_config
 
 
 def pytest_configure(config):
@@ -16,7 +16,7 @@ def pytest_configure(config):
     username = config.getoption('username')
     password = config.getoption('password')
 
-    set_login(url, username, password)
+    mock_config(url, username, password)
 
 
 @pytest.fixture
@@ -31,9 +31,15 @@ def session(request):
 
 
 def run_commander(arg_string):
-    """Runs the commander and asserts that the exit code was 1."""
+    """Runs the commander and asserts that the exit code was 0."""
     exit_code = start(['mcmd'] + arg_string.split(' '))
-    assert exit_code == 1
+    assert exit_code == 0
+
+
+def run_commander_fail(arg_string):
+    """Runs the commander without failing the test if the command fails"""
+    with pytest.raises(SystemExit):
+        start(['mcmd'] + arg_string.split(' '))
 
 
 def random_name():

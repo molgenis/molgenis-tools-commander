@@ -1,6 +1,6 @@
+from os import path as os_path
 from pathlib import Path
 from urllib.parse import urljoin
-from os import path as os_path
 
 import polling
 import requests
@@ -11,8 +11,8 @@ from mcmd.client import github_client as github
 from mcmd.client.molgenis_client import login, post_file, get, import_by_url
 from mcmd.config.home import get_issues_folder
 from mcmd.io import highlight
-from mcmd.utils.utils import McmdError
 from mcmd.utils.file_helpers import scan_folders_for_files, select_path
+from mcmd.utils.utils import McmdError
 
 # =========
 # Arguments
@@ -115,7 +115,7 @@ def _import_from_issue(args):
 
 
 def _import_from_path(args):
-    file = Path(args.file)
+    file = Path(args.resource)
     if not file.is_file():
         raise McmdError("File %s doesn't exist" % str(file.resolve()))
     _do_import(file, args.to_package)
