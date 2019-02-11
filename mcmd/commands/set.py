@@ -21,7 +21,7 @@ def arguments(subparsers):
 
     p_set.add_argument('type',
                        type=str,
-                       help="The type of setting (table extending from the sys_set_Settings table)")
+                       help="Simple name of the settings entity (app, mail, opencpu, etc.) or the ID")
 
     p_set.add_argument('setting',
                        type=str,
