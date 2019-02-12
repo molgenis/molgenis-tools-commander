@@ -3,7 +3,7 @@ from mock import patch
 
 from mcmd.config.home import get_issues_folder
 from tests.integration.conftest import run_commander, run_commander_fail, random_name
-from tests.integration.loader_mock import get_dataset_folder
+from tests.integration.loader_mock import get_test_resource_folder
 
 
 def _ontologies_by_name_query(name):
@@ -43,7 +43,7 @@ def test_import_fail(capsys):
 
 @pytest.mark.integration
 def test_import_from_path(session):
-    file = get_dataset_folder().joinpath('it_emx_autoid.xlsx')
+    file = get_test_resource_folder().joinpath('it_emx_autoid.xlsx')
     run_commander('import --from-path {}'.format(str(file)))
 
     result = session.get('it_emx_autoid_testAutoId')
@@ -69,7 +69,7 @@ def test_import_from_path_in_package(session):
     package_name = random_name()
     run_commander('add package {}'.format(package_name))
 
-    file = get_dataset_folder().joinpath('testautoId_unpackaged.xlsx')
+    file = get_test_resource_folder().joinpath('testautoId_unpackaged.xlsx')
     run_commander('import --from-path {} --in {}'.format(file, package_name))
 
     result = session.get('{}_testAutoId'.format(package_name))

@@ -44,3 +44,11 @@ def run_commander_fail(arg_string):
 
 def random_name():
     return ''.join(random.choices(string.ascii_uppercase, k=6))
+
+
+def setup_entity():
+    """Imports an entity with a different identifier each time."""
+    package_name = random_name()
+    run_commander('add package {}'.format(package_name))
+    run_commander('import testAutoId_unpackaged --in {}'.format(package_name))
+    return '{}_testAutoId'.format(package_name)

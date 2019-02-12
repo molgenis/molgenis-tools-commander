@@ -1,13 +1,13 @@
-from pathlib import Path
-from os import path as os_path
 import mimetypes
+from os import path as os_path
+from pathlib import Path
 
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import login, post, get, post_files
 from mcmd.io import highlight
-from mcmd.utils.utils import McmdError
 from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
+from mcmd.utils.utils import McmdError
 
 # Store a reference to the parser so that we can show an error message for the custom validation rule
 p_add_theme = None
@@ -91,10 +91,10 @@ def arguments(subparsers):
 
     required_named = p_add_theme.add_argument_group('required named arguments')
     required_named.add_argument('--bootstrap3', '-3',
-                               type=str,
-                               metavar='STYLESHEET',
-                               help="The bootstrap3 css theme file (when not specified, the default molgenis theme will "
-                                    "be applied on bootstrap3 pages)")
+                                type=str,
+                                metavar='STYLESHEET',
+                                help="The bootstrap3 css theme file (when not specified, the default molgenis theme "
+                                     "will be applied on bootstrap3 pages)")
 
     p_add_theme.add_argument('--bootstrap4', '-4',
                              type=str,
@@ -183,7 +183,6 @@ def add_theme(args):
     _validate_args(args)
     valid_types = {'text/css'}
     api = config.api('add_theme')
-    paths = []
     bs3_name = args.bootstrap3
     bs4 = args.bootstrap4
     paths = [bs3_name]
@@ -213,12 +212,14 @@ def add_logo(args):
     :param args: commandline arguments containing path to logo
     :return: None
     """
-    io.start('Adding logo from path {}'.format(highlight(args.logo)))
     api = config.api('logo')
     valid_types = {'image/jpeg', 'image/png', 'image/gif'}
     logo = [args.logo]
     if not args.from_path:
+        io.start('Adding logo from path {}'.format(highlight(args.logo)))
         logo = [_get_path_from_quick_folders(args.logo)]
+    else:
+        io.start('Adding logo {}'.format(highlight(args.logo)))
     files = _prepare_files_for_upload(logo, ['logo'], valid_types)
     post_files(files, api)
 
@@ -233,7 +234,8 @@ def _prepare_files_for_upload(paths, names, valid_content_types):
     :return: a dictionary with as key the name of the file and as value a tuple with: filename, file to upload, and
     content type
 
-    :exception McmdError when the file on the given path does not exist and when the content type of the file is invalid.
+    :exception McmdError when the file on the given path does not exist and when the content type of the file is
+    invalid.
     """
     files = {}
     for name, path in zip(names, paths):
@@ -250,9 +252,10 @@ def _prepare_files_for_upload(paths, names, valid_content_types):
                     'File [{}] does not exist on path [{}]'.format(file_name, path.strip(file_name)))
         else:
             raise McmdError(
-                'File [{}] does not have valid content type [{}], content type should be in {}'.format(file_name,
-                                                                                                       content_type,
-                                                                                                       valid_content_types))
+                'File [{}] does not have valid content type [{}], '
+                'content type should be in {}'.format(file_name,
+                                                      content_type,
+                                                      valid_content_types))
     return files
 
 

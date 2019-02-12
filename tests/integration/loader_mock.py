@@ -14,6 +14,8 @@ git:
 resources:
   dataset_folders: 
   - {dataset_folder}
+  resource_folders:
+  - {resource_folder}
 host:
   selected: {url}
   auth:
@@ -32,6 +34,9 @@ api:
   import_url: plugin/importwizard/importByUrl
   perm: menu/admin/permissionmanager/update/
   rls: menu/admin/permissionmanager/update/entityclass/rls
+  add_theme: plugin/thememanager/add-bootstrap-theme
+  logo: plugin/menumanager/upload-logo
+  set_theme: plugin/thememanager/set-bootstrap-theme
 """
 
 
@@ -41,13 +46,15 @@ def load_config():
     config._config = test_config
 
 
-def get_dataset_folder():
+def get_test_resource_folder():
     return Path(__file__).parent.joinpath('resources').absolute()
 
 
 def mock_config(url, username, password):
     global _TEST_CONFIG
+    resource_folder = str(get_test_resource_folder())
     _TEST_CONFIG = _TEST_CONFIG.format(url=url,
                                        username=username,
                                        password=password,
-                                       dataset_folder=str(get_dataset_folder()))
+                                       dataset_folder=resource_folder,
+                                       resource_folder=resource_folder)
