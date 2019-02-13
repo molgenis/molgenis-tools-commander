@@ -1,7 +1,7 @@
 import pytest
 
+from tests.integration.loader_mock import get_resource_folder
 from tests.integration.utils import run_commander
-from tests.integration.loader_mock import get_test_resource_folder
 
 
 @pytest.mark.integration
@@ -14,7 +14,7 @@ def test_add_theme(session):
 
 @pytest.mark.integration
 def test_add_theme_from_path(session):
-    file = str(get_test_resource_folder().joinpath('logo_black.png'))
+    file = str(get_resource_folder().joinpath('logo_black.png'))
     run_commander('add logo --from-path {}'.format(file))
 
     settings = session.get('sys_set_app')[0]

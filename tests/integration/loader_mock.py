@@ -6,11 +6,9 @@ import mcmd.config.config as config
 
 _TEST_CONFIG = """
 git:
-  root:
+  root: {git_root}
   paths:
-  - molgenis-platform-integration-tests/src/test/resources/xls
-  - molgenis-platform-integration-tests/src/test/resources/csv
-  - molgenis-platform-integration-tests/src/test/resources/obo
+  - {git_folder}
 resources:
   dataset_folders: 
   - {dataset_folder}
@@ -46,15 +44,27 @@ def load_config():
     config._config = test_config
 
 
-def get_test_resource_folder():
-    return Path(__file__).parent.joinpath('resources').absolute()
+def get_dataset_folder():
+    return get_files_folder().joinpath('datasets')
+
+
+def get_resource_folder():
+    return get_files_folder().joinpath('resources')
+
+
+def get_files_folder():
+    return Path(__file__).parent.joinpath('files').absolute()
 
 
 def mock_config(url, username, password):
+    git_root = get_files_folder().joinpath('git_root')
+    git_folder = 'git_folder'
+
     global _TEST_CONFIG
-    resource_folder = str(get_test_resource_folder())
     _TEST_CONFIG = _TEST_CONFIG.format(url=url,
                                        username=username,
                                        password=password,
-                                       dataset_folder=resource_folder,
-                                       resource_folder=resource_folder)
+                                       dataset_folder=get_dataset_folder(),
+                                       resource_folder=get_resource_folder(),
+                                       git_root=git_root,
+                                       git_folder=git_folder)

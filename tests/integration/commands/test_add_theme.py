@@ -1,8 +1,8 @@
 import pytest
 from requests import HTTPError
 
+from tests.integration.loader_mock import get_resource_folder
 from tests.integration.utils import run_commander
-from tests.integration.loader_mock import get_test_resource_folder
 
 
 def _style_exists(session, id_):
@@ -53,8 +53,8 @@ def test_add_theme_without_bootstrap3(session):
 
 @pytest.mark.integration
 def test_add_theme_from_path(session):
-    file_bs3 = str(get_test_resource_folder().joinpath('test3.css'))
-    file_bs4 = str(get_test_resource_folder().joinpath('test4.css'))
+    file_bs3 = str(get_resource_folder().joinpath('test3.css'))
+    file_bs4 = str(get_resource_folder().joinpath('test4.css'))
     run_commander('add theme --from-path --bootstrap3 {} --bootstrap4 {}'.format(file_bs3, file_bs4))
 
     try:

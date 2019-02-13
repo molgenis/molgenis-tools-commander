@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 
-from tests.integration.loader_mock import get_test_resource_folder
+from tests.integration.loader_mock import get_files_folder
 
 _TEMP_HISTORY = None
 _TEMP_ISSUES_FOLDER = None
@@ -26,7 +26,7 @@ def get_issues_folder():
 
 
 def get_scripts_folder():
-    return get_test_resource_folder()
+    return get_files_folder().joinpath('scripts')
 
 
 def get_properties_file():
