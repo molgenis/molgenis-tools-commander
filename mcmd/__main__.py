@@ -32,7 +32,7 @@ def start(argv):
     else:
         execute(args)
 
-    return 1
+    return 0
 
 
 def show_help(args, argv):
