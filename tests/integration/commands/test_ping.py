@@ -3,13 +3,12 @@ from unittest import mock
 import pytest
 
 import mcmd.config.config as config
-from tests.integration.conftest import run_commander
+from tests.integration.utils import run_commander
 
 
 @pytest.mark.integration
 def test_ping_online(capsys):
-    exit_code = run_commander('ping')
-    assert exit_code == 1
+    run_commander('ping')
 
     captured = capsys.readouterr().out
     assert 'Online' in captured
@@ -18,12 +17,11 @@ def test_ping_online(capsys):
     assert config.username() in captured
 
 
-# noinspection PyUnusedLocal
 @pytest.mark.integration
-@mock.patch('mcmd.config.config.api', return_value='https://nonexisting.url')
+@mock.patch('mcmd.config.config.api')
 def test_ping_offline(api_mock, capsys):
-    exit_code = run_commander('ping')
-    assert exit_code == 1
+    api_mock.return_value = 'https://nonexisting.url'
+    run_commander('ping')
 
     captured = capsys.readouterr().out
     assert 'Offline' in captured
