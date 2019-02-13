@@ -41,20 +41,24 @@ class PrincipalType(Enum):
 def login(func):
     """Login decorator."""
 
+    def _get_username(args):
+        if args.as_user is not None:
+            return args.as_user
+        else:
+            return config.host('username')
+
+    def _get_password(args):
+        if args.with_password is not None:
+            return args.with_password
+        elif args.as_user is not None:
+            return args.as_user
+        else:
+            return config.host('password')
+
     def wrapper(args):
         global token
-        if args.as_user is None:
-            username = config.username()
-        else:
-            username = args.as_user
-
-        if args.with_password is None:
-            if args.as_user is None:
-                password = config.password()
-            else:
-                password = args.as_user
-        else:
-            password = args.with_password
+        username = _get_username(args)
+        password = _get_password(args)
 
         login_url = config.api('login')
 

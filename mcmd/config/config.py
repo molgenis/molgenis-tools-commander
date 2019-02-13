@@ -7,10 +7,10 @@ from functools import reduce
 from pathlib import Path
 from urllib.parse import urljoin
 
-from mcmd.utils.utils import McmdError
 from ruamel.yaml import YAML
 
 from mcmd.config.home import get_properties_file
+from mcmd.utils.utils import McmdError
 
 _config = None
 
@@ -36,12 +36,9 @@ def get(*args):
     return prop
 
 
-def username():
-    return _get_selected_host_auth()['username']
-
-
-def password():
-    return _get_selected_host_auth()['password']
+def host(key):
+    host_ = _get_selected_host_auth()
+    return host_.get(key, None)
 
 
 def git_paths():

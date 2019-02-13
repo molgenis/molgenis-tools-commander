@@ -14,7 +14,7 @@ def test_ping_online(capsys):
     assert 'Online' in captured
     assert 'Version' in captured
     assert config.get('host', 'selected') in captured
-    assert config.username() in captured
+    assert config.host('username') in captured
 
 
 @pytest.mark.integration
@@ -27,4 +27,4 @@ def test_ping_offline(api_mock, capsys):
     assert 'Offline' in captured
     assert 'Version' not in captured
     assert config.get('host', 'selected') in captured
-    assert config.username() in captured
+    assert config.host('username') in captured
