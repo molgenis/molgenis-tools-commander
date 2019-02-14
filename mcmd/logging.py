@@ -19,5 +19,3 @@ def get_logger():
 
 def set_level(level):
     logger.setLevel(level)
-
-
