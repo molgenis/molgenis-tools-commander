@@ -97,9 +97,9 @@ def _create_script(args):
     commands = io.checkbox('Pick the lines that will form the script:', options)
     file_name = _input_script_name()
     try:
-        script_file = open(get_scripts_folder().joinpath(file_name), 'w')
-        for command in commands:
-            script_file.write(command + '\n')
+        with open(get_scripts_folder().joinpath(file_name), 'w') as script_file:
+            for command in commands:
+                script_file.write(command + '\n')
     except OSError as e:
         raise McmdError("Error writing to script: %s" % str(e))
 
