@@ -37,3 +37,20 @@ def test_run_ignore_error(session):
     finally:
         session.delete('sys_md_Package', 'scripttest')
         session.delete('sys_md_Package', 'package_after_error')
+
+
+@pytest.mark.integration
+def test_run_nested_fails(session):
+    with pytest.raises(SystemExit):
+        run_commander('run test_script_nested')
+
+    assert not package_exists(session, 'scripttest')
+    assert not package_exists(session, 'package_after_error')
+
+
+@pytest.mark.integration
+def test_run_quotes(session):
+    run_commander('run test_script_quotes')
+
+    settings = session.get('sys_set_app')[0]
+    assert settings['title'] == 'value between quotes'

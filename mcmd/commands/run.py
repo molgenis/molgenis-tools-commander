@@ -1,3 +1,5 @@
+import shlex
+
 from mcmd import arguments as arg_parser
 from mcmd import io
 from mcmd.config.home import get_scripts_folder
@@ -40,7 +42,7 @@ def _run_script(exit_on_error, lines):
 
 
 def _run_command(exit_on_error, line):
-    sub_args = arg_parser.parse_args(line.split(' '))
+    sub_args = arg_parser.parse_args(shlex.split(line))
     setattr(sub_args, 'arg_string', line)
     _fail_on_run_command(exit_on_error, sub_args)
     execute(sub_args, exit_on_error)
