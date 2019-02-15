@@ -159,7 +159,7 @@ def set_debug():
 
 
 def newline():
-    print()
+    log.info('')
 
 
 def highlight(string):

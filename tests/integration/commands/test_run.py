@@ -54,3 +54,20 @@ def test_run_quotes(session):
 
     settings = session.get('sys_set_app')[0]
     assert settings['title'] == 'value between quotes'
+
+
+@pytest.mark.integration
+def test_run_comments(session, caplog):
+    run_commander('run test_script_comments')
+
+    settings = session.get('sys_set_app')[0]
+    assert settings['title'] == 'test'
+
+    expected_messages = [
+        "Let's change the app title",
+        '',
+        '',
+        'Finished'
+    ]
+
+    assert caplog.messages == expected_messages
