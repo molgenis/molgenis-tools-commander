@@ -73,11 +73,40 @@ def login(func):
     return wrapper
 
 
+def request(func):
+    def handle_json_error(response_json):
+        if 'errors' in response_json:
+            for error in response_json['errors']:
+                raise McmdError(error['message'])
+        elif 'errorMessage' in response_json:
+            raise McmdError(response_json['errorMessage'])
+
+    def is_json(response):
+        return response.headers.get('Content-Type') and 'application/json' in response.headers.get('Content-Type')
+
+    def handle_request(*args, **kwargs):
+        response = str()
+        try:
+            response = func(*args, **kwargs)
+            response.raise_for_status()
+            return response
+        except requests.HTTPError as e:
+            if is_json(response):
+                handle_json_error(response.json())
+            raise McmdError(str(e))
+        except requests.RequestException as e:
+            raise McmdError(str(e))
+
+    return handle_request
+
+
+@request
 def get(url):
-    return _handle_request(lambda: requests.get(url,
-                                                headers=_get_default_headers()))
+    return requests.get(url,
+                        headers=_get_default_headers())
 
 
+@request
 def grant(principal_type, principal_name, resource_type, identifier, permission):
     data = {'radio-' + identifier: permission}
 
@@ -89,53 +118,60 @@ def grant(principal_type, principal_name, resource_type, identifier, permission)
         raise McmdError('Unknown principal type: %s' % principal_type)
 
     url = config.api('perm') + resource_type.get_resource_name() + '/' + principal_type.value
-    return _handle_request(lambda: requests.post(url,
-                                                 headers={
-                                                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                                                     'x-molgenis-token': token},
-                                                 data=data))
+    return requests.post(url,
+                         headers={
+                             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                             'x-molgenis-token': token},
+                         data=data)
 
 
+@request
 def post(url, data):
-    return _handle_request(lambda: requests.post(url,
-                                                 headers=_get_default_headers(),
-                                                 data=json.dumps(data)))
+    return requests.post(url,
+                         headers=_get_default_headers(),
+                         data=json.dumps(data))
 
 
+@request
 def post_file(url, file_path, params):
-    return _handle_request(lambda: requests.post(url,
-                                                 headers={'x-molgenis-token': token},
-                                                 files={'file': open(file_path, 'rb')},
-                                                 params=params))
+    return requests.post(url,
+                         headers={'x-molgenis-token': token},
+                         files={'file': open(file_path, 'rb')},
+                         params=params)
 
 
+@request
 def post_files(files, url):
-    return _handle_request(lambda: requests.post(url,
-                                                 headers={'x-molgenis-token': token},
-                                                 files=files))
+    return requests.post(url,
+                         headers={'x-molgenis-token': token},
+                         files=files)
 
 
+@request
 def delete(url):
-    return _handle_request(lambda: requests.delete(url,
-                                                   headers=_get_default_headers()))
+    return requests.delete(url,
+                           headers=_get_default_headers())
 
 
+@request
 def delete_data(url, data):
-    return _handle_request(lambda: requests.delete(url,
-                                                   headers=_get_default_headers(),
-                                                   data=json.dumps({"entityIds": data})))
+    return requests.delete(url,
+                           headers=_get_default_headers(),
+                           data=json.dumps({"entityIds": data}))
 
 
+@request
 def put(url, data):
-    return _handle_request(lambda: requests.put(url=url,
-                                                headers=_get_default_headers(),
-                                                data=data))
+    return requests.put(url=url,
+                        headers=_get_default_headers(),
+                        data=data)
 
 
+@request
 def import_by_url(params):
-    return _handle_request(lambda: requests.post(config.api('import_url'),
-                                                 headers=_get_default_headers(),
-                                                 params=params))
+    return requests.post(config.api('import_url'),
+                         headers=_get_default_headers(),
+                         params=params)
 
 
 def _get_default_headers():
@@ -143,33 +179,6 @@ def _get_default_headers():
     if token:
         headers['x-molgenis-token'] = token
     return headers
-
-
-def _handle_request(request):
-    response = str()
-    try:
-        response = request()
-        response.raise_for_status()
-        return response
-    except requests.HTTPError as e:
-        if _is_json(response):
-            _handle_json_error(response.json())
-        raise McmdError(str(e))
-    except requests.RequestException as e:
-        raise McmdError(str(e))
-
-
-def _handle_json_error(response_json):
-    if 'errors' in response_json:
-        for error in response_json['errors']:
-            # TODO capture multiple error messages
-            raise McmdError(error['message'])
-    elif 'errorMessage' in response_json:
-        raise McmdError(response_json['errorMessage'])
-
-
-def _is_json(response):
-    return response.headers.get('Content-Type') and 'application/json' in response.headers.get('Content-Type')
 
 
 def resource_exists(resource_id, resource_type):
