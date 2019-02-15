@@ -1,5 +1,9 @@
+import sys
+import termios
+import tty
+
 from PyInquirer import prompt
-from colorama import Fore
+from colorama import Fore, Style
 from halo import Halo
 
 import mcmd.config.config as config
@@ -166,6 +170,10 @@ def highlight(string):
     return Fore.LIGHTBLUE_EX + string + Fore.RESET
 
 
+def bold(string):
+    return Style.BRIGHT + string + Style.RESET_ALL
+
+
 def _handle_question(question):
     answer = prompt([question])
     if not answer:
@@ -175,3 +183,14 @@ def _handle_question(question):
         if spinner:
             spinner.start()
         return answer['answer']
+
+
+def input_single_character():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(fd)
+        ch = sys.stdin.read(1)  # This number represents the length
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch

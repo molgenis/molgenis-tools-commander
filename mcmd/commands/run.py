@@ -4,12 +4,12 @@ from mcmd import arguments as arg_parser
 from mcmd import io
 from mcmd.config.home import get_scripts_folder
 from mcmd.executor import execute
+from mcmd.io import bold
 from mcmd.logging import get_logger
-
-
 # =========
 # Arguments
 # =========
+from mcmd.utils.kbhit import KBHit
 
 
 def arguments(subparsers):
@@ -46,9 +46,10 @@ def run(args):
 
 def _run_script(log_comments, exit_on_error, lines):
     for line in lines:
-        if _is_comment(line) or _is_empty(line):
-            if log_comments:
-                _log_comments(line)
+        if (_is_comment(line) or _is_empty(line)) and log_comments:
+            _log_comments(line)
+        elif _is_script_function(line):
+            _do_script_function(line)
         else:
             _run_command(exit_on_error, line)
 
@@ -59,6 +60,24 @@ def _log_comments(line):
         io.newline()
     else:
         log.info(line)
+
+
+def _do_script_function(line):
+    line_parts = line.strip('$').split()
+    function = line_parts[0]
+    if function == 'wait':
+        _wait(' '.join(line_parts[1:]).strip())
+    else:
+        io.error("Unknown function '{}', aborting script".format(function))
+        exit(1)
+
+
+def _wait(message):
+    text = '{}: {} (Press enter to continue or ESC to stop)'.format(bold('Waiting for user'), message)
+    io.start(text)
+    if not _wait_for_enter():
+        exit(1)
+    io.succeed()
 
 
 def _run_command(exit_on_error, line):
@@ -94,3 +113,21 @@ def _is_comment(line):
 
 def _is_empty(line):
     return line.isspace() or len(line) == 0
+
+
+def _is_script_function(line):
+    return line.startswith('$')
+
+
+def _wait_for_enter():
+    kb = KBHit()
+    try:
+        while True:
+            if kb.kbhit():
+                c = kb.getch()
+                if ord(c) == 27:  # ESC
+                    return False
+                if c == '\n':  # Enter
+                    return True
+    finally:
+        kb.set_normal_term()
