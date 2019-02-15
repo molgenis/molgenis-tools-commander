@@ -1,10 +1,12 @@
+import os
+
 import pytest
 from mock import patch, mock, mock_open
 
 from mcmd.config.home import get_scripts_folder
 from tests.integration.utils import run_commander
 
-_expected_list_messages = ['test_script', 'test_script_error']
+_expected_list_messages = [file for file in os.listdir(get_scripts_folder())]
 _expected_read_messages = ['add package scripttest', 'import testAutoId_unpackaged --in scripttest',
                            'add package otherpackage']
 _history_lines = [
@@ -21,13 +23,7 @@ def test_script_list(caplog):
 
 
 @pytest.mark.integration
-def test_script_list(caplog):
-    run_commander('script --read test_script')
-    assert caplog.messages == _expected_read_messages
-
-
-@pytest.mark.integration
-def test_script_list(caplog):
+def test_script_read(caplog):
     run_commander('script --read test_script')
     assert caplog.messages == _expected_read_messages
 

@@ -3,10 +3,10 @@ from mcmd import io
 from mcmd.config.home import get_scripts_folder
 from mcmd.executor import execute
 
+
 # =========
 # Arguments
 # =========
-from mcmd.utils.utils import McmdError
 
 
 def arguments(subparsers):
@@ -42,22 +42,27 @@ def _run_script(exit_on_error, lines):
 def _run_command(exit_on_error, line):
     sub_args = arg_parser.parse_args(line.split(' '))
     setattr(sub_args, 'arg_string', line)
+    _fail_on_run_command(exit_on_error, sub_args)
+    execute(sub_args, exit_on_error)
+
+
+def _fail_on_run_command(exit_on_error, sub_args):
     if sub_args.command == 'run':
-        io.error("Can't use the run command in a script: %s" % line)
         if exit_on_error:
+            io.error("Can't use the run command in a script: {}".format(sub_args.arg_string))
             exit(1)
         else:
             return
 
-    execute(sub_args, exit_on_error)
-
 
 def _read_script(script):
+    lines = list()
     try:
         with open(script) as file:
             lines = [line.rstrip('\n') for line in file]
     except OSError as e:
-        raise McmdError('Error reading script: {}'.format(str(e)))
+        io.error('Error reading script: {}'.format(str(e)))
+        exit(1)
     return lines
 
 
