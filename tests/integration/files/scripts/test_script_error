@@ -1,3 +1,7 @@
 add package scripttest
+
+# add the same package again, this should throw an error
 add package scripttest
+
+# this line shouldn't be executed unless the --ignore-errors flag was passed
 add package package_after_error
