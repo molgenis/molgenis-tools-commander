@@ -26,7 +26,7 @@ def _set_authentication(args):
         if args.with_password:
             auth.set_(username=args.as_user, password=args.with_password, as_user=True)
         else:
-            auth.set_(username=args.as_user, password=args.username, as_user=True)
+            auth.set_(username=args.as_user, password=args.as_user, as_user=True)
     else:
         auth.set_(config.host('username'), config.host('password'), config.host('token'))
 

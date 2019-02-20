@@ -39,7 +39,8 @@ def login():
         else:
             raise McmdError(str(e))
     finally:
-        config.set_token(_token)
+        if not _as_user:
+            config.set_token(_token)
 
 
 def _ask_password():

@@ -49,7 +49,7 @@ def request(func):
         return response.headers.get('Content-Type') and 'application/json' in response.headers.get('Content-Type')
 
     def token_is_valid(response):
-        """There's no real way to figure out if a token exists or is valid. The best we can do is assume that any
+        """There's no real way to figure out if a token is valid or not. The best we can do is assume that any
         'no read metadata' error means that the user isn't logged in."""
         if response.status_code == 401 and is_json(response):
             error = response.json()['errors'][0]
