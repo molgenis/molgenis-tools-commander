@@ -5,7 +5,7 @@ import json
 
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, get, put
+from mcmd.client.molgenis_client import get, put
 from mcmd.io import highlight
 from mcmd.utils.utils import McmdError
 
@@ -84,7 +84,6 @@ def _get_row_id(entity):
     return settings[0]['id']
 
 
-@login
 def set(args):
     """
     set sets the given setting of the given settings type to the given value

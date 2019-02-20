@@ -3,8 +3,9 @@ Deletes an entityType or data from an entityType.
 """
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, delete, delete_data, ensure_resource_exists, ResourceType
+from mcmd.client.molgenis_client import delete, delete_data, ensure_resource_exists, ResourceType
 from mcmd.io import highlight
+
 
 # =========
 # Arguments
@@ -58,7 +59,6 @@ def _delete_entity_type(entity):
     _delete_row('sys_md_EntityType', entity)
 
 
-@login
 def delete_all_data(args):
     ensure_resource_exists(args.entity_type, ResourceType.ENTITY_TYPE)
     if args.force or (not args.force and io.confirm(
@@ -66,7 +66,6 @@ def delete_all_data(args):
         _delete_all_data(args.entity_type)
 
 
-@login
 def delete_entity(args):
     ensure_resource_exists(args.entity_type, ResourceType.ENTITY_TYPE)
     if args.force or (not args.force and io.confirm(

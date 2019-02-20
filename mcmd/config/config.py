@@ -96,3 +96,8 @@ def _get_selected_host_auth():
             return host
 
     raise McmdError("The selected host doesn't exist.")
+
+
+def set_token(token):
+    _get_selected_host_auth()['token'] = token
+    _persist()

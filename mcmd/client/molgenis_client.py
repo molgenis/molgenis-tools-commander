@@ -4,13 +4,12 @@ from urllib.parse import urljoin
 
 import requests
 
-import mcmd.config.config as config
-from mcmd import io
+from mcmd.client import auth
+from mcmd.config import config
 from mcmd.logging import get_logger
 from mcmd.utils.utils import McmdError
 
 log = get_logger()
-token = ''
 
 
 class ResourceType(Enum):
@@ -36,41 +35,6 @@ class ResourceType(Enum):
 class PrincipalType(Enum):
     USER = 'user'
     ROLE = 'role'
-
-
-def login(func):
-    """Login decorator."""
-
-    def _get_username(args):
-        if args.as_user is not None:
-            return args.as_user
-        else:
-            return config.host('username')
-
-    def _get_password(args):
-        if args.with_password is not None:
-            return args.with_password
-        elif args.as_user is not None:
-            return args.as_user
-        else:
-            return config.host('password')
-
-    def wrapper(args):
-        global token
-        username = _get_username(args)
-        password = _get_password(args)
-
-        login_url = config.api('login')
-
-        io.debug('Logging in as user %s' % username)
-
-        response = post(login_url,
-                        data={"username": username, "password": password})
-        token = response.json()['token']
-
-        func(args)
-
-    return wrapper
 
 
 def request(func):
@@ -121,7 +85,7 @@ def grant(principal_type, principal_name, resource_type, identifier, permission)
     return requests.post(url,
                          headers={
                              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                             'x-molgenis-token': token},
+                             'x-molgenis-token': auth.get_token()},
                          data=data)
 
 
@@ -135,7 +99,7 @@ def post(url, data):
 @request
 def post_file(url, file_path, params):
     return requests.post(url,
-                         headers={'x-molgenis-token': token},
+                         headers={'x-molgenis-token': auth.get_token()},
                          files={'file': open(file_path, 'rb')},
                          params=params)
 
@@ -143,7 +107,7 @@ def post_file(url, file_path, params):
 @request
 def post_files(files, url):
     return requests.post(url,
-                         headers={'x-molgenis-token': token},
+                         headers={'x-molgenis-token': auth.get_token()},
                          files=files)
 
 
@@ -176,8 +140,8 @@ def import_by_url(params):
 
 def _get_default_headers():
     headers = {'Content-Type': 'application/json'}
-    if token:
-        headers['x-molgenis-token'] = token
+    if auth.get_token():
+        headers['x-molgenis-token'] = auth.get_token()
     return headers
 
 

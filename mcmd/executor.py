@@ -1,11 +1,14 @@
 import configparser
 
 from mcmd import history, io
+from mcmd.client import auth
+from mcmd.config import config
 from mcmd.utils.utils import McmdError
 
 
 def execute(args, exit_on_error=True):
     try:
+        _set_authentication(args)
         args.func(args)
     except McmdError as e:
         _handle_error(str(e), args.write_to_history, args.arg_string, exit_on_error)
@@ -16,6 +19,16 @@ def execute(args, exit_on_error=True):
         if args.write_to_history:
             history.write(args.arg_string, success=True)
         io.succeed()
+
+
+def _set_authentication(args):
+    if args.as_user:
+        if args.with_password:
+            auth.set_(username=args.as_user, password=args.with_password, as_user=True)
+        else:
+            auth.set_(username=args.as_user, password=args.username, as_user=True)
+    else:
+        auth.set_(config.host('username'), config.host('password'), config.host('token'))
 
 
 def _handle_error(message, write_to_history, arg_string, exit_on_error):

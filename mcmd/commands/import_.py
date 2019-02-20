@@ -8,7 +8,7 @@ import requests
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.client import github_client as github
-from mcmd.client.molgenis_client import login, post_file, get, import_by_url
+from mcmd.client.molgenis_client import post_file, get, import_by_url
 from mcmd.config.home import get_issues_folder
 from mcmd.io import highlight
 from mcmd.utils.file_helpers import scan_folders_for_files, select_path
@@ -68,7 +68,6 @@ def _validate_args(args):
         _p_import.error("the following argument is required: resource")
 
 
-@login
 def _choose_import_method(args):
     if args.from_path:
         _import_from_path(args)
