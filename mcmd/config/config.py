@@ -106,5 +106,8 @@ def _get_selected_host_auth():
 
 
 def set_token(token):
-    _get_selected_host_auth()['token'] = token
+    if token is None:
+        _get_selected_host_auth().pop('token', None)
+    else:
+        _get_selected_host_auth()['token'] = token
     _persist()

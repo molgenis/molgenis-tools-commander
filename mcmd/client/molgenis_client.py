@@ -48,6 +48,16 @@ def request(func):
     def is_json(response):
         return response.headers.get('Content-Type') and 'application/json' in response.headers.get('Content-Type')
 
+    def token_is_valid(response):
+        """There's no real way to figure out if a token exists or is valid. The best we can do is assume that any
+        'no read metadata' error means that the user isn't logged in."""
+        if response.status_code == 401 and is_json(response):
+            error = response.json()['errors'][0]
+            if 'code' in error and error['code'] == 'DS04' and 'message' in error and error['message'].startswith(
+                    "No 'Read metadata' permission"):
+                return False
+        return True
+
     def handle_request(*args, **kwargs):
         response = str()
         try:
@@ -55,6 +65,9 @@ def request(func):
             response.raise_for_status()
             return response
         except requests.HTTPError as e:
+            if not token_is_valid(response):
+                auth.login()
+                handle_request(*args, **kwargs)
             if is_json(response):
                 handle_json_error(response.json())
             raise McmdError(str(e))
@@ -139,9 +152,8 @@ def import_by_url(params):
 
 
 def _get_default_headers():
-    headers = {'Content-Type': 'application/json'}
-    if auth.get_token():
-        headers['x-molgenis-token'] = auth.get_token()
+    headers = {'Content-Type': 'application/json',
+               'x-molgenis-token': auth.get_token()}
     return headers
 
 

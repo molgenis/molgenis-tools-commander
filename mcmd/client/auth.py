@@ -1,9 +1,11 @@
 import json
 
 import requests
+from requests import HTTPError
 
 from mcmd import io
 from mcmd.config import config
+from mcmd.utils.utils import McmdError
 
 _username = None
 _password = None
@@ -12,22 +14,32 @@ _as_user = False
 
 
 def get_token():
-    global _password
     if not _token:
-        if not _password:
-            _password = _ask_password()
         login()
     return _token
 
 
 def login():
-    io.debug('Logging in as user {}'.format(_username))
-    response = requests.post(config.api('login'),
-                             headers={'Content-Type': 'application/json'},
-                             data=json.dumps({"username": _username, "password": _password}))
-    global _token
-    _token = response.json()['token']
-    config.set_token(_token)
+    global _password, _token
+    _token = None
+
+    if not _password:
+        _password = _ask_password()
+
+    try:
+        io.debug('Logging in as user {}'.format(_username))
+        response = requests.post(config.api('login'),
+                                 headers={'Content-Type': 'application/json'},
+                                 data=json.dumps({"username": _username, "password": _password}))
+        response.raise_for_status()
+        _token = response.json()['token']
+    except HTTPError as e:
+        if e.response.status_code == 401:
+            raise McmdError('Invalid login credentials')
+        else:
+            raise McmdError(str(e))
+    finally:
+        config.set_token(_token)
 
 
 def _ask_password():
