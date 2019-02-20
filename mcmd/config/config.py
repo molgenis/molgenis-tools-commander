@@ -9,24 +9,31 @@ from urllib.parse import urljoin
 
 from ruamel.yaml import YAML
 
-from mcmd.config.home import get_properties_file
 from mcmd.utils.utils import McmdError
 
 _config = None
+_properties_file: Path = None
 
 
-def set_config(config):
+def set_config(config, properties_file):
+    """The config module must nog have dependencies on other modules in the config package so the necessary information
+    should be passed here."""
     global _config
     if _config:
         raise ValueError('config already set')
-
     _config = config
+
+    global _properties_file
+    if _properties_file:
+        raise ValueError('properties file already set')
+    _properties_file = properties_file
+
     _persist()
 
 
 def _persist():
     """Writes the config to disk."""
-    YAML().dump(_config, get_properties_file())
+    YAML().dump(_config, _properties_file)
 
 
 def get(*args):
@@ -67,7 +74,7 @@ def has_option(*args):
 
 def set_host(url):
     hosts = _config['host']['auth']
-    if url in [host['url'] for host in hosts]:
+    if url in [host_['url'] for host_ in hosts]:
         _config['host']['selected'] = url
     else:
         raise McmdError("There is no host with url {}".format(url))
@@ -91,9 +98,9 @@ def host_exists(url):
 def _get_selected_host_auth():
     selected = _config['host']['selected']
     hosts = _config['host']['auth']
-    for host in hosts:
-        if host['url'] == selected:
-            return host
+    for host_ in hosts:
+        if host_['url'] == selected:
+            return host_
 
     raise McmdError("The selected host doesn't exist.")
 

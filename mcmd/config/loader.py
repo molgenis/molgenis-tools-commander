@@ -43,7 +43,7 @@ def load_config():
     _merge(default_config, user_config)
 
     # pass result to the config module and save to disk
-    config.set_config(default_config)
+    config.set_config(default_config, get_properties_file())
 
 
 def _upgrade(default_config, user_config):
@@ -54,7 +54,7 @@ def _upgrade(default_config, user_config):
         if prop not in user_config:
             configurer(default_config)
 
-    config.set_config(default_config)
+    config.set_config(default_config, get_properties_file())
 
     mcmd.io.newline()
     mcmd.io.info(
@@ -71,18 +71,18 @@ def _install(default_config):
     for configurer in property_configurers().values():
         configurer(default_config)
 
-    config.set_config(default_config)
+    config.set_config(default_config, get_properties_file())
 
     mcmd.io.newline()
     mcmd.io.info('The configuration file has been created at {}'.format(highlight(str(get_properties_file()))))
     exit(0)
 
 
-def _configure_git_root(config):
+def _configure_git_root(config_):
     git_root = mcmd.io.input_(
         'Enter the absolute path to your Molgenis git folder (e.g. /Users/me/git/molgenis/)')
     if len(git_root) > 0:
-        config['git']['root'] = git_root
+        config_['git']['root'] = git_root
 
 
 def _configure_host(values):
