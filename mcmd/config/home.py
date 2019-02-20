@@ -3,8 +3,6 @@
 .mcmd/
     scripts/
         ...
-    datasets/
-        ...
     issues/
         <issue1>/
             ...
@@ -19,7 +17,6 @@ from pathlib import Path
 
 _MCMD_FOLDER = '.mcmd'
 _SCRIPT_FOLDER = 'scripts'
-_DATASET_FOLDER = 'datasets'
 _BACKUP_FOLDER = 'backups'
 _ISSUE_FOLDER = 'issues'
 _PROPERTIES_FILE = 'mcmd.yaml'
@@ -34,11 +31,6 @@ def get_mcmd_home():
 def get_scripts_folder():
     scripts_folder = get_mcmd_home().joinpath(_SCRIPT_FOLDER)
     return _mkdir_if_not_exists(scripts_folder)
-
-
-def get_datasets_folder():
-    datasets_folder = get_mcmd_home().joinpath(_DATASET_FOLDER)
-    return _mkdir_if_not_exists(datasets_folder)
 
 
 def get_backups_folder():

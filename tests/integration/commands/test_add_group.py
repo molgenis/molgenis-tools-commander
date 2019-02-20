@@ -1,6 +1,6 @@
 import pytest
 
-from tests.integration.conftest import run_commander, random_name
+from tests.integration.utils import run_commander, random_name
 
 
 def _group_by_name_query(name):
@@ -18,8 +18,7 @@ def _random_group_name():
 @pytest.mark.integration
 def test_add_group(session):
     name = _random_group_name()
-    exit_code = run_commander('add group {}'.format(name))
-    assert exit_code == 1
+    run_commander('add group {}'.format(name))
 
     result = session.get('sys_sec_Group', q=_group_by_name_query(name.lower()))
     assert len(result) == 1

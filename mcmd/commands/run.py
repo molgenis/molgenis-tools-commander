@@ -1,7 +1,6 @@
-from pathlib import Path
-
 from mcmd import arguments as arg_parser
 from mcmd import io
+from mcmd.config.home import get_scripts_folder
 from mcmd.executor import execute
 
 
@@ -26,7 +25,7 @@ def arguments(subparsers):
 # =======
 
 def run(args):
-    script = Path().home().joinpath('.mcmd', 'scripts', args.script)
+    script = get_scripts_folder().joinpath(args.script)
 
     lines = list()
     try:

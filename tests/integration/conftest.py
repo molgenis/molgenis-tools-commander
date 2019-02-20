@@ -1,12 +1,10 @@
-import random
-import string
 from urllib.parse import urljoin
 
 import molgenis.client
 import pytest
 
-from mcmd.__main__ import start
-from tests.integration.loader_mock import set_login
+from tests.integration.loader_mock import mock_config
+from tests.integration.utils import setup_entity, run_commander, random_name
 
 
 def pytest_configure(config):
@@ -16,10 +14,10 @@ def pytest_configure(config):
     username = config.getoption('username')
     password = config.getoption('password')
 
-    set_login(url, username, password)
+    mock_config(url, username, password)
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def session(request):
     url = request.config.getoption('url')
     username = request.config.getoption('username')
@@ -30,9 +28,27 @@ def session(request):
     return session
 
 
-def run_commander(arg_string):
-    return start(['mcmd'] + arg_string.split(' '))
+@pytest.fixture
+def entity_type():
+    return setup_entity()
 
 
-def random_name():
-    return ''.join(random.choices(string.ascii_uppercase, k=6))
+@pytest.fixture
+def user():
+    name = random_name()
+    run_commander('add user {}'.format(name))
+    return name
+
+
+@pytest.fixture
+def group():
+    name = random_name()
+    run_commander('add group {}'.format(name))
+    return name
+
+
+@pytest.fixture
+def package():
+    name = random_name()
+    run_commander('add package {}'.format(name))
+    return name

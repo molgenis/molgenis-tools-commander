@@ -1,0 +1,3 @@
+add package scripttest
+import testAutoId_unpackaged --in scripttest
+add package otherpackage
