@@ -4,7 +4,7 @@ from mcmd import arguments as arg_parser
 from mcmd import io
 from mcmd.config.home import get_scripts_folder
 from mcmd.executor import execute
-from mcmd.io import bold
+from mcmd.io import bold, dim
 from mcmd.logging import get_logger
 # =========
 # Arguments
@@ -46,8 +46,9 @@ def run(args):
 
 def _run_script(log_comments, exit_on_error, lines):
     for line in lines:
-        if (_is_comment(line) or _is_empty(line)) and log_comments:
-            _log_comments(line)
+        if _is_comment(line) or _is_empty(line):
+            if log_comments:
+                _log_comments(line)
         elif _is_script_function(line):
             _do_script_function(line)
         else:
@@ -73,10 +74,9 @@ def _do_script_function(line):
 
 
 def _wait(message):
-    text = '{}: {} (Press enter to continue or ESC to stop)'.format(bold('Waiting for user'), message)
+    text = '{}: {}   {}'.format(bold('Waiting for user'), message, dim('(Press enter to continue)'))
     io.start(text)
-    if not _wait_for_enter():
-        exit(1)
+    _wait_for_enter()
     io.succeed()
 
 
@@ -121,13 +121,8 @@ def _is_script_function(line):
 
 def _wait_for_enter():
     kb = KBHit()
-    try:
-        while True:
-            if kb.kbhit():
-                c = kb.getch()
-                if ord(c) == 27:  # ESC
-                    return False
-                if c == '\n':  # Enter
-                    return True
-    finally:
-        kb.set_normal_term()
+    while True:
+        if kb.kbhit():
+            c = kb.getch()
+            if c == '\n':  # Enter
+                break

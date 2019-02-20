@@ -174,6 +174,10 @@ def bold(string):
     return Style.BRIGHT + string + Style.RESET_ALL
 
 
+def dim(string):
+    return Style.DIM + string + Style.RESET_ALL
+
+
 def _handle_question(question):
     answer = prompt([question])
     if not answer:
