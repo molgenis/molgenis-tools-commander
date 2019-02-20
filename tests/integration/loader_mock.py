@@ -2,7 +2,7 @@ from pathlib import Path
 
 from ruamel.yaml import YAML
 
-import mcmd.config.config as config
+from mcmd.config import config
 
 _TEST_CONFIG = """
 git:
