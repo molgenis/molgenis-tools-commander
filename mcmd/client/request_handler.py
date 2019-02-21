@@ -1,3 +1,10 @@
+"""
+Error handling of requests to MOLGENIS.
+
+Error responses can come back in varying forms which this decorator tries to unify. Invalidates the current REST token
+if a request came back with 401 'no read meatadata permission' (see _token_is_invalid).
+"""
+
 import requests
 
 from mcmd.client import auth
@@ -15,7 +22,8 @@ def request(func):
             return response
         except requests.HTTPError as e:
             if not _token_is_valid(response):
-                auth.login()
+                auth.invalidate_token()
+                # retry the request
                 return handle_request(*args, **kwargs)
             elif _is_json(response):
                 _handle_json_error(response.json())

@@ -1,3 +1,8 @@
+"""
+Handles the authentication and provides the REST token to the rest of the application. If a token was
+invalidated or simply not present it tries to login with the provided credentials.
+"""
+
 import json
 
 import requests
@@ -15,13 +20,26 @@ _as_user = False
 
 def get_token():
     if not _token:
-        login()
+        _login()
     return _token
 
 
-def login():
-    global _password, _token
+def invalidate_token():
+    global _token
     _token = None
+
+
+def set_(username, password=None, token=None, as_user=False):
+    global _username, _password, _token, _as_user
+    _username = username
+    _password = password
+    _token = token
+    _as_user = as_user
+
+
+def _login():
+    """Logs in with the provided credentials. Prompts the user for a password if no password is found in the config."""
+    global _password, _token
 
     if not _password:
         _password = _ask_password()
@@ -46,11 +64,3 @@ def login():
 def _ask_password():
     return io.password(
         'Please enter the password for user {} on {}'.format(_username, config.host('url')))
-
-
-def set_(username, password=None, token=None, as_user=False):
-    global _username, _password, _token, _as_user
-    _username = username
-    _password = password
-    _token = token
-    _as_user = as_user
