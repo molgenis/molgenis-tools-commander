@@ -6,6 +6,7 @@ from mcmd.utils.utils import McmdError
 
 def request(func):
     """Request decorator."""
+
     def handle_request(*args, **kwargs):
         response = str()
         try:
@@ -15,10 +16,11 @@ def request(func):
         except requests.HTTPError as e:
             if not _token_is_valid(response):
                 auth.login()
-                handle_request(*args, **kwargs)
-            if _is_json(response):
+                return handle_request(*args, **kwargs)
+            elif _is_json(response):
                 _handle_json_error(response.json())
-            raise McmdError(str(e))
+            else:
+                raise McmdError(str(e))
         except requests.RequestException as e:
             raise McmdError(str(e))
 
