@@ -105,7 +105,7 @@ def _configure_username(values):
 
 
 def _configure_password(values):
-    password = mcmd.io.input_('Enter the password of the super user (Default: admin)')
+    password = mcmd.io.password('Enter the password of the super user (Leave empty to use command line authentication)')
     if len(password) > 0:
         values['host']['auth'][0]['password'] = password
 

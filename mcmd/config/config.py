@@ -16,7 +16,7 @@ _properties_file: Path = None
 
 
 def set_config(config, properties_file):
-    """The config module must nog have dependencies on other modules in the config package so the necessary information
+    """The config module must not have dependencies on other modules in the config package so the necessary information
     should be passed here."""
     global _config
     if _config:
@@ -82,10 +82,11 @@ def set_host(url):
     _persist()
 
 
-def add_host(url, name, pw):
+def add_host(url, name, pw=None):
     auth = {'url': url,
-            'username': name,
-            'password': pw}
+            'username': name}
+    if pw:
+        auth['password'] = pw
 
     _config['host']['auth'].append(auth)
     _persist()
