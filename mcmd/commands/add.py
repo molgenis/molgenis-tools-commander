@@ -4,10 +4,10 @@ from pathlib import Path
 
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, post, get, post_files
+from mcmd.client.molgenis_client import post, get, post_files
 from mcmd.io import highlight
 from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 # Store a reference to the parser so that we can show an error message for the custom validation rule
 p_add_theme = None
@@ -118,7 +118,6 @@ def arguments(subparsers):
 # Methods
 # =======
 
-@login
 def add_user(args):
     io.start('Adding user %s' % highlight(args.username))
 
@@ -138,13 +137,11 @@ def add_user(args):
           })
 
 
-@login
 def add_group(args):
     io.start('Adding group %s' % highlight(args.name))
     post(config.api('group'), {'name': args.name.lower(), 'label': args.name})
 
 
-@login
 def add_package(args):
     io.start('Adding package %s' % highlight(args.id))
 
@@ -157,7 +154,6 @@ def add_package(args):
     post(config.api('rest1') + 'sys_md_Package', data)
 
 
-@login
 def add_token(args):
     io.start('Adding token %s for user %s' % (highlight(args.token), highlight(args.user)))
 
@@ -173,7 +169,6 @@ def add_token(args):
     post(config.api('rest1') + 'sys_sec_Token', data)
 
 
-@login
 def add_theme(args):
     """
     add_theme adds a theme to the stylesheet table
@@ -205,7 +200,6 @@ def add_theme(args):
     post_files(files, api)
 
 
-@login
 def add_logo(args):
     """
     add_logo uploads a logo to add to the left top of the menu

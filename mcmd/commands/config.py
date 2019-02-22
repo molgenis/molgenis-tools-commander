@@ -1,7 +1,7 @@
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.io import highlight
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 
 # =========
@@ -58,15 +58,15 @@ def config_add_host(args):
 
 
 def _add_host():
-    url = io.input_("Enter the URL of the host", required=True)
+    url = io.input_("URL", required=True)
     if config.host_exists(url):
         raise McmdError("A host with URL {} already exists.".format(url))
 
-    username = io.input_("Enter the username of the superuser (Default: admin)")
-    password = io.password("Enter the password of the superuser (Default: admin)")
+    username = io.input_("Username (Default: admin)")
+    password = io.password("Password (Leave blank to use command line authentication)")
 
     username = 'admin' if len(username) == 0 else username
-    password = 'admin' if len(password) == 0 else password
+    password = None if len(password) == 0 else password
 
     io.start("Adding host {}".format(highlight(url)))
     config.add_host(url, username, password)

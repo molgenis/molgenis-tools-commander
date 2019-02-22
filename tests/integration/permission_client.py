@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 import molgenis.client
 import requests
 
-from mcmd.config import config as config
+from tests.integration.loader_mock import get_host
 from tests.integration.utils import entity_is_empty, random_name, run_commander
 
 
@@ -28,7 +28,7 @@ def _get_permissions(session, resource_type, principal_type, id_):
     # noinspection PyProtectedMember
     headers = session._get_token_header()
     headers.update({"Content-Type": "application/json"})
-    response = requests.get(urljoin(config.get('host', 'selected'),
+    response = requests.get(urljoin(get_host()['url'],
                                     'menu/admin/permissionmanager/{}/{}/{}'.format(resource_type, principal_type, id_)),
                             headers=headers)
     permissions = json.loads(response.content)['permissions']
@@ -43,6 +43,6 @@ def entity_is_row_level_secured(admin_session, entity_id):
     run_commander('add user {}'.format(name))
     run_commander('give {} read {}'.format(name, entity_id))
 
-    user_session = molgenis.client.Session(urljoin(config.get('host', 'selected'), '/api/'))
+    user_session = molgenis.client.Session(urljoin(get_host()['url'], '/api/'))
     user_session.login(name, name)
     return entity_is_empty(user_session, entity_id)

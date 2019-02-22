@@ -1,8 +1,9 @@
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, post, get
+from mcmd.client.molgenis_client import post, get
 from mcmd.io import highlight
-from mcmd.utils.utils import lower_kebab, McmdError, upper_snake
+from mcmd.utils.utils import lower_kebab, upper_snake
+from mcmd.utils.errors import McmdError
 
 
 # =========
@@ -26,7 +27,6 @@ def arguments(subparsers):
 # Methods
 # =======
 
-@login
 def make(args):
     io.start('Making user %s a member of role %s' % (highlight(args.user), highlight(args.role.upper())))
 
