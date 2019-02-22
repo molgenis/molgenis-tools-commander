@@ -3,7 +3,7 @@ import configparser
 from mcmd import history, io
 from mcmd.client import auth
 from mcmd.config import config
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 
 def execute(args, exit_on_error=True):

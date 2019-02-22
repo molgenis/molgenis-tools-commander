@@ -8,7 +8,7 @@ if a request came back with 401 'no read meatadata permission' (see _token_is_in
 import requests
 
 from mcmd.client import auth
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 
 def request(func):

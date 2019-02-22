@@ -7,7 +7,7 @@ from mcmd import io
 from mcmd.client.molgenis_client import post, get, post_files
 from mcmd.io import highlight
 from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 # Store a reference to the parser so that we can show an error message for the custom validation rule
 p_add_theme = None

@@ -10,7 +10,7 @@ from requests import HTTPError
 
 from mcmd import io
 from mcmd.config import config
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 _username = None
 _password = None

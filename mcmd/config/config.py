@@ -9,7 +9,7 @@ from urllib.parse import urljoin
 
 from ruamel.yaml import YAML
 
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 _config = None
 _properties_file: Path = None

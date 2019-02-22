@@ -3,7 +3,7 @@ from os import path
 from pathlib import Path
 
 from mcmd import io
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 
 def get_file_name_from_path(file_path):

@@ -8,7 +8,7 @@ from mcmd.client import auth
 from mcmd.client.request_handler import request
 from mcmd.config import config
 from mcmd.logging import get_logger
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 log = get_logger()
 

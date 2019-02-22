@@ -2,7 +2,7 @@ import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import ResourceType, post, ensure_resource_exists, one_resource_exists
 from mcmd.io import highlight
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 
 # =========
