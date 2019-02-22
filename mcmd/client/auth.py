@@ -63,4 +63,4 @@ def _login():
 
 def _ask_password():
     return io.password(
-        'Please enter the password for user {} on {}'.format(_username, config.host('url')))
+        'Please enter the password for user {} on {}'.format(_username, config.url()))

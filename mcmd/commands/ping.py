@@ -24,7 +24,7 @@ def arguments(subparsers):
 # noinspection PyUnusedLocal
 def ping(args):
     host = config.get('host', 'selected')
-    user = config.host('username')
+    user = config.username()
     status = Fore.LIGHTGREEN_EX + 'Online' + Fore.RESET
     try:
         version = get_version()

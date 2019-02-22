@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-import mcmd.config.config as config
+from tests.integration.loader_mock import get_host
 from tests.integration.utils import run_commander
 
 
@@ -13,8 +13,8 @@ def test_ping_online(capsys):
     captured = capsys.readouterr().out
     assert 'Online' in captured
     assert 'Version' in captured
-    assert config.get('host', 'selected') in captured
-    assert config.host('username') in captured
+    assert get_host()['url'] in captured
+    assert get_host()['username'] in captured
 
 
 @pytest.mark.integration
@@ -26,5 +26,5 @@ def test_ping_offline(api_mock, capsys):
     captured = capsys.readouterr().out
     assert 'Offline' in captured
     assert 'Version' not in captured
-    assert config.get('host', 'selected') in captured
-    assert config.host('username') in captured
+    assert get_host()['url'] in captured
+    assert get_host()['username'] in captured

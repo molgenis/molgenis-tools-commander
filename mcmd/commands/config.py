@@ -63,7 +63,7 @@ def _add_host():
         raise McmdError("A host with URL {} already exists.".format(url))
 
     username = io.input_("Username (Default: admin)")
-    password = io.password("Password (Leave empty to use command line authentication)")
+    password = io.password("Password (Leave blank to use command line authentication)")
 
     username = 'admin' if len(username) == 0 else username
     password = None if len(password) == 0 else password

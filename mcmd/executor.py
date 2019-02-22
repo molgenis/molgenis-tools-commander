@@ -28,7 +28,7 @@ def _set_authentication(args):
         else:
             auth.set_(username=args.as_user, password=args.as_user, as_user=True)
     else:
-        auth.set_(config.host('username'), config.host('password'), config.host('token'))
+        auth.set_(config.username(), config.password(), config.token())
 
 
 def _handle_error(message, write_to_history, arg_string, exit_on_error):
