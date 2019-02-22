@@ -112,6 +112,12 @@ def import_by_url(params):
                          params=params)
 
 
+@request
+def get_version():
+    return requests.get(urljoin(config.api('rest2'), 'version'),
+                        headers={'Content-Type': 'application/json'})
+
+
 def _get_default_headers():
     headers = {'Content-Type': 'application/json',
                'x-molgenis-token': auth.get_token()}
@@ -147,11 +153,6 @@ def principal_exists(principal_name, principal_type):
         return role_exists(principal_name)
     else:
         raise McmdError('Unknown principal type: %s' % principal_type)
-
-
-def get_version():
-    response = get(urljoin(config.api('rest2'), 'version'))
-    return response.json()['molgenisVersion']
 
 
 def user_exists(username):

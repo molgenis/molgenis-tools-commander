@@ -27,7 +27,7 @@ def ping(args):
     user = config.username()
     status = Fore.LIGHTGREEN_EX + 'Online' + Fore.RESET
     try:
-        version = get_version()
+        version = get_version().json()['molgenisVersion']
     except McmdError:
         status = Fore.LIGHTRED_EX + 'Offline' + Fore.RESET
         version = None
