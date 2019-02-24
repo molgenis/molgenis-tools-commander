@@ -1,6 +1,7 @@
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import ResourceType, post, ensure_resource_exists
+from mcmd.command import command
 from mcmd.io import highlight
 
 
@@ -28,6 +29,7 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@command
 def enable_rls(args):
     if not io.confirm('Are you sure you want to disable row level security on %s?' % args.entity):
         return

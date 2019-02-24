@@ -4,9 +4,7 @@ import sys
 
 from mcmd import io
 from mcmd.arguments import parse_args, print_help, is_intermediate_subcommand
-from mcmd.commands.run import run
 from mcmd.config.loader import load_config
-from mcmd.executor import execute
 from mcmd.io import set_debug
 from mcmd.logging import set_level
 
@@ -27,10 +25,7 @@ def start(argv):
     setattr(args, 'arg_string', ' '.join(argv[1:]))
     set_log_level(args)
 
-    if args.command == 'run':
-        run(args)
-    else:
-        execute(args)
+    args.func(args)
 
     return 0
 
