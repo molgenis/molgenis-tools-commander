@@ -1,5 +1,6 @@
 from mcmd import history as hist
 from mcmd import io
+from mcmd.command import command
 from mcmd.logging import get_logger
 
 
@@ -33,6 +34,7 @@ log = get_logger()
 # Methods
 # =======
 
+@command
 def history(args):
     if args.clear:
         io.start('Clearing history')

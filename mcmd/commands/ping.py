@@ -2,6 +2,7 @@ from colorama import Fore
 
 import mcmd.config.config as config
 from mcmd.client.molgenis_client import get_version
+from mcmd.command import command
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
 
@@ -22,6 +23,7 @@ def arguments(subparsers):
 # =======
 
 # noinspection PyUnusedLocal
+@command
 def ping(args):
     host = config.get('host', 'selected')
     user = config.username()

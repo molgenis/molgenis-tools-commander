@@ -7,6 +7,7 @@ principal doesn't exist, the program will terminate.
 from mcmd import io
 from mcmd.client.molgenis_client import grant, PrincipalType, principal_exists, \
     resource_exists, ResourceType, ensure_resource_exists, ensure_principal_exists
+from mcmd.command import command
 from mcmd.io import multi_choice, highlight
 from mcmd.utils.errors import McmdError
 
@@ -61,6 +62,7 @@ _PERMISSION_SYNONYMS = {'view': 'read',
 # Methods
 # =======
 
+@command
 def give(args):
     # Convert synonyms to correct permission type
     if args.permission in _PERMISSION_SYNONYMS:

@@ -10,6 +10,7 @@ from mcmd import io
 from mcmd.client import github_client as github
 from mcmd.client.molgenis_client import post_file, get, import_by_url
 from mcmd.config.home import get_issues_folder
+from mcmd.command import command
 from mcmd.io import highlight
 from mcmd.utils.file_helpers import scan_folders_for_files, select_path
 from mcmd.utils.errors import McmdError
@@ -56,6 +57,7 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@command
 def import_(args):
     _validate_args(args)
     _choose_import_method(args)

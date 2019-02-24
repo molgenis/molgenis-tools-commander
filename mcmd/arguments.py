@@ -3,6 +3,7 @@ import sys
 
 from mcmd.commands.add import arguments as add_args
 from mcmd.commands.config import arguments as config_args
+from mcmd.commands.delete import arguments as delete_args
 from mcmd.commands.disable import arguments as disable_args
 from mcmd.commands.enable import arguments as enable_args
 from mcmd.commands.give import arguments as give_args
@@ -12,7 +13,6 @@ from mcmd.commands.make import arguments as make_args
 from mcmd.commands.ping import arguments as ping_args
 from mcmd.commands.run import arguments as run_args
 from mcmd.commands.script import arguments as script_args
-from mcmd.commands.delete import arguments as delete_args
 from mcmd.commands.set import arguments as set_args
 
 _parser = None
@@ -75,10 +75,10 @@ def print_help():
 def is_intermediate_subcommand(args):
     """
     Some commands have nested subcommands. These intermediate commands are not executable and don't have a 'func'
-    property. (The 'run' command is the exception, it doesn't have a 'func' but is executable.)
+    property.
 
     For example:
     > mcmd add user
     Here, 'add' is the intermediate command.
     """
-    return not hasattr(args, 'func') and not args.command == 'run'
+    return not hasattr(args, 'func')

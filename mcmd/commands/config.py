@@ -1,5 +1,6 @@
 import mcmd.config.config as config
 from mcmd import io
+from mcmd.command import command
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
 
@@ -39,6 +40,7 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@command
 def config_set_host(args):
     if args.url:
         url = args.url
@@ -51,6 +53,7 @@ def config_set_host(args):
     config.set_host(url)
 
 
+@command
 # noinspection PyUnusedLocal
 def config_add_host(args):
     url = _add_host()
