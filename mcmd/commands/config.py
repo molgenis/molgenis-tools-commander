@@ -1,5 +1,6 @@
 import mcmd.config.config as config
 from mcmd import io
+from mcmd.arguments import arguments
 from mcmd.command import command
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
@@ -9,7 +10,7 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
-
+@arguments
 def arguments(subparsers):
     p_config = subparsers.add_parser('config',
                                      help='Change the configuration of Molgenis Commander')

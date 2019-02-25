@@ -1,5 +1,6 @@
 import mcmd.config.config as config
 from mcmd import io
+from mcmd.arguments import arguments
 from mcmd.client.molgenis_client import ResourceType, post, ensure_resource_exists
 from mcmd.command import command
 from mcmd.io import highlight
@@ -9,7 +10,7 @@ from mcmd.io import highlight
 # Arguments
 # =========
 
-
+@arguments
 def arguments(subparsers):
     p_disable = subparsers.add_parser('disable',
                                       help='Disable resources/functionality',

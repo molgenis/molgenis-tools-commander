@@ -1,21 +1,8 @@
 import argparse
 import sys
 
-from mcmd.commands.add import arguments as add_args
-from mcmd.commands.config import arguments as config_args
-from mcmd.commands.delete import arguments as delete_args
-from mcmd.commands.disable import arguments as disable_args
-from mcmd.commands.enable import arguments as enable_args
-from mcmd.commands.give import arguments as give_args
-from mcmd.commands.history import arguments as history_args
-from mcmd.commands.import_ import arguments as import_args
-from mcmd.commands.make import arguments as make_args
-from mcmd.commands.ping import arguments as ping_args
-from mcmd.commands.run import arguments as run_args
-from mcmd.commands.script import arguments as script_args
-from mcmd.commands.set import arguments as set_args
-
 _parser = None
+_REGISTERED_COMMANDS = list()
 
 
 def _get_parser():
@@ -24,6 +11,12 @@ def _get_parser():
         _parser = _create_parser()
 
     return _parser
+
+
+def arguments(func):
+    """Command argument registration decorator."""
+    _REGISTERED_COMMANDS.append(func)
+    return func
 
 
 def _create_parser():
@@ -45,20 +38,9 @@ def _create_parser():
                         action='count',
                         help='Print verbose messages')
 
-    # add sub commands
-    import_args(subparsers)
-    make_args(subparsers)
-    add_args(subparsers)
-    give_args(subparsers)
-    enable_args(subparsers)
-    disable_args(subparsers)
-    run_args(subparsers)
-    script_args(subparsers)
-    history_args(subparsers)
-    delete_args(subparsers)
-    ping_args(subparsers)
-    config_args(subparsers)
-    set_args(subparsers)
+    # add the parser arguments for each command
+    for set_arguments in _REGISTERED_COMMANDS:
+        set_arguments(subparsers)
 
     return parser
 
@@ -82,3 +64,7 @@ def is_intermediate_subcommand(args):
     Here, 'add' is the intermediate command.
     """
     return not hasattr(args, 'func')
+
+
+# noinspection PyUnresolvedReferences
+from mcmd.commands import *

@@ -4,6 +4,7 @@ from pathlib import Path
 
 import mcmd.config.config as config
 from mcmd import io
+from mcmd.arguments import arguments
 from mcmd.client.molgenis_client import post, get, post_files
 from mcmd.command import command
 from mcmd.io import highlight
@@ -18,7 +19,8 @@ p_add_theme = None
 # Arguments
 # =========
 
-def arguments(subparsers):
+@arguments
+def subparser(subparsers):
     global p_add_theme
     p_add = subparsers.add_parser('add',
                                   help='Add users and groups',

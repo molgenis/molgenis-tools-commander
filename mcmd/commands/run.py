@@ -1,13 +1,15 @@
 from mcmd import arguments as arg_parser
+from mcmd.arguments import arguments
 from mcmd.config.home import get_scripts_folder
 from mcmd.command import command
+from mcmd.utils.errors import McmdError
 
 # =========
 # Arguments
 # =========
-from mcmd.utils.errors import McmdError
 
 
+@arguments
 def arguments(subparsers):
     p_run = subparsers.add_parser('run',
                                   help='Run an mcmd script')

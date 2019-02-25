@@ -1,4 +1,5 @@
 from mcmd import history, io
+from mcmd.arguments import arguments
 from mcmd.config.home import get_scripts_folder
 from mcmd.command import command
 from mcmd.io import confirm, highlight
@@ -10,6 +11,7 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
+@arguments
 def arguments(subparsers):
     p_script = subparsers.add_parser('script',
                                      help="Do actions involving scripts.")
