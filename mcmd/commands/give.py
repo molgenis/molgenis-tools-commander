@@ -18,7 +18,7 @@ from mcmd.utils.errors import McmdError
 # =========
 
 @arguments('give')
-def arguments(subparsers):
+def add_arguments(subparsers):
     p_give = subparsers.add_parser('give',
                                    help='Give permissions on resources to roles or users.')
     p_give.set_defaults(func=give,

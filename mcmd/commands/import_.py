@@ -25,7 +25,7 @@ _p_import = None
 
 
 @arguments('import')
-def arguments(subparsers):
+def add_arguments(subparsers):
     global _p_import
     _p_import = subparsers.add_parser('import',
                                       help='Import a file')

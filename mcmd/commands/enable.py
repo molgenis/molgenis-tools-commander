@@ -12,7 +12,7 @@ from mcmd.utils.errors import McmdError
 # =========
 
 @arguments('enable')
-def arguments(subparsers):
+def add_arguments(subparsers):
     p_enable = subparsers.add_parser('enable',
                                      help='Enable resources/functionality',
                                      description="Run 'mcmd enable rls -h' to view the help for those sub-commands")

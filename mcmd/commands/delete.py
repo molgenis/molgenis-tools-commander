@@ -14,7 +14,7 @@ from mcmd.io import highlight
 # =========
 
 @arguments('delete')
-def arguments(subparsers):
+def add_arguments(subparsers):
     p_delete = subparsers.add_parser('delete',
                                      help='Delete entities or data',
                                      description="Run 'mcmd delete entity -h' or 'mcmd delete data -h' to view the help"

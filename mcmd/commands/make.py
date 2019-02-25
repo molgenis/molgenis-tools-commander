@@ -13,7 +13,7 @@ from mcmd.utils.utils import lower_kebab, upper_snake
 # =========
 
 @arguments('make')
-def arguments(subparsers):
+def add_arguments(subparsers):
     p_make = subparsers.add_parser('make',
                                    help='Make a user member of a role')
     p_make.set_defaults(func=make,

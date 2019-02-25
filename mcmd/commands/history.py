@@ -10,7 +10,7 @@ from mcmd.logging import get_logger
 # =========
 
 @arguments('history')
-def arguments(subparsers):
+def add_arguments(subparsers):
     p_history = subparsers.add_parser('history',
                                       help="Shows the history of commands that were run. Commands from scripts are"
                                            " also included.")

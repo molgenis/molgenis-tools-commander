@@ -12,7 +12,7 @@ from mcmd.utils.errors import McmdError
 # =========
 
 @arguments('script')
-def arguments(subparsers):
+def add_arguments(subparsers):
     p_script = subparsers.add_parser('script',
                                      help="Do actions involving scripts.")
     p_script.set_defaults(func=script,

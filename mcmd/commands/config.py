@@ -11,7 +11,7 @@ from mcmd.utils.errors import McmdError
 # =========
 
 @arguments('config')
-def arguments(subparsers):
+def add_arguments(subparsers):
     p_config = subparsers.add_parser('config',
                                      help='Change the configuration of Molgenis Commander')
     p_config_subparsers = p_config.add_subparsers(dest="type")

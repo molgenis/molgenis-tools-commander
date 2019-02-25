@@ -11,7 +11,7 @@ from mcmd.io import highlight
 # =========
 
 @arguments('disable')
-def arguments(subparsers):
+def add_arguments(subparsers):
     p_disable = subparsers.add_parser('disable',
                                       help='Disable resources/functionality',
                                       description="Run 'mcmd disable rls -h' to view the help for those sub-commands")
