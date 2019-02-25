@@ -13,7 +13,7 @@ from mcmd.io import highlight
 # Arguments
 # =========
 
-@arguments
+@arguments('delete')
 def arguments(subparsers):
     p_delete = subparsers.add_parser('delete',
                                      help='Delete entities or data',

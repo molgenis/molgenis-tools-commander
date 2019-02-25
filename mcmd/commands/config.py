@@ -10,7 +10,7 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
-@arguments
+@arguments('config')
 def arguments(subparsers):
     p_config = subparsers.add_parser('config',
                                      help='Change the configuration of Molgenis Commander')

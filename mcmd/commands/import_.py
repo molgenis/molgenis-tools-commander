@@ -24,7 +24,7 @@ from mcmd.utils.file_helpers import scan_folders_for_files, select_path
 _p_import = None
 
 
-@arguments
+@arguments('import')
 def arguments(subparsers):
     global _p_import
     _p_import = subparsers.add_parser('import',

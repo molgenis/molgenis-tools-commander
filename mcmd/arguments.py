@@ -2,7 +2,8 @@ import argparse
 import sys
 
 _parser = None
-_REGISTERED_COMMANDS = list()
+# _REGISTERED_COMMANDS = list()
+_REGISTERED_COMMANDS = dict()
 
 
 def _get_parser():
@@ -13,10 +14,14 @@ def _get_parser():
     return _parser
 
 
-def arguments(func):
+def arguments(command_name):
     """Command argument registration decorator."""
-    _REGISTERED_COMMANDS.append(func)
-    return func
+
+    def decorator(func):
+        _REGISTERED_COMMANDS[command_name] = func
+        return func
+
+    return decorator
 
 
 def _create_parser():
@@ -39,8 +44,8 @@ def _create_parser():
                         help='Print verbose messages')
 
     # add the parser arguments for each command
-    for set_arguments in _REGISTERED_COMMANDS:
-        set_arguments(subparsers)
+    for command_name in sorted(_REGISTERED_COMMANDS.keys()):
+        _REGISTERED_COMMANDS[command_name](subparsers)
 
     return parser
 

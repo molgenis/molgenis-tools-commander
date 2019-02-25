@@ -12,7 +12,7 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
-@arguments
+@arguments('ping')
 def arguments(subparsers):
     p_make = subparsers.add_parser('ping',
                                    help='Pings the selected host')

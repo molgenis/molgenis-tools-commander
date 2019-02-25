@@ -10,7 +10,7 @@ from mcmd.io import highlight
 # Arguments
 # =========
 
-@arguments
+@arguments('disable')
 def arguments(subparsers):
     p_disable = subparsers.add_parser('disable',
                                       help='Disable resources/functionality',

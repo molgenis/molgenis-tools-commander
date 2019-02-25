@@ -19,8 +19,8 @@ p_add_theme = None
 # Arguments
 # =========
 
-@arguments
-def subparser(subparsers):
+@arguments('add')
+def arguments(subparsers):
     global p_add_theme
     p_add = subparsers.add_parser('add',
                                   help='Add users and groups',

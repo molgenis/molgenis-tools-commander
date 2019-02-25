@@ -11,7 +11,7 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
-@arguments
+@arguments('enable')
 def arguments(subparsers):
     p_enable = subparsers.add_parser('enable',
                                      help='Enable resources/functionality',

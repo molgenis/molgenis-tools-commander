@@ -16,7 +16,7 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
-@arguments
+@arguments('set')
 def arguments(subparsers):
     p_set = subparsers.add_parser('set',
                                   help='Alter settings',
