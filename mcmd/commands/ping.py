@@ -1,7 +1,7 @@
 from colorama import Fore
 
 import mcmd.config.config as config
-from mcmd.arguments import arguments
+from mcmd.commands._registry import arguments
 from mcmd.client.molgenis_client import get_version
 from mcmd.command import command
 from mcmd.io import highlight

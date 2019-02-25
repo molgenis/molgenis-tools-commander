@@ -1,9 +1,11 @@
 import argparse
 import sys
 
+# noinspection PyUnresolvedReferences
+from mcmd.commands import *
+from mcmd.commands import get_argument_adders
+
 _parser = None
-# _REGISTERED_COMMANDS = list()
-_REGISTERED_COMMANDS = dict()
 
 
 def _get_parser():
@@ -12,16 +14,6 @@ def _get_parser():
         _parser = _create_parser()
 
     return _parser
-
-
-def arguments(command_name):
-    """Command argument registration decorator."""
-
-    def decorator(func):
-        _REGISTERED_COMMANDS[command_name] = func
-        return func
-
-    return decorator
 
 
 def _create_parser():
@@ -43,9 +35,9 @@ def _create_parser():
                         action='count',
                         help='Print verbose messages')
 
-    # add the parser arguments for each command
-    for command_name in sorted(_REGISTERED_COMMANDS.keys()):
-        _REGISTERED_COMMANDS[command_name](subparsers)
+    # get and call each command's argument adder
+    for argument_adder in get_argument_adders():
+        argument_adder(subparsers)
 
     return parser
 
@@ -69,7 +61,3 @@ def is_intermediate_subcommand(args):
     Here, 'add' is the intermediate command.
     """
     return not hasattr(args, 'func')
-
-
-# noinspection PyUnresolvedReferences
-from mcmd.commands import *

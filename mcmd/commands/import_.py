@@ -7,7 +7,7 @@ import requests
 
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.arguments import arguments
+from mcmd.commands._registry import arguments
 from mcmd.client import github_client as github
 from mcmd.client.molgenis_client import post_file, get, import_by_url
 from mcmd.command import command

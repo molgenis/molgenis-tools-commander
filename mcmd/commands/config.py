@@ -1,6 +1,6 @@
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.arguments import arguments
+from mcmd.commands._registry import arguments
 from mcmd.command import command
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError

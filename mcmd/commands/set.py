@@ -5,7 +5,7 @@ import json
 
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.arguments import arguments
+from mcmd.commands._registry import arguments
 from mcmd.client.molgenis_client import get, put
 from mcmd.command import command
 from mcmd.io import highlight

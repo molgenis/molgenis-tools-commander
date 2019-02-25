@@ -1,5 +1,5 @@
 from mcmd import history, io
-from mcmd.arguments import arguments
+from mcmd.commands._registry import arguments
 from mcmd.command import command
 from mcmd.config.home import get_scripts_folder
 from mcmd.io import confirm, highlight
