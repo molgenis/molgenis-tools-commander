@@ -2,7 +2,7 @@ import pytest
 from mock import patch
 
 from tests.integration.loader_mock import get_host
-from tests.integration.utils import run_commander, random_name
+from tests.integration.utils import run_commander, random_name, entity_type_exists
 
 
 @pytest.mark.integration
@@ -75,6 +75,22 @@ def test_login_token_invalid(set_token_mock, host_mock, session):
     assert set_token_mock.called
     settings = session.get('sys_set_app')[0]
     assert settings['title'] == 'login4'
+
+
+@pytest.mark.integration
+@patch('mcmd.config.config._get_selected_host_auth')
+@patch('mcmd.config.config.set_token')
+def test_login_token_invalid_login_page(set_token_mock, host_mock, session, package):
+    test_host = get_host()
+    test_host['token'] = 'nonexistingtoken'
+    host_mock.return_value = test_host
+
+    # the import endpoint returns an html login page when the token is invalid
+    run_commander('import testAutoId_unpackaged --in {}'.format(package))
+
+    # a new token should've been set
+    assert set_token_mock.called
+    assert entity_type_exists(session, '{}_testAutoId'.format(package))
 
 
 @pytest.mark.integration
