@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='molgenis-commander',
-    version='1.1.1',
+    version='1.1.2',
     packages=['mcmd', 'mcmd.client', 'mcmd.commands', 'mcmd.config', 'mcmd.utils'],
     description='A command line interface for Molgenis',
     url='https://github.com/molgenis/molgenis-tools-commander',
