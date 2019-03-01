@@ -1,6 +1,6 @@
 from mcmd import argparser as arg_parser
-from mcmd.commands._registry import arguments
 from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.config.home import get_scripts_folder
 from mcmd.utils.errors import McmdError
 

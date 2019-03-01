@@ -1,6 +1,8 @@
 import argparse
 import sys
 
+import pkg_resources
+
 # noinspection PyUnresolvedReferences
 from mcmd.commands import *
 from mcmd.commands import get_argument_adders
@@ -34,6 +36,9 @@ def _create_parser():
     parser.add_argument('--verbose', '-v',
                         action='count',
                         help='Print verbose messages')
+    parser.add_argument('--version',
+                        action='version',
+                        version='Molgenis Commander {version}'.format(version=_get_version()))
 
     # get and call each command's argument adder
     for argument_adder in get_argument_adders():
@@ -43,15 +48,32 @@ def _create_parser():
 
 
 def parse_args(arg_list):
-    return _get_parser().parse_args(arg_list)
+    args = _get_parser().parse_args(arg_list)
+    _show_help(args, arg_list)
+    return args
 
 
-def print_help():
+def _show_help(args, arg_list):
+    if not args.command:
+        _print_help()
+        exit(1)
+    elif _is_intermediate_subcommand(args):
+        # we can't access the subparser from here, so we parse the arguments again with the --help flag
+        arg_list.append('--help')
+        parse_args(arg_list)
+        exit(1)
+
+
+def _print_help():
     _get_parser().print_help(sys.stderr)
     exit(1)
 
 
-def is_intermediate_subcommand(args):
+def _get_version():
+    return pkg_resources.get_distribution('molgenis-commander').version
+
+
+def _is_intermediate_subcommand(args):
     """
     Some commands have nested subcommands. These intermediate commands are not executable and don't have a 'func'
     property.

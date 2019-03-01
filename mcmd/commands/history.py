@@ -1,7 +1,7 @@
 from mcmd import history as hist
 from mcmd import io
-from mcmd.commands._registry import arguments
 from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.logging import get_logger
 
 
