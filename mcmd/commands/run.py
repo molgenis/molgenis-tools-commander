@@ -7,7 +7,6 @@ from mcmd.commands._registry import arguments
 from mcmd.config.home import get_scripts_folder
 from mcmd.io import bold, dim
 from mcmd.logging import get_logger
-from mcmd.utils.kbhit import KBHit
 
 
 # =========
@@ -82,7 +81,7 @@ def _do_script_function(line):
 def _wait(message):
     text = '{}: {}   {}'.format(bold('Waiting for user'), message, dim('(Press enter to continue)'))
     io.start(text)
-    _wait_for_enter()
+    io.wait_for_enter()
     io.succeed()
 
 
@@ -123,12 +122,3 @@ def _is_empty(line):
 
 def _is_script_function(line):
     return line.startswith('$')
-
-
-def _wait_for_enter():
-    kb = KBHit()
-    while True:
-        if kb.kbhit():
-            c = kb.getch()
-            if c == '\n':  # Enter
-                break

@@ -1,13 +1,10 @@
-import sys
-import termios
-import tty
-
 from PyInquirer import prompt
 from colorama import Fore, Style
 from halo import Halo
 
 import mcmd.config.config as config
 from mcmd.logging import get_logger
+from mcmd.utils.kbhit import KBHit
 
 log = get_logger()
 
@@ -153,6 +150,16 @@ def confirm(message):
     return _handle_question(message)
 
 
+def wait_for_enter():
+    """Waits until the user presses enter. Non-blocking: the program can still be interrupted and closed."""
+    kb = KBHit()
+    while True:
+        if kb.kbhit():
+            c = kb.getch()
+            if c == '\n':  # Enter
+                break
+
+
 def _new_spinner():
     return Halo(spinner='dots')
 
@@ -187,14 +194,3 @@ def _handle_question(question):
         if spinner:
             spinner.start()
         return answer['answer']
-
-
-def input_single_character():
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    try:
-        tty.setraw(fd)
-        ch = sys.stdin.read(1)  # This number represents the length
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
