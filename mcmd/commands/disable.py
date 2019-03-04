@@ -2,6 +2,7 @@ import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import ResourceType, post, ensure_resource_exists
 from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.io import highlight
 
 
@@ -9,8 +10,8 @@ from mcmd.io import highlight
 # Arguments
 # =========
 
-
-def arguments(subparsers):
+@arguments('disable')
+def add_arguments(subparsers):
     p_disable = subparsers.add_parser('disable',
                                       help='Disable resources/functionality',
                                       description="Run 'mcmd disable rls -h' to view the help for those sub-commands")

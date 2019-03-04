@@ -5,6 +5,7 @@ principal doesn't exist, the program will terminate.
 """
 
 from mcmd import io
+from mcmd.commands._registry import arguments
 from mcmd.client.molgenis_client import grant, PrincipalType, principal_exists, \
     resource_exists, ResourceType, ensure_resource_exists, ensure_principal_exists
 from mcmd.command import command
@@ -16,7 +17,8 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
-def arguments(subparsers):
+@arguments('give')
+def add_arguments(subparsers):
     p_give = subparsers.add_parser('give',
                                    help='Give permissions on resources to roles or users.')
     p_give.set_defaults(func=give,

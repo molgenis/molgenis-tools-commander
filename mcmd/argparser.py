@@ -3,19 +3,9 @@ import sys
 
 import pkg_resources
 
-from mcmd.commands.add import arguments as add_args
-from mcmd.commands.config import arguments as config_args
-from mcmd.commands.delete import arguments as delete_args
-from mcmd.commands.disable import arguments as disable_args
-from mcmd.commands.enable import arguments as enable_args
-from mcmd.commands.give import arguments as give_args
-from mcmd.commands.history import arguments as history_args
-from mcmd.commands.import_ import arguments as import_args
-from mcmd.commands.make import arguments as make_args
-from mcmd.commands.ping import arguments as ping_args
-from mcmd.commands.run import arguments as run_args
-from mcmd.commands.script import arguments as script_args
-from mcmd.commands.set import arguments as set_args
+# noinspection PyUnresolvedReferences
+from mcmd.commands import *
+from mcmd.commands import get_argument_adders
 
 _parser = None
 
@@ -50,20 +40,9 @@ def _create_parser():
                         action='version',
                         version='Molgenis Commander {version}'.format(version=_get_version()))
 
-    # add sub commands
-    import_args(subparsers)
-    make_args(subparsers)
-    add_args(subparsers)
-    give_args(subparsers)
-    enable_args(subparsers)
-    disable_args(subparsers)
-    run_args(subparsers)
-    script_args(subparsers)
-    history_args(subparsers)
-    delete_args(subparsers)
-    ping_args(subparsers)
-    config_args(subparsers)
-    set_args(subparsers)
+    # get and call each command's argument adder
+    for argument_adder in get_argument_adders():
+        argument_adder(subparsers)
 
     return parser
 

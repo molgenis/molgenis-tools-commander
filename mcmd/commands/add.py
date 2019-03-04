@@ -6,6 +6,7 @@ import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import post, get, post_files
 from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
 from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
@@ -18,7 +19,8 @@ p_add_theme = None
 # Arguments
 # =========
 
-def arguments(subparsers):
+@arguments('add')
+def add_arguments(subparsers):
     global p_add_theme
     p_add = subparsers.add_parser('add',
                                   help='Add users and groups',

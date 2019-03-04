@@ -7,13 +7,15 @@ import requests
 
 import mcmd.config.config as config
 from mcmd import io
+from mcmd.commands._registry import arguments
 from mcmd.client import github_client as github
 from mcmd.client.molgenis_client import post_file, get, import_by_url
+from mcmd.command import command
 from mcmd.config.home import get_issues_folder
 from mcmd.command import command
 from mcmd.io import highlight
-from mcmd.utils.file_helpers import scan_folders_for_files, select_path
 from mcmd.utils.errors import McmdError
+from mcmd.utils.file_helpers import scan_folders_for_files, select_path
 
 # =========
 # Arguments
@@ -23,7 +25,8 @@ from mcmd.utils.errors import McmdError
 _p_import = None
 
 
-def arguments(subparsers):
+@arguments('import')
+def add_arguments(subparsers):
     global _p_import
     _p_import = subparsers.add_parser('import',
                                       help='Import a file')

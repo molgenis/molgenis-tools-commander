@@ -7,6 +7,7 @@ import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import get, put
 from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
 
@@ -15,7 +16,8 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
-def arguments(subparsers):
+@arguments('set')
+def add_arguments(subparsers):
     p_set = subparsers.add_parser('set',
                                   help='Alter settings',
                                   description="Run 'mcmd set -h' to view the help for this sub-command")

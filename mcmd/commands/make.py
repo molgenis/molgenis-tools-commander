@@ -1,17 +1,19 @@
 import mcmd.config.config as config
 from mcmd import io
+from mcmd.commands._registry import arguments
 from mcmd.client.molgenis_client import post, get
 from mcmd.command import command
 from mcmd.io import highlight
-from mcmd.utils.utils import lower_kebab, upper_snake
 from mcmd.utils.errors import McmdError
+from mcmd.utils.utils import lower_kebab, upper_snake
 
 
 # =========
 # Arguments
 # =========
 
-def arguments(subparsers):
+@arguments('make')
+def add_arguments(subparsers):
     p_make = subparsers.add_parser('make',
                                    help='Make a user member of a role')
     p_make.set_defaults(func=make,

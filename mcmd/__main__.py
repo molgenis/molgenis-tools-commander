@@ -3,7 +3,7 @@ import signal
 import sys
 
 from mcmd import io
-from mcmd.arguments import parse_args
+from mcmd.argparser import parse_args
 from mcmd.config.loader import load_config
 from mcmd.io import set_debug
 from mcmd.logging import set_level

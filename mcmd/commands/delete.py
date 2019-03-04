@@ -3,6 +3,7 @@ Deletes an entityType or data from an entityType.
 """
 import mcmd.config.config as config
 from mcmd import io
+from mcmd.commands._registry import arguments
 from mcmd.client.molgenis_client import delete, delete_data, ensure_resource_exists, ResourceType
 from mcmd.command import command
 from mcmd.io import highlight
@@ -12,7 +13,8 @@ from mcmd.io import highlight
 # Arguments
 # =========
 
-def arguments(subparsers):
+@arguments('delete')
+def add_arguments(subparsers):
     p_delete = subparsers.add_parser('delete',
                                      help='Delete entities or data',
                                      description="Run 'mcmd delete entity -h' or 'mcmd delete data -h' to view the help"

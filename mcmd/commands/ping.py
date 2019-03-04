@@ -1,6 +1,7 @@
 from colorama import Fore
 
 import mcmd.config.config as config
+from mcmd.commands._registry import arguments
 from mcmd.client.molgenis_client import get_version
 from mcmd.command import command
 from mcmd.io import highlight
@@ -11,7 +12,8 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
-def arguments(subparsers):
+@arguments('ping')
+def add_arguments(subparsers):
     p_make = subparsers.add_parser('ping',
                                    help='Pings the selected host')
     p_make.set_defaults(func=ping,
