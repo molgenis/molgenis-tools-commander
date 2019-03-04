@@ -6,8 +6,8 @@ import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import post, get, post_files
 from mcmd.io import highlight
-from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
 from mcmd.utils.errors import McmdError
+from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
 
 # Store a reference to the parser so that we can show an error message for the custom validation rule
 p_add_theme = None
@@ -47,7 +47,8 @@ def arguments(subparsers):
     p_add_user.add_argument('--with-email', '-e',
                             metavar='EMAIL',
                             type=str,
-                            help="The user's e-mail address")
+                            help="The user's e-mail address",
+                            from_version='7.0.0')
     p_add_user.add_argument('--is-inactive', '-a',
                             action='store_true',
                             help="Make user inactive")
