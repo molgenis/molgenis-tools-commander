@@ -108,7 +108,7 @@ def _read_script(script):
             lines = [line.rstrip('\n') for line in file]
     except OSError as e:
         io.error('Error reading script: {}'.format(str(e)))
-    exit(1)
+        exit(1)
     return lines
 
 
