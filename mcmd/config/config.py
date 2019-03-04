@@ -7,57 +7,81 @@ from functools import reduce
 from pathlib import Path
 from urllib.parse import urljoin
 
-from mcmd.utils.utils import McmdError
 from ruamel.yaml import YAML
 
-from mcmd.config.home import get_properties_file
+from mcmd.utils.errors import ConfigError
 
 _config = None
+_properties_file: Path = None
 
 
-def set_config(config):
+def set_config(config, properties_file):
+    """The config module must not have dependencies on other modules in the config package so the necessary information
+    should be passed here."""
     global _config
     if _config:
         raise ValueError('config already set')
-
     _config = config
+
+    global _properties_file
+    if _properties_file:
+        raise ValueError('properties file already set')
+    _properties_file = properties_file
+
     _persist()
 
 
 def _persist():
     """Writes the config to disk."""
-    YAML().dump(_config, get_properties_file())
+    YAML().dump(_config, _properties_file)
 
 
 def get(*args):
-    prop = _config
-    for at in list(args):
-        prop = prop[at]
-    return prop
+    try:
+        prop = _config
+        for at in list(args):
+            prop = prop[at]
+        return prop
+    except KeyError as e:
+        raise ConfigError('missing property: {}'.format(_key_error_string(e)))
+
+
+def url():
+    try:
+        return _get_selected_host_auth()['url']
+    except KeyError as e:
+        raise ConfigError('missing property: {}'.format(_key_error_string(e)))
 
 
 def username():
-    return _get_selected_host_auth()['username']
+    try:
+        return _get_selected_host_auth()['username']
+    except KeyError as e:
+        raise ConfigError('missing property: {}'.format(_key_error_string(e)))
+
+
+def token():
+    return _get_selected_host_auth().get('token', None)
 
 
 def password():
-    return _get_selected_host_auth()['password']
+    return _get_selected_host_auth().get('password', None)
 
 
 def git_paths():
-    root = _config['git']['root']
+    root = get('git', 'root')
     if root is None or len(root) == 0:
         return []
     else:
         root_path = Path(root)
-        paths = _config['git']['paths']
+        paths = get('git', 'paths')
         return [root_path.joinpath(path) for path in paths]
 
 
 def api(endpoint):
     """Returns the combination of the host's url and the API endpoint."""
-    url = _config['host']['selected']
-    return urljoin(url, get('api', endpoint))
+    url_ = get('host', 'selected')
+    return urljoin(url_, get('api', endpoint))
 
 
 def has_option(*args):
@@ -68,34 +92,47 @@ def has_option(*args):
         return False
 
 
-def set_host(url):
-    hosts = _config['host']['auth']
-    if url in [host['url'] for host in hosts]:
-        _config['host']['selected'] = url
+def set_host(url_):
+    hosts = get('host', 'auth')
+    if url_ in [host_['url'] for host_ in hosts]:
+        _config['host']['selected'] = url_
     else:
-        raise McmdError("There is no host with url {}".format(url))
+        raise ConfigError("There is no host with url {}".format(url_))
 
     _persist()
 
 
-def add_host(url, name, pw):
-    auth = {'url': url,
-            'username': name,
-            'password': pw}
+def add_host(url_, name, pw=None):
+    auth = {'url': url_,
+            'username': name}
+    if pw:
+        auth['password'] = pw
 
     _config['host']['auth'].append(auth)
     _persist()
 
 
-def host_exists(url):
-    return url in [auth['url'] for auth in _config['host']['auth']]
+def host_exists(url_):
+    return url_ in [auth['url'] for auth in _config['host']['auth']]
 
 
 def _get_selected_host_auth():
-    selected = _config['host']['selected']
-    hosts = _config['host']['auth']
-    for host in hosts:
-        if host['url'] == selected:
-            return host
+    selected = get('host', 'selected')
+    hosts = get('host', 'auth')
+    for host_ in hosts:
+        if host_['url'] == selected:
+            return host_
 
-    raise McmdError("The selected host doesn't exist.")
+    raise ConfigError("The selected host doesn't exist.")
+
+
+def set_token(token_):
+    if token_ is None:
+        _get_selected_host_auth().pop('token', None)
+    else:
+        _get_selected_host_auth()['token'] = token_
+    _persist()
+
+
+def _key_error_string(error):
+    return str(error).strip("'")

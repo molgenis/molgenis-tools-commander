@@ -1,16 +1,19 @@
 from colorama import Fore
 
 import mcmd.config.config as config
+from mcmd.commands._registry import arguments
 from mcmd.client.molgenis_client import get_version
+from mcmd.command import command
 from mcmd.io import highlight
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 
 # =========
 # Arguments
 # =========
 
-def arguments(subparsers):
+@arguments('ping')
+def add_arguments(subparsers):
     p_make = subparsers.add_parser('ping',
                                    help='Pings the selected host')
     p_make.set_defaults(func=ping,
@@ -22,12 +25,13 @@ def arguments(subparsers):
 # =======
 
 # noinspection PyUnusedLocal
+@command
 def ping(args):
     host = config.get('host', 'selected')
     user = config.username()
     status = Fore.LIGHTGREEN_EX + 'Online' + Fore.RESET
     try:
-        version = get_version()
+        version = get_version().json()['molgenisVersion']
     except McmdError:
         status = Fore.LIGHTRED_EX + 'Offline' + Fore.RESET
         version = None

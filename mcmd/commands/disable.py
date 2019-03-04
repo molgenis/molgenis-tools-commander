@@ -1,6 +1,8 @@
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import login, ResourceType, post, ensure_resource_exists
+from mcmd.client.molgenis_client import ResourceType, post, ensure_resource_exists
+from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.io import highlight
 
 
@@ -8,8 +10,8 @@ from mcmd.io import highlight
 # Arguments
 # =========
 
-
-def arguments(subparsers):
+@arguments('disable')
+def add_arguments(subparsers):
     p_disable = subparsers.add_parser('disable',
                                       help='Disable resources/functionality',
                                       description="Run 'mcmd disable rls -h' to view the help for those sub-commands")
@@ -17,7 +19,7 @@ def arguments(subparsers):
 
     p_disable_rls = p_disable_subparsers.add_parser('rls',
                                                     help='Disables row level security on an entity type')
-    p_disable_rls.set_defaults(func=enable_rls,
+    p_disable_rls.set_defaults(func=disable_rls,
                                write_to_history=True)
     p_disable_rls.add_argument('entity',
                                type=str,
@@ -28,8 +30,8 @@ def arguments(subparsers):
 # Methods
 # =======
 
-@login
-def enable_rls(args):
+@command
+def disable_rls(args):
     if not io.confirm('Are you sure you want to disable row level security on %s?' % args.entity):
         return
 

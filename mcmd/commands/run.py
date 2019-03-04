@@ -1,21 +1,26 @@
 import shlex
 
-from mcmd import arguments as arg_parser
+from mcmd import argparser as arg_parser
 from mcmd import io
+from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.config.home import get_scripts_folder
-from mcmd.executor import execute
 from mcmd.io import bold, dim
 from mcmd.logging import get_logger
-# =========
-# Arguments
-# =========
 from mcmd.utils.kbhit import KBHit
 
 
-def arguments(subparsers):
+# =========
+# Arguments
+# =========
+
+
+@arguments('run')
+def add_arguments(subparsers):
     p_run = subparsers.add_parser('run',
                                   help='Run an mcmd script')
-    p_run.set_defaults(write_to_history=False)
+    p_run.set_defaults(func=run,
+                       write_to_history=False)
     p_run.add_argument('script',
                        type=str,
                        help='The script to run')
@@ -38,6 +43,7 @@ log = get_logger()
 # Methods
 # =======
 
+@command
 def run(args):
     script = get_scripts_folder().joinpath(args.script)
     lines = _read_script(script)
@@ -84,7 +90,7 @@ def _run_command(exit_on_error, line):
     sub_args = arg_parser.parse_args(shlex.split(line))
     setattr(sub_args, 'arg_string', line)
     _fail_on_run_command(exit_on_error, sub_args)
-    execute(sub_args, exit_on_error)
+    sub_args.func(sub_args, exit_on_error)
 
 
 def _fail_on_run_command(exit_on_error, sub_args):
@@ -103,7 +109,7 @@ def _read_script(script):
             lines = [line.rstrip('\n') for line in file]
     except OSError as e:
         io.error('Error reading script: {}'.format(str(e)))
-        exit(1)
+    exit(1)
     return lines
 
 

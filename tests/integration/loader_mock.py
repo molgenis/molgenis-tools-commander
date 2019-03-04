@@ -2,7 +2,7 @@ from pathlib import Path
 
 from ruamel.yaml import YAML
 
-import mcmd.config.config as config
+from mcmd.config import config
 
 _TEST_CONFIG = """
 git:
@@ -37,6 +37,10 @@ api:
   set_theme: plugin/thememanager/set-bootstrap-theme
 """
 
+_url: str = None
+_username: str = None
+_password: str = None
+
 
 def load_config():
     yaml = YAML()
@@ -56,9 +60,22 @@ def get_files_folder():
     return Path(__file__).parent.joinpath('files').absolute()
 
 
+def get_host():
+    return {
+        'url': _url,
+        'username': _username,
+        'password': _password
+    }
+
+
 def mock_config(url, username, password):
     git_root = get_files_folder().joinpath('git_root')
     git_folder = 'git_folder'
+
+    global _url, _username, _password
+    _url = url
+    _username = username
+    _password = password
 
     global _TEST_CONFIG
     _TEST_CONFIG = _TEST_CONFIG.format(url=url,

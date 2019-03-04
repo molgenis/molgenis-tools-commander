@@ -129,7 +129,7 @@ def input_(message, required=False):
 
 def password(message):
     if spinner:
-        spinner.stop_and_persist()
+        spinner.warn()
 
     message = {
         'type': 'password',

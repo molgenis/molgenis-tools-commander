@@ -1,15 +1,17 @@
 import mcmd.config.config as config
 from mcmd import io
+from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.io import highlight
-from mcmd.utils.utils import McmdError
+from mcmd.utils.errors import McmdError
 
 
 # =========
 # Arguments
 # =========
 
-
-def arguments(subparsers):
+@arguments('config')
+def add_arguments(subparsers):
     p_config = subparsers.add_parser('config',
                                      help='Change the configuration of Molgenis Commander')
     p_config_subparsers = p_config.add_subparsers(dest="type")
@@ -39,6 +41,7 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@command
 def config_set_host(args):
     if args.url:
         url = args.url
@@ -51,6 +54,7 @@ def config_set_host(args):
     config.set_host(url)
 
 
+@command
 # noinspection PyUnusedLocal
 def config_add_host(args):
     url = _add_host()
@@ -58,15 +62,15 @@ def config_add_host(args):
 
 
 def _add_host():
-    url = io.input_("Enter the URL of the host", required=True)
+    url = io.input_("URL", required=True)
     if config.host_exists(url):
         raise McmdError("A host with URL {} already exists.".format(url))
 
-    username = io.input_("Enter the username of the superuser (Default: admin)")
-    password = io.password("Enter the password of the superuser (Default: admin)")
+    username = io.input_("Username (Default: admin)")
+    password = io.password("Password (Leave blank to use command line authentication)")
 
     username = 'admin' if len(username) == 0 else username
-    password = 'admin' if len(password) == 0 else password
+    password = None if len(password) == 0 else password
 
     io.start("Adding host {}".format(highlight(url)))
     config.add_host(url, username, password)
