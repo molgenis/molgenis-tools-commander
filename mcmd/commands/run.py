@@ -7,6 +7,7 @@ from mcmd.commands._registry import arguments
 from mcmd.config.home import get_scripts_folder
 from mcmd.io import bold, dim
 from mcmd.logging import get_logger
+from mcmd.utils.errors import McmdError
 
 
 # =========
@@ -88,17 +89,13 @@ def _wait(message):
 def _run_command(exit_on_error, line):
     sub_args = arg_parser.parse_args(shlex.split(line))
     setattr(sub_args, 'arg_string', line)
-    _fail_on_run_command(exit_on_error, sub_args)
+    _fail_on_run_command(sub_args)
     sub_args.func(sub_args, exit_on_error)
 
 
-def _fail_on_run_command(exit_on_error, sub_args):
+def _fail_on_run_command(sub_args):
     if sub_args.command == 'run':
-        if exit_on_error:
-            io.error("Can't use the run command in a script: {}".format(sub_args.arg_string))
-            exit(1)
-        else:
-            return
+        raise McmdError("Can't use the run command in a script: {}".format(sub_args.arg_string))
 
 
 def _read_script(script):
