@@ -75,8 +75,7 @@ def _do_script_function(line):
     if function == 'wait':
         _wait(' '.join(line_parts[1:]).strip())
     else:
-        io.error("Unknown function '{}', aborting script".format(function))
-        exit(1)
+        raise McmdError("Unknown function '{}', aborting script".format(function))
 
 
 def _wait(message):
@@ -99,13 +98,11 @@ def _fail_on_run_command(sub_args):
 
 
 def _read_script(script):
-    lines = list()
     try:
         with open(script) as file:
             lines = [line.rstrip('\n') for line in file]
     except OSError as e:
-        io.error('Error reading script: {}'.format(str(e)))
-        exit(1)
+        raise McmdError('Error reading script: {}'.format(str(e)))
     return lines
 
 
