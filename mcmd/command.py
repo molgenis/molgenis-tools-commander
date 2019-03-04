@@ -1,24 +1,24 @@
-import configparser
-
 from mcmd import history, io
 from mcmd.client import auth
 from mcmd.config import config
 from mcmd.utils.errors import McmdError
 
 
-def execute(args, exit_on_error=True):
-    try:
-        _set_authentication(args)
-        args.func(args)
-    except McmdError as e:
-        _handle_error(str(e), args.write_to_history, args.arg_string, exit_on_error)
-    except configparser.Error as e:
-        message = 'Error reading or writing mcmd.properties: %s' % str(e)
-        _handle_error(message, args.write_to_history, args.arg_string, exit_on_error)
-    else:
-        if args.write_to_history:
-            history.write(args.arg_string, success=True)
-        io.succeed()
+def command(func):
+    """Decorator for commands. Handles auxiliary actions: authentication, history and errors."""
+
+    def wrapper(args, exit_on_error=True):
+        try:
+            _set_authentication(args)
+            func(args)
+        except McmdError as e:
+            _handle_error(str(e), args.write_to_history, args.arg_string, exit_on_error)
+        else:
+            if args.write_to_history:
+                history.write(args.arg_string, success=True)
+            io.succeed()
+
+    return wrapper
 
 
 def _set_authentication(args):

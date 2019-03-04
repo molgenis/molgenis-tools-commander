@@ -4,6 +4,7 @@ Deletes an entityType or data from an entityType.
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import delete, delete_data, ensure_resource_exists, ResourceType
+from mcmd.command import command
 from mcmd.io import highlight
 
 
@@ -42,6 +43,21 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@command
+def delete_all_data(args):
+    ensure_resource_exists(args.entity_type, ResourceType.ENTITY_TYPE)
+    if args.force or (not args.force and io.confirm(
+            'Are you sure you want to remove all data from entity: {}?'.format(args.entity_type))):
+        _delete_all_data(args.entity_type)
+
+
+@command
+def delete_entity(args):
+    ensure_resource_exists(args.entity_type, ResourceType.ENTITY_TYPE)
+    if args.force or (not args.force and io.confirm(
+            'Are you sure you want to remove the complete entity: {}?'.format(args.entity_type))):
+        _delete_entity_type(args.entity_type)
+
 
 def _delete_row(entity, row):
     url = '{}{}'.format(config.api('rest2'), entity)
@@ -57,17 +73,3 @@ def _delete_all_data(entity):
 def _delete_entity_type(entity):
     io.start('Deleting entity {}'.format(highlight(entity)))
     _delete_row('sys_md_EntityType', entity)
-
-
-def delete_all_data(args):
-    ensure_resource_exists(args.entity_type, ResourceType.ENTITY_TYPE)
-    if args.force or (not args.force and io.confirm(
-            'Are you sure you want to remove all data from entity: {}?'.format(args.entity_type))):
-        _delete_all_data(args.entity_type)
-
-
-def delete_entity(args):
-    ensure_resource_exists(args.entity_type, ResourceType.ENTITY_TYPE)
-    if args.force or (not args.force and io.confirm(
-            'Are you sure you want to remove the complete entity: {}?'.format(args.entity_type))):
-        _delete_entity_type(args.entity_type)

@@ -1,5 +1,6 @@
 from mcmd import history, io
 from mcmd.config.home import get_scripts_folder
+from mcmd.command import command
 from mcmd.io import confirm, highlight
 from mcmd.logging import get_logger
 from mcmd.utils.errors import McmdError
@@ -49,6 +50,7 @@ log = get_logger()
 # Methods
 # =======
 
+@command
 def script(args):
     if args.list:
         _list_scripts()
