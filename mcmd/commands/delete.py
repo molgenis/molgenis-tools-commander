@@ -1,77 +1,95 @@
-"""
-Deletes an entityType or data from an entityType.
-"""
-import mcmd.config.config as config
+from urllib.parse import urljoin
+
 from mcmd import io
-from mcmd.commands._registry import arguments
-from mcmd.client.molgenis_client import delete, delete_data, ensure_resource_exists, ResourceType
+from mcmd.client.molgenis_client import ResourceType, ensure_resource_exists, delete_data, delete as client_delete
 from mcmd.command import command
+from mcmd.commands._registry import arguments
+from mcmd.config import config
 from mcmd.io import highlight
+from mcmd.utils.types import guess_resource_type
 
 
 # =========
 # Arguments
 # =========
 
+
 @arguments('delete')
 def add_arguments(subparsers):
     p_delete = subparsers.add_parser('delete',
-                                     help='Delete entities or data',
-                                     description="Run 'mcmd delete entity -h' or 'mcmd delete data -h' to view the help"
-                                                 " for those sub-commands")
+                                     help='Delete resources')
+    p_delete.set_defaults(func=delete,
+                          write_to_history=True)
+    p_delete_resource = p_delete.add_mutually_exclusive_group()
+    p_delete_resource.add_argument('--entity-type', '-e',
+                                   action='store_true',
+                                   help='Flag to specify that the resource is an entity type')
+    p_delete_resource.add_argument('--package', '-p',
+                                   action='store_true',
+                                   help='Flag to specify that the resource is a package')
+    p_delete_resource.add_argument('--group', '-g',
+                                   action='store_true',
+                                   help='Flag to specify that the resource is a group')
     p_delete.add_argument('--force', '-f',
                           action='store_true',
-                          help="Does your delete action without asking if you know it for sure")
-    p_delete_subparsers = p_delete.add_subparsers(dest="type")
-    p_delete_entity = p_delete_subparsers.add_parser('entity',
-                                                     help='Delete an entity(type)')
-    p_delete_entity.add_argument('entity_type',
-                                 type=str,
-                                 metavar='ID',
-                                 help="The ID of the entity type you want to delete")
-    p_delete_entity.set_defaults(func=delete_entity,
-                                 write_to_history=True)
-    p_delete_data = p_delete_subparsers.add_parser('data',
-                                                   help='Delete data from an entity(type)')
-    p_delete_data.add_argument('entity_type',
-                               metavar='ID',
-                               type=str,
-                               help="The ID of the entity type you want to delete all data from")
-    p_delete_data.set_defaults(func=delete_all_data,
-                               write_to_history=True)
+                          help='Forces the delete action without asking for confirmation')
+    p_delete.add_argument('resource',
+                          type=str,
+                          help='The identifier of the resource to delete')
 
 
 # =======
 # Methods
 # =======
 
-@command
-def delete_all_data(args):
-    ensure_resource_exists(args.entity_type, ResourceType.ENTITY_TYPE)
-    if args.force or (not args.force and io.confirm(
-            'Are you sure you want to remove all data from entity: {}?'.format(args.entity_type))):
-        _delete_all_data(args.entity_type)
-
 
 @command
-def delete_entity(args):
-    ensure_resource_exists(args.entity_type, ResourceType.ENTITY_TYPE)
+def delete(args):
+    resource_type = _get_resource_type(args)
+    if resource_type is ResourceType.ENTITY_TYPE:
+        _delete_entity_type(args)
+    elif resource_type is ResourceType.PACKAGE:
+        _delete_package(args)
+    elif resource_type is ResourceType.GROUP:
+        _delete_group(args)
+
+
+def _delete_entity_type(args):
     if args.force or (not args.force and io.confirm(
-            'Are you sure you want to remove the complete entity: {}?'.format(args.entity_type))):
-        _delete_entity_type(args.entity_type)
+            'Are you sure you want to delete entity type {} including its data?'.format(args.resource))):
+        io.start('Deleting entity type {}'.format(highlight(args.resource)))
+        _delete_row('sys_md_EntityType', args.resource)
 
 
-def _delete_row(entity, row):
-    url = '{}{}'.format(config.api('rest2'), entity)
+def _delete_package(args):
+    if args.force or (not args.force and io.confirm(
+            'Are you sure you want to delete package {} and all of its contents?'.format(args.resource))):
+        io.start('Deleting package {}'.format(highlight(args.resource)))
+        _delete_row('sys_md_Package', args.resource)
+
+
+def _delete_group(args):
+    if args.force or (not args.force and io.confirm(
+            'Are you sure you want to delete group {}?'.format(args.resource))):
+        io.start('Deleting group {}'.format(highlight(args.resource)))
+        client_delete(urljoin(config.get('group'), args.resource))
+
+
+def _delete_row(entity_type, row):
+    url = '{}{}'.format(config.api('rest2'), entity_type)
     delete_data(url, [row])
 
 
-def _delete_all_data(entity):
-    io.start('Deleting all data from entity {}'.format(highlight(entity)))
-    url = '{}{}'.format(config.api('rest1'), entity)
-    delete(url)
-
-
-def _delete_entity_type(entity):
-    io.start('Deleting entity {}'.format(highlight(entity)))
-    _delete_row('sys_md_EntityType', entity)
+def _get_resource_type(args):
+    resource_id = args.resource
+    if args.entity_type:
+        ensure_resource_exists(resource_id, ResourceType.ENTITY_TYPE)
+        return ResourceType.ENTITY_TYPE
+    elif args.package:
+        ensure_resource_exists(resource_id, ResourceType.PACKAGE)
+        return ResourceType.PACKAGE
+    elif args.group:
+        ensure_resource_exists(resource_id, ResourceType.GROUP)
+        return ResourceType.GROUP
+    else:
+        return guess_resource_type(resource_id, [ResourceType.ENTITY_TYPE, ResourceType.PACKAGE, ResourceType.GROUP])
