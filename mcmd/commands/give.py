@@ -5,17 +5,16 @@ principal doesn't exist, the program will terminate.
 """
 
 from mcmd import io
-from mcmd.commands._registry import arguments
-from mcmd.client.molgenis_client import grant, PrincipalType, principal_exists, \
-    resource_exists, ResourceType, ensure_resource_exists, ensure_principal_exists
+from mcmd.client.molgenis_client import grant, PrincipalType, ResourceType, ensure_resource_exists, \
+    ensure_principal_exists
 from mcmd.command import command
-from mcmd.io import multi_choice, highlight
-from mcmd.utils.errors import McmdError
-
-
+from mcmd.commands._registry import arguments
+from mcmd.io import highlight
 # =========
 # Arguments
 # =========
+from mcmd.utils.types import guess_resource_type, guess_principal_type
+
 
 @arguments('give')
 def add_arguments(subparsers):
@@ -91,23 +90,7 @@ def _get_principal_type(args):
         ensure_principal_exists(principal_name, PrincipalType.ROLE)
         return PrincipalType.ROLE
     else:
-        return _guess_principal_type(principal_name)
-
-
-def _guess_principal_type(principal_name):
-    results = dict()
-    for principal_type in PrincipalType:
-        if principal_exists(principal_name, principal_type):
-            results[principal_type.value] = principal_name
-
-    if len(results) == 0:
-        raise McmdError('No principals found with name %s' % principal_name)
-    elif len(results) > 1:
-        choices = results.keys()
-        answer = multi_choice('Multiple principals found with name %s. Choose one:' % principal_name, choices)
-        return PrincipalType[answer.upper()]
-    else:
-        return PrincipalType[list(results)[0].upper()]
+        return guess_principal_type(principal_name)
 
 
 def _get_resource_type(args):
@@ -122,20 +105,4 @@ def _get_resource_type(args):
         ensure_resource_exists(resource_id, ResourceType.PLUGIN)
         return ResourceType.PLUGIN
     else:
-        return _guess_resource_type(resource_id)
-
-
-def _guess_resource_type(resource_id):
-    results = dict()
-    for resource_type in ResourceType:
-        if resource_exists(resource_id, resource_type):
-            results[resource_type.get_label()] = resource_id
-
-    if len(results) == 0:
-        raise McmdError('No resources found with id %s' % resource_id)
-    elif len(results) > 1:
-        choices = results.keys()
-        answer = multi_choice('Multiple resources found for id %s. Choose one:' % resource_id, choices)
-        return ResourceType.of_label(answer)
-    else:
-        return ResourceType.of_label(list(results)[0])
+        return guess_resource_type(resource_id, [ResourceType.ENTITY_TYPE, ResourceType.PACKAGE, ResourceType.PLUGIN])

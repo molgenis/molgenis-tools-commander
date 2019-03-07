@@ -18,6 +18,7 @@ class ResourceType(Enum):
     THEME = ('sys_set_StyleSheet', 'stylesheet', 'Stylesheet')
     PACKAGE = ('sys_md_Package', 'package', 'Package')
     PLUGIN = ('sys_Plugin', 'plugin', 'Plugin')
+    GROUP = ('sys_sec_Group', 'group', 'Group')
 
     def get_entity_id(self):
         return self.value[0]
