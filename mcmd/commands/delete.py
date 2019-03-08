@@ -1,7 +1,7 @@
 from urllib.parse import urljoin
 
+import mcmd.client.molgenis_client as client
 from mcmd import io
-from mcmd.client.molgenis_client import delete_data, delete as client_delete
 from mcmd.command import command
 from mcmd.commands._registry import arguments
 from mcmd.config import config
@@ -30,6 +30,12 @@ def add_arguments(subparsers):
     p_delete_resource.add_argument('--group', '-g',
                                    action='store_true',
                                    help='Flag to specify that the resource is a group')
+    p_delete.add_argument('--data',
+                          action='store_true',
+                          help='Use in conjunction with --entity-type to only delete the rows of the entity type')
+    p_delete.add_argument('--contents',
+                          action='store_true',
+                          help='Use in conjunction with --package to only delete the contents of the package')
     p_delete.add_argument('--force', '-f',
                           action='store_true',
                           help='Forces the delete action without asking for confirmation')
@@ -47,9 +53,15 @@ def add_arguments(subparsers):
 def delete(args):
     resource_type = _get_resource_type(args)
     if resource_type is ResourceType.ENTITY_TYPE:
-        _delete_entity_type(args)
+        if args.data:
+            _delete_entity_type_data(args)
+        else:
+            _delete_entity_type(args)
     elif resource_type is ResourceType.PACKAGE:
-        _delete_package(args)
+        if args.contents:
+            _delete_package_contents(args)
+        else:
+            _delete_package(args)
     elif resource_type is ResourceType.GROUP:
         _delete_group(args)
 
@@ -58,26 +70,58 @@ def _delete_entity_type(args):
     if args.force or (not args.force and io.confirm(
             'Are you sure you want to delete entity type {} including its data?'.format(args.resource))):
         io.start('Deleting entity type {}'.format(highlight(args.resource)))
-        _delete_row('sys_md_EntityType', args.resource)
+        _delete_rows(ResourceType.ENTITY_TYPE.get_entity_id(), [args.resource])
+
+
+def _delete_entity_type_data(args):
+    if args.force or (not args.force and io.confirm(
+            'Are you sure you want to delete all data in entity type {}?'.format(args.resource))):
+        io.start('Deleting all data from entity {}'.format(highlight(args.resource)))
+        url = urljoin(config.api('rest1'), args.resource)
+        client.delete(url)
 
 
 def _delete_package(args):
     if args.force or (not args.force and io.confirm(
             'Are you sure you want to delete package {} and all of its contents?'.format(args.resource))):
         io.start('Deleting package {}'.format(highlight(args.resource)))
-        _delete_row('sys_md_Package', args.resource)
+        _delete_rows(ResourceType.PACKAGE.get_entity_id(), [args.resource])
+
+
+def _delete_package_contents(args):
+    if args.force or (not args.force and io.confirm(
+            'Are you sure you want to delete the contents of package {}?'.format(args.resource))):
+        io.start('Deleting contents of package {}'.format(highlight(args.resource)))
+        _delete_entity_types_in_package(args.resource)
+        _delete_packages_in_package(args.resource)
+
+
+def _delete_entity_types_in_package(package_id):
+    response = client.get(
+        config.api('rest2') + ResourceType.ENTITY_TYPE.get_entity_id() + '?attrs=id&q=package==' + package_id)
+    entity_ids = [entity_type['id'] for entity_type in response.json()['items']]
+    if len(entity_ids):
+        _delete_rows(ResourceType.ENTITY_TYPE.get_entity_id(), entity_ids)
+
+
+def _delete_packages_in_package(package_id):
+    response = client.get(
+        config.api('rest2') + ResourceType.PACKAGE.get_entity_id() + '?attrs=id&q=parent==' + package_id)
+    entity_ids = [entity_type['id'] for entity_type in response.json()['items']]
+    if len(entity_ids):
+        _delete_rows(ResourceType.PACKAGE.get_entity_id(), entity_ids)
 
 
 def _delete_group(args):
     if args.force or (not args.force and io.confirm(
             'Are you sure you want to delete group {}?'.format(args.resource))):
         io.start('Deleting group {}'.format(highlight(args.resource)))
-        client_delete(urljoin(config.get('group'), args.resource))
+        client.delete(urljoin(config.get('group'), args.resource))
 
 
-def _delete_row(entity_type, row):
+def _delete_rows(entity_type, rows):
     url = '{}{}'.format(config.api('rest2'), entity_type)
-    delete_data(url, [row])
+    client.delete_data(url, rows)
 
 
 def _get_resource_type(args):
