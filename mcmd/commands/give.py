@@ -3,17 +3,20 @@ Give a principal (a user or a group) some permission on a resource (a package, e
 by the user, the give command will try to figure out the principal- and resource types itself. If a resource or
 principal doesn't exist, the program will terminate.
 """
+from urllib.parse import urljoin
 
 from mcmd import io
-from mcmd.client.molgenis_client import grant, PrincipalType, ResourceType, ensure_resource_exists, \
-    ensure_principal_exists
+from mcmd.client.molgenis_client import post_form
 from mcmd.command import command
 from mcmd.commands._registry import arguments
+from mcmd.config import config
 from mcmd.io import highlight
+from mcmd.utils.errors import McmdError
+from mcmd.utils.principals import ensure_principal_exists, guess_principal_type, PrincipalType
 # =========
 # Arguments
 # =========
-from mcmd.utils.types import guess_resource_type, guess_principal_type
+from mcmd.utils.resources import guess_resource_type, ensure_resource_exists, ResourceType
 
 
 @arguments('give')
@@ -78,7 +81,21 @@ def give(args):
                                                          resource_type.get_label().lower(),
                                                          highlight(args.resource)))
 
-    grant(principal_type, args.receiver, resource_type, args.resource, args.permission)
+    _grant(principal_type, args.receiver, resource_type, args.resource, args.permission)
+
+
+def _grant(principal_type, principal_name, resource_type, identifier, permission):
+    data = {'radio-' + identifier: permission}
+
+    if principal_type == PrincipalType.USER:
+        data['username'] = principal_name
+    elif principal_type == PrincipalType.ROLE:
+        data['rolename'] = principal_name.upper()
+    else:
+        raise McmdError('Unknown principal type: %s' % principal_type)
+
+    url = urljoin(config.api('perm'), '{}/{}'.format(resource_type.get_resource_name(), principal_type.value))
+    post_form(url, data)
 
 
 def _get_principal_type(args):

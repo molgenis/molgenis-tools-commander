@@ -1,12 +1,12 @@
 from urllib.parse import urljoin
 
 from mcmd import io
-from mcmd.client.molgenis_client import ResourceType, ensure_resource_exists, delete_data, delete as client_delete
+from mcmd.client.molgenis_client import delete_data, delete as client_delete
 from mcmd.command import command
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.io import highlight
-from mcmd.utils.types import guess_resource_type
+from mcmd.utils.resources import guess_resource_type, ensure_resource_exists, ResourceType
 
 
 # =========
