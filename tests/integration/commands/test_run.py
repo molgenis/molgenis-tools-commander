@@ -16,6 +16,17 @@ def test_run(session):
 
 
 @pytest.mark.integration
+def test_run_from_line(session):
+    run_commander('run test_script --from-line 3')
+
+    try:
+        assert not package_exists(session, 'scripttest')
+        assert package_exists(session, 'otherpackage')
+    finally:
+        session.delete('sys_md_Package', 'otherpackage')
+
+
+@pytest.mark.integration
 def test_run_error(session):
     with pytest.raises(SystemExit):
         run_commander('run test_script_error')

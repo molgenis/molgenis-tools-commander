@@ -30,6 +30,10 @@ def add_arguments(subparsers):
     p_run.add_argument('--hide-comments', '-c',
                        action='store_true',
                        help="Don't print comments and whitespace during script execution")
+    p_run.add_argument('--from-line', '-l',
+                       type=int,
+                       default=1,
+                       help="The line number to start the script at")
 
 
 # =======
@@ -47,11 +51,14 @@ log = get_logger()
 def run(args):
     script = get_scripts_folder().joinpath(args.script)
     lines = _read_script(script)
-    _run_script(not args.hide_comments, not args.ignore_errors, lines)
+    _run_script(not args.hide_comments, not args.ignore_errors, lines, args.from_line)
 
 
-def _run_script(log_comments, exit_on_error, lines):
-    for line in lines:
+def _run_script(log_comments, exit_on_error, lines, from_line):
+    if from_line < 2:
+        from_line = 1
+
+    for line in lines[from_line - 1:]:
         if _is_comment(line) or _is_empty(line):
             if log_comments:
                 _log_comments(line)
