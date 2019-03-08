@@ -116,7 +116,7 @@ def _delete_group(args):
     if args.force or (not args.force and io.confirm(
             'Are you sure you want to delete group {}?'.format(args.resource))):
         io.start('Deleting group {}'.format(highlight(args.resource)))
-        client.delete(urljoin(config.get('group'), args.resource))
+        client.delete(urljoin(config.api('group'), args.resource))
 
 
 def _delete_rows(entity_type, rows):

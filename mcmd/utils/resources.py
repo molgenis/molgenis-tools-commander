@@ -11,11 +11,11 @@ log = get_logger()
 
 
 class ResourceType(Enum):
-    ENTITY_TYPE = ('sys_md_EntityType', 'entityclass', 'Entity Type')
-    THEME = ('sys_set_StyleSheet', 'stylesheet', 'Stylesheet')
-    PACKAGE = ('sys_md_Package', 'package', 'Package')
-    PLUGIN = ('sys_Plugin', 'plugin', 'Plugin')
-    GROUP = ('sys_sec_Group', 'group', 'Group')
+    ENTITY_TYPE = ('sys_md_EntityType', 'entityclass', 'Entity Type', 'id')
+    THEME = ('sys_set_StyleSheet', 'stylesheet', 'Stylesheet', 'id')
+    PACKAGE = ('sys_md_Package', 'package', 'Package', 'id')
+    PLUGIN = ('sys_Plugin', 'plugin', 'Plugin', 'id')
+    GROUP = ('sys_sec_Group', 'group', 'Group', 'name')
 
     def get_entity_id(self):
         return self.value[0]
@@ -25,6 +25,9 @@ class ResourceType(Enum):
 
     def get_label(self):
         return self.value[2]
+
+    def get_identifying_attribute(self):
+        return self.value[3]
 
     @classmethod
     def of_label(cls, label):
@@ -41,7 +44,7 @@ def guess_resource_type(resource_id, types: List[ResourceType]):
         raise McmdError('No resources found with id %s' % resource_id)
     elif len(results) > 1:
         choices = results.keys()
-        answer = multi_choice('Multiple resources found for id %s. Choose one:' % resource_id, choices)
+        answer = multi_choice('Multiple resources found for %s. Choose one:' % resource_id, choices)
         return ResourceType.of_label(answer)
     else:
         return ResourceType.of_label(list(results)[0])
@@ -49,7 +52,8 @@ def guess_resource_type(resource_id, types: List[ResourceType]):
 
 def resource_exists(resource_id, resource_type):
     log.debug('Checking if %s %s exists' % (resource_type.get_label(), resource_id))
-    response = get(config.api('rest2') + resource_type.get_entity_id() + '?q=id==' + resource_id)
+    query = '?q={}=={}'.format(resource_type.get_identifying_attribute(), resource_id)
+    response = get(config.api('rest2') + resource_type.get_entity_id() + query)
     return int(response.json()['total']) > 0
 
 
