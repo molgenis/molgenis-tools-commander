@@ -28,11 +28,44 @@ mcmd --help
 
 ### How to install
 
-In a terminal, run:
+Make sure you have Python 3.7 or higher installed and in a terminal, run:
 
 ```
 pip install molgenis-commander
 ```
+
+
+### Writing scripts
+
+It's possible to collect multiple commands in a script. For simple scripts, you can use the `mcmd script` command which 
+lets you compose a script from commands you've run previously. Of course, you can also use a text editor. Just make sure
+to save the script (without extension) under `~/.mcmd/scripts/`. 
+
+Here's an example of a script:
+
+```
+# Imports
+add package test
+import my_dataset --in test
+
+# Change application settings
+set app title "My MOLGENIS"
+set dataexplorer searchbox false
+$wait Please change the layout of the menu to your liking
+
+# Cleanup
+delete --force --package test
+```
+
+#### Running scripts
+
+Scripts can be run with the `mcmd run` command. 
+
+#### Script functions
+##### $wait
+`$wait` simply waits for the user to press enter. The message next to `$wait` will be displayed and can be used to 
+instruct the user to do something the commander can't (yet).
+ 
 
 ### Development
 Want to help out? Fork and clone this repository, go to the root of the project and create a virtual environment:
