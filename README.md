@@ -34,6 +34,31 @@ Make sure you have Python 3.7 or higher installed and in a terminal, run:
 pip install molgenis-commander
 ```
 
+If you have also have Python 2.x installed on your machine (common for machines running MacOs), make sure to install the commander with the Python 3 version of `pip`:
+
+```
+pip3 install molgenis-commander
+```
+
+#### Upgrading
+
+To upgrade to the newest version, run:
+
+```
+pip install --upgrade molgenis-commander
+```
+
+Or if you have both Python 2 and 3 installed, run:
+
+```
+pip3 install --upgrade molgenis-commander
+```
+
+#### Troubleshooting
+> I've installed the commander with pip but when I run `mcmd` I get a stacktrace referencing Python 2.x
+
+You've installed the commander with an old version of `pip`. Make sure your Python version is up to date (3.7 or higher) and that you've installed with the correct version of `pip`.
+
 
 ### Writing scripts
 
