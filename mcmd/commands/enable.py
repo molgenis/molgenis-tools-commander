@@ -1,7 +1,8 @@
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.commands._registry import arguments
-from mcmd.client.molgenis_client import ResourceType, post, ensure_resource_exists, one_resource_exists
+from mcmd.client.molgenis_client import post
+from mcmd.utils.resources import one_resource_exists, ensure_resource_exists, ResourceType
 from mcmd.command import command
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError

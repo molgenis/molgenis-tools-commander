@@ -3,19 +3,21 @@ Give a principal (a user or a group) some permission on a resource (a package, e
 by the user, the give command will try to figure out the principal- and resource types itself. If a resource or
 principal doesn't exist, the program will terminate.
 """
+from urllib.parse import urljoin
 
 from mcmd import io
-from mcmd.commands._registry import arguments
-from mcmd.client.molgenis_client import grant, PrincipalType, principal_exists, \
-    resource_exists, ResourceType, ensure_resource_exists, ensure_principal_exists
+from mcmd.client.molgenis_client import post_form
 from mcmd.command import command
-from mcmd.io import multi_choice, highlight
+from mcmd.commands._registry import arguments
+from mcmd.config import config
+from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
-
-
+from mcmd.utils.principals import ensure_principal_exists, guess_principal_type, PrincipalType
 # =========
 # Arguments
 # =========
+from mcmd.utils.resources import guess_resource_type, ensure_resource_exists, ResourceType
+
 
 @arguments('give')
 def add_arguments(subparsers):
@@ -79,7 +81,21 @@ def give(args):
                                                          resource_type.get_label().lower(),
                                                          highlight(args.resource)))
 
-    grant(principal_type, args.receiver, resource_type, args.resource, args.permission)
+    _grant(principal_type, args.receiver, resource_type, args.resource, args.permission)
+
+
+def _grant(principal_type, principal_name, resource_type, identifier, permission):
+    data = {'radio-' + identifier: permission}
+
+    if principal_type == PrincipalType.USER:
+        data['username'] = principal_name
+    elif principal_type == PrincipalType.ROLE:
+        data['rolename'] = principal_name.upper()
+    else:
+        raise McmdError('Unknown principal type: %s' % principal_type)
+
+    url = urljoin(config.api('perm'), '{}/{}'.format(resource_type.get_resource_name(), principal_type.value))
+    post_form(url, data)
 
 
 def _get_principal_type(args):
@@ -91,23 +107,7 @@ def _get_principal_type(args):
         ensure_principal_exists(principal_name, PrincipalType.ROLE)
         return PrincipalType.ROLE
     else:
-        return _guess_principal_type(principal_name)
-
-
-def _guess_principal_type(principal_name):
-    results = dict()
-    for principal_type in PrincipalType:
-        if principal_exists(principal_name, principal_type):
-            results[principal_type.value] = principal_name
-
-    if len(results) == 0:
-        raise McmdError('No principals found with name %s' % principal_name)
-    elif len(results) > 1:
-        choices = results.keys()
-        answer = multi_choice('Multiple principals found with name %s. Choose one:' % principal_name, choices)
-        return PrincipalType[answer.upper()]
-    else:
-        return PrincipalType[list(results)[0].upper()]
+        return guess_principal_type(principal_name)
 
 
 def _get_resource_type(args):
@@ -122,20 +122,4 @@ def _get_resource_type(args):
         ensure_resource_exists(resource_id, ResourceType.PLUGIN)
         return ResourceType.PLUGIN
     else:
-        return _guess_resource_type(resource_id)
-
-
-def _guess_resource_type(resource_id):
-    results = dict()
-    for resource_type in ResourceType:
-        if resource_exists(resource_id, resource_type):
-            results[resource_type.get_label()] = resource_id
-
-    if len(results) == 0:
-        raise McmdError('No resources found with id %s' % resource_id)
-    elif len(results) > 1:
-        choices = results.keys()
-        answer = multi_choice('Multiple resources found for id %s. Choose one:' % resource_id, choices)
-        return ResourceType.of_label(answer)
-    else:
-        return ResourceType.of_label(list(results)[0])
+        return guess_resource_type(resource_id, [ResourceType.ENTITY_TYPE, ResourceType.PACKAGE, ResourceType.PLUGIN])
