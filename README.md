@@ -34,7 +34,7 @@ Make sure you have Python 3.7 or higher installed and in a terminal, run:
 pip install molgenis-commander
 ```
 
-If you have also have Python 2.x installed on your machine (common for machines running MacOs), make sure to install the commander with the Python 3 version of `pip`:
+If you also have Python 2.x installed on your machine (common for machines running MacOs), make sure to install the commander with the Python 3 version of `pip`:
 
 ```
 pip3 install molgenis-commander
