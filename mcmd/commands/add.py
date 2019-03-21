@@ -23,7 +23,7 @@ p_add_theme = None
 def add_arguments(subparsers):
     global p_add_theme
     p_add = subparsers.add_parser('add',
-                                  help='Add users and groups',
+                                  help='Add users, groups, tokens, themes and logos',
                                   description="Run 'mcmd add group -h' or 'mcmd add user -h' to view the help for those"
                                               " sub-commands")
     p_add_subparsers = p_add.add_subparsers(dest="type")
