@@ -34,7 +34,7 @@ class ResourceType(Enum):
         return ResourceType[label.replace(' ', '_').upper()]
 
 
-def guess_resource_type(resource_id, types: List[ResourceType]):
+def detect_resource_type(resource_id, types: List[ResourceType]):
     results = dict()
     for resource_type in types:
         if resource_exists(resource_id, resource_type):
@@ -59,7 +59,8 @@ def resource_exists(resource_id, resource_type):
 
 def one_resource_exists(resources, resource_type):
     log.debug('Checking if one of [{}] exists in [{}]'.format(','.join(resources), resource_type.get_label()))
-    response = get(config.api('rest2') + resource_type.get_entity_id() + '?q=id=in=({})'.format(','.join(resources)))
+    query = '?q={}=in=({})'.format(resource_type.get_identifying_attribute(), ','.join(resources))
+    response = get(config.api('rest2') + resource_type.get_entity_id() + query)
     return int(response.json()['total']) > 0
 
 

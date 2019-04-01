@@ -40,7 +40,7 @@ def role_exists(rolename):
     return int(response.json()['total']) > 0
 
 
-def guess_principal_type(principal_name):
+def detect_principal_type(principal_name):
     results = dict()
     for principal_type in PrincipalType:
         if principal_exists(principal_name, principal_type):

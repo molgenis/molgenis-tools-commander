@@ -6,7 +6,7 @@ from mcmd.command import command
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.io import highlight
-from mcmd.utils.resources import guess_resource_type, ensure_resource_exists, ResourceType
+from mcmd.utils.resources import detect_resource_type, ensure_resource_exists, ResourceType
 
 
 # =========
@@ -136,4 +136,4 @@ def _get_resource_type(args):
         ensure_resource_exists(resource_id, ResourceType.GROUP)
         return ResourceType.GROUP
     else:
-        return guess_resource_type(resource_id, [ResourceType.ENTITY_TYPE, ResourceType.PACKAGE, ResourceType.GROUP])
+        return detect_resource_type(resource_id, [ResourceType.ENTITY_TYPE, ResourceType.PACKAGE, ResourceType.GROUP])
