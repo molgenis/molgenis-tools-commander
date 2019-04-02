@@ -7,12 +7,11 @@ import requests
 
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.commands._registry import arguments
 from mcmd.client import github_client as github
 from mcmd.client.molgenis_client import post_file, get, import_by_url
 from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.config.home import get_issues_folder
-from mcmd.command import command
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
 from mcmd.utils.file_helpers import scan_folders_for_files, select_path
@@ -54,6 +53,15 @@ def add_arguments(subparsers):
                            metavar='PACKAGE_ID',
                            help='The package to import to.')
     return _p_import
+
+
+# =========
+# Globals
+# =========
+
+_IMPORT_ACTIONS = {'.owl': 'add',
+                   '.obo': 'add',
+                   '.vcf': 'add'}
 
 
 # =======
@@ -211,10 +219,12 @@ def _do_import(file_path, package):
 
 
 def _get_import_action(file_name):
-    if '.owl' in file_name or '.obo' in file_name:
-        return 'add'
-    else:
-        return config.get('settings', 'import_action')
+    file_name = file_name.rstrip('.gz')
+    file_name = file_name.rstrip('.zip')
+    for file_type, action in _IMPORT_ACTIONS.items():
+        if file_name.endswith(file_type):
+            return action
+    return config.get('settings', 'import_action')
 
 
 def _poll_for_completion(url):

@@ -37,6 +37,17 @@ def test_import_ontology(session):
 
 
 @pytest.mark.integration
+def test_import_vcf(session):
+    run_commander('import testvcf')
+
+    result = session.get('testvcf')
+    assert len(result) == 5
+
+    # cleanup
+    session.delete('sys_md_EntityType', 'testvcf')
+
+
+@pytest.mark.integration
 def test_import_fail(capsys):
     run_commander_fail('import broken')
 
