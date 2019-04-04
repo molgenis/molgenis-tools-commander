@@ -143,6 +143,7 @@ def confirm(message):
 
     message = {
         'type': 'confirm',
+        'default': False,
         'name': 'answer',
         'message': message
     }

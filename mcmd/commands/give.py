@@ -12,11 +12,11 @@ from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
-from mcmd.utils.principals import ensure_principal_exists, guess_principal_type, PrincipalType
+from mcmd.utils.principals import ensure_principal_exists, detect_principal_type, PrincipalType
 # =========
 # Arguments
 # =========
-from mcmd.utils.resources import guess_resource_type, ensure_resource_exists, ResourceType
+from mcmd.utils.resources import detect_resource_type, ensure_resource_exists, ResourceType
 
 
 @arguments('give')
@@ -107,7 +107,7 @@ def _get_principal_type(args):
         ensure_principal_exists(principal_name, PrincipalType.ROLE)
         return PrincipalType.ROLE
     else:
-        return guess_principal_type(principal_name)
+        return detect_principal_type(principal_name)
 
 
 def _get_resource_type(args):
@@ -122,4 +122,4 @@ def _get_resource_type(args):
         ensure_resource_exists(resource_id, ResourceType.PLUGIN)
         return ResourceType.PLUGIN
     else:
-        return guess_resource_type(resource_id, [ResourceType.ENTITY_TYPE, ResourceType.PACKAGE, ResourceType.PLUGIN])
+        return detect_resource_type(resource_id, [ResourceType.ENTITY_TYPE, ResourceType.PACKAGE, ResourceType.PLUGIN])

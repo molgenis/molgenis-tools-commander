@@ -19,7 +19,7 @@ def test_import_emx(session):
     run_commander('import it_emx_autoid')
 
     result = session.get('it_emx_autoid_testAutoId')
-    assert len(result) == 4
+    assert len(result) > 0
 
     # cleanup
     session.delete('sys_md_Package', 'it')
@@ -67,7 +67,7 @@ def test_import_from_path(session):
     run_commander('import --from-path {}'.format(str(file)))
 
     result = session.get('it_emx_autoid_testAutoId')
-    assert len(result) == 4
+    assert len(result) > 0
 
     # cleanup
     session.delete('sys_md_Package', 'it')
@@ -78,7 +78,7 @@ def test_import_in_package(session, package):
     run_commander('import testAutoId_unpackaged --in {}'.format(package))
 
     result = session.get('{}_testAutoId'.format(package))
-    assert len(result) == 4
+    assert len(result) > 0
 
 
 @pytest.mark.integration
@@ -87,7 +87,7 @@ def test_import_from_path_in_package(session, package):
     run_commander('import --from-path {} --in {}'.format(file, package))
 
     result = session.get('{}_testAutoId'.format(package))
-    assert len(result) == 4
+    assert len(result) > 0
 
 
 @pytest.mark.integration
