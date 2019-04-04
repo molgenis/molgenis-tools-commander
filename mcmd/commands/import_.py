@@ -52,6 +52,11 @@ def add_arguments(subparsers):
                            type=str,
                            metavar='PACKAGE_ID',
                            help='The package to import to.')
+    _p_import.add_argument('--as',
+                           dest='entity_type_id',
+                           type=str,
+                           metavar='ENTITY_TYPE_ID',
+                           help='The id of the entity type (only used when importing VCF files)')
     return _p_import
 
 
@@ -116,21 +121,21 @@ def _import_from_quick_folders(args):
     file_name = os_path.splitext(args.resource)[0]
     file_map = scan_folders_for_files(config.git_paths() + _get_dataset_folders())
     path = select_path(file_map, file_name)
-    _do_import(path, args.to_package)
+    _do_import(path, args.to_package, args.entity_type_id)
 
 
 def _import_from_issue(args):
     issue_num = args.from_issue
     attachment = _select_attachment(issue_num, args.resource)
     file_path = _download_attachment(attachment, issue_num)
-    _do_import(file_path, args.to_package)
+    _do_import(file_path, args.to_package, args.entity_type_id)
 
 
 def _import_from_path(args):
     file = Path(args.resource)
     if not file.is_file():
         raise McmdError("File %s doesn't exist" % str(file.resolve()))
-    _do_import(file, args.to_package)
+    _do_import(file, args.to_package, args.entity_type_id)
 
 
 def _select_attachment(issue_num, wanted_attachment):
@@ -202,7 +207,7 @@ def _download_attachment(attachment, issue_num):
     return file_path
 
 
-def _do_import(file_path, package):
+def _do_import(file_path, package, entity_type_id):
     io.start('Importing %s' % (highlight(file_path.name)))
 
     params = {'action': _get_import_action(file_path.name),
@@ -210,6 +215,8 @@ def _do_import(file_path, package):
 
     if package:
         params['packageId'] = package
+    if entity_type_id:
+        params['entityTypeId'] = entity_type_id
 
     response = post_file(config.api('import'), file_path.resolve(), params)
     import_run_url = urljoin(config.get('host', 'selected'), response.text)

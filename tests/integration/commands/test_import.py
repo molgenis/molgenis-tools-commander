@@ -3,7 +3,7 @@ from mock import patch
 
 from mcmd.config.home import get_issues_folder
 from tests.integration.loader_mock import get_dataset_folder
-from tests.integration.utils import run_commander, run_commander_fail
+from tests.integration.utils import run_commander, run_commander_fail, random_name
 
 
 def _ontologies_by_name_query(name):
@@ -45,6 +45,15 @@ def test_import_vcf(session):
 
     # cleanup
     session.delete('sys_md_EntityType', 'testvcf')
+
+
+@pytest.mark.integration
+def test_import_vcf_as_name(session):
+    name = random_name()
+    run_commander('import testvcf --as {}'.format(name))
+
+    result = session.get(name)
+    assert len(result) == 5
 
 
 @pytest.mark.integration
