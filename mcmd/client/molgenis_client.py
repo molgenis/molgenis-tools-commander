@@ -8,20 +8,20 @@ from mcmd.client.request_handler import request
 from mcmd.config import config
 
 
-@request
+@request()
 def get(url):
     return requests.get(url,
                         headers=_get_default_headers())
 
 
-@request
+@request()
 def post(url, data):
     return requests.post(url,
                          headers=_get_default_headers(),
                          data=json.dumps(data))
 
 
-@request
+@request()
 def post_file(url, file_path, params):
     return requests.post(url,
                          headers={'x-molgenis-token': auth.get_token()},
@@ -29,14 +29,14 @@ def post_file(url, file_path, params):
                          params=params)
 
 
-@request
+@request()
 def post_files(files, url):
     return requests.post(url,
                          headers={'x-molgenis-token': auth.get_token()},
                          files=files)
 
 
-@request
+@request()
 def post_form(url, data):
     return requests.post(url,
                          headers={
@@ -45,34 +45,34 @@ def post_form(url, data):
                          data=data)
 
 
-@request
+@request()
 def delete(url):
     return requests.delete(url,
                            headers=_get_default_headers())
 
 
-@request
+@request()
 def delete_data(url, data):
     return requests.delete(url,
                            headers=_get_default_headers(),
                            data=json.dumps({"entityIds": data}))
 
 
-@request
+@request()
 def put(url, data):
     return requests.put(url=url,
                         headers=_get_default_headers(),
                         data=data)
 
 
-@request
+@request()
 def import_by_url(params):
     return requests.post(config.api('import_url'),
                          headers=_get_default_headers(),
                          params=params)
 
 
-@request
+@request(login=False)
 def get_version():
     return requests.get(urljoin(config.api('rest2'), 'version'),
                         headers={'Content-Type': 'application/json'})
