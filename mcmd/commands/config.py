@@ -1,5 +1,7 @@
 import mcmd.config.config as config
 from mcmd import io
+from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
 
@@ -8,8 +10,8 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
-
-def arguments(subparsers):
+@arguments('config')
+def add_arguments(subparsers):
     p_config = subparsers.add_parser('config',
                                      help='Change the configuration of Molgenis Commander')
     p_config_subparsers = p_config.add_subparsers(dest="type")
@@ -39,6 +41,7 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@command
 def config_set_host(args):
     if args.url:
         url = args.url
@@ -51,6 +54,7 @@ def config_set_host(args):
     config.set_host(url)
 
 
+@command
 # noinspection PyUnusedLocal
 def config_add_host(args):
     url = _add_host()

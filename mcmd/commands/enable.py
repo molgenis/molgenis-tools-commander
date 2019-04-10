@@ -1,6 +1,9 @@
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import ResourceType, post, ensure_resource_exists, one_resource_exists
+from mcmd.commands._registry import arguments
+from mcmd.client.molgenis_client import post
+from mcmd.utils.resources import one_resource_exists, ensure_resource_exists, ResourceType
+from mcmd.command import command
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
 
@@ -9,8 +12,8 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
-
-def arguments(subparsers):
+@arguments('enable')
+def add_arguments(subparsers):
     p_enable = subparsers.add_parser('enable',
                                      help='Enable resources/functionality',
                                      description="Run 'mcmd enable rls -h' to view the help for those sub-commands")
@@ -39,6 +42,7 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@command
 def enable_rls(args):
     io.start('Enabling row level security on entity type %s' % highlight(args.entity))
 
@@ -47,6 +51,7 @@ def enable_rls(args):
                                   'rlsEnabled': True})
 
 
+@command
 def enable_theme(args):
     """
     enable_theme enables a bootstrap theme

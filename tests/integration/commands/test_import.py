@@ -3,7 +3,7 @@ from mock import patch
 
 from mcmd.config.home import get_issues_folder
 from tests.integration.loader_mock import get_dataset_folder
-from tests.integration.utils import run_commander, run_commander_fail
+from tests.integration.utils import run_commander, run_commander_fail, random_name
 
 
 def _ontologies_by_name_query(name):
@@ -19,7 +19,7 @@ def test_import_emx(session):
     run_commander('import it_emx_autoid')
 
     result = session.get('it_emx_autoid_testAutoId')
-    assert len(result) == 4
+    assert len(result) > 0
 
     # cleanup
     session.delete('sys_md_Package', 'it')
@@ -37,6 +37,26 @@ def test_import_ontology(session):
 
 
 @pytest.mark.integration
+def test_import_vcf(session):
+    run_commander('import testvcf')
+
+    result = session.get('testvcf')
+    assert len(result) == 5
+
+    # cleanup
+    session.delete('sys_md_EntityType', 'testvcf')
+
+
+@pytest.mark.integration
+def test_import_vcf_as_name(session):
+    name = random_name()
+    run_commander('import testvcf --as {}'.format(name))
+
+    result = session.get(name)
+    assert len(result) == 5
+
+
+@pytest.mark.integration
 def test_import_fail(capsys):
     run_commander_fail('import broken')
 
@@ -47,7 +67,7 @@ def test_import_from_path(session):
     run_commander('import --from-path {}'.format(str(file)))
 
     result = session.get('it_emx_autoid_testAutoId')
-    assert len(result) == 4
+    assert len(result) > 0
 
     # cleanup
     session.delete('sys_md_Package', 'it')
@@ -58,7 +78,7 @@ def test_import_in_package(session, package):
     run_commander('import testAutoId_unpackaged --in {}'.format(package))
 
     result = session.get('{}_testAutoId'.format(package))
-    assert len(result) == 4
+    assert len(result) > 0
 
 
 @pytest.mark.integration
@@ -67,7 +87,7 @@ def test_import_from_path_in_package(session, package):
     run_commander('import --from-path {} --in {}'.format(file, package))
 
     result = session.get('{}_testAutoId'.format(package))
-    assert len(result) == 4
+    assert len(result) > 0
 
 
 @pytest.mark.integration

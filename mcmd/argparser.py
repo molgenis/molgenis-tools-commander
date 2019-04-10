@@ -3,19 +3,9 @@ import sys
 
 import pkg_resources
 
-from mcmd.commands.add import arguments as add_args
-from mcmd.commands.config import arguments as config_args
-from mcmd.commands.delete import arguments as delete_args
-from mcmd.commands.disable import arguments as disable_args
-from mcmd.commands.enable import arguments as enable_args
-from mcmd.commands.give import arguments as give_args
-from mcmd.commands.history import arguments as history_args
-from mcmd.commands.import_ import arguments as import_args
-from mcmd.commands.make import arguments as make_args
-from mcmd.commands.ping import arguments as ping_args
-from mcmd.commands.run import arguments as run_args
-from mcmd.commands.script import arguments as script_args
-from mcmd.commands.set import arguments as set_args
+# noinspection PyUnresolvedReferences
+from mcmd.commands import *
+from mcmd.commands import get_argument_adders
 
 _parser = None
 
@@ -36,13 +26,13 @@ def _create_parser():
     parser.add_argument('--as-user', '-u',
                         type=str,
                         metavar='USER',
-                        help="Execute a command as a user. (The default user is set in the mcmd.properties file). "
+                        help="Execute a command as a user. (The default user is set in the mcmd.yaml file). "
                              "Assumes that the password is the same as the username. If it isn't, also supply the "
                              "--with-password argument.")
     parser.add_argument('--with-password', '-p',
                         type=str,
                         metavar='PASSWORD',
-                        help="The password to use when logging in. (The default is set in the mcmd.properties file)")
+                        help="The password to use when logging in. (The default is set in the mcmd.yaml file)")
     parser.add_argument('--verbose', '-v',
                         action='count',
                         help='Print verbose messages')
@@ -50,20 +40,9 @@ def _create_parser():
                         action='version',
                         version='Molgenis Commander {version}'.format(version=_get_version()))
 
-    # add sub commands
-    import_args(subparsers)
-    make_args(subparsers)
-    add_args(subparsers)
-    give_args(subparsers)
-    enable_args(subparsers)
-    disable_args(subparsers)
-    run_args(subparsers)
-    script_args(subparsers)
-    history_args(subparsers)
-    delete_args(subparsers)
-    ping_args(subparsers)
-    config_args(subparsers)
-    set_args(subparsers)
+    # get and call each command's argument adder
+    for argument_adder in get_argument_adders():
+        argument_adder(subparsers)
 
     return parser
 
@@ -97,10 +76,10 @@ def _get_version():
 def _is_intermediate_subcommand(args):
     """
     Some commands have nested subcommands. These intermediate commands are not executable and don't have a 'func'
-    property. (The 'run' command is the exception, it doesn't have a 'func' but is executable.)
+    property.
 
     For example:
     > mcmd add user
     Here, 'add' is the intermediate command.
     """
-    return not hasattr(args, 'func') and not args.command == 'run'
+    return not hasattr(args, 'func')

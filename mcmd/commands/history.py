@@ -1,5 +1,7 @@
 from mcmd import history as hist
 from mcmd import io
+from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.logging import get_logger
 
 
@@ -7,7 +9,8 @@ from mcmd.logging import get_logger
 # Arguments
 # =========
 
-def arguments(subparsers):
+@arguments('history')
+def add_arguments(subparsers):
     p_history = subparsers.add_parser('history',
                                       help="Shows the history of commands that were run. Commands from scripts are"
                                            " also included.")
@@ -33,6 +36,7 @@ log = get_logger()
 # Methods
 # =======
 
+@command
 def history(args):
     if args.clear:
         io.start('Clearing history')

@@ -5,6 +5,8 @@ from pathlib import Path
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import post, get, post_files
+from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
 from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
@@ -17,10 +19,11 @@ p_add_theme = None
 # Arguments
 # =========
 
-def arguments(subparsers):
+@arguments('add')
+def add_arguments(subparsers):
     global p_add_theme
     p_add = subparsers.add_parser('add',
-                                  help='Add users and groups',
+                                  help='Add users, groups, tokens, themes and logos',
                                   description="Run 'mcmd add group -h' or 'mcmd add user -h' to view the help for those"
                                               " sub-commands")
     p_add_subparsers = p_add.add_subparsers(dest="type")
@@ -119,6 +122,7 @@ def arguments(subparsers):
 # Methods
 # =======
 
+@command
 def add_user(args):
     io.start('Adding user %s' % highlight(args.username))
 
@@ -138,11 +142,13 @@ def add_user(args):
           })
 
 
+@command
 def add_group(args):
     io.start('Adding group %s' % highlight(args.name))
     post(config.api('group'), {'name': args.name.lower(), 'label': args.name})
 
 
+@command
 def add_package(args):
     io.start('Adding package %s' % highlight(args.id))
 
@@ -155,6 +161,7 @@ def add_package(args):
     post(config.api('rest1') + 'sys_md_Package', data)
 
 
+@command
 def add_token(args):
     io.start('Adding token %s for user %s' % (highlight(args.token), highlight(args.user)))
 
@@ -170,6 +177,7 @@ def add_token(args):
     post(config.api('rest1') + 'sys_sec_Token', data)
 
 
+@command
 def add_theme(args):
     """
     add_theme adds a theme to the stylesheet table
@@ -201,6 +209,7 @@ def add_theme(args):
     post_files(files, api)
 
 
+@command
 def add_logo(args):
     """
     add_logo uploads a logo to add to the left top of the menu

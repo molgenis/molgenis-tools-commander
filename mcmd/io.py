@@ -1,9 +1,10 @@
 from PyInquirer import prompt
-from colorama import Fore
+from colorama import Fore, Style
 from halo import Halo
 
 import mcmd.config.config as config
 from mcmd.logging import get_logger
+from mcmd.utils.kbhit import KBHit
 
 log = get_logger()
 
@@ -142,11 +143,22 @@ def confirm(message):
 
     message = {
         'type': 'confirm',
+        'default': False,
         'name': 'answer',
         'message': message
     }
 
     return _handle_question(message)
+
+
+def wait_for_enter():
+    """Waits until the user presses enter. Non-blocking: the program can still be interrupted and closed."""
+    kb = KBHit()
+    while True:
+        if kb.kbhit():
+            c = kb.getch()
+            if c == '\n':  # Enter
+                break
 
 
 def _new_spinner():
@@ -159,11 +171,19 @@ def set_debug():
 
 
 def newline():
-    print()
+    log.info('')
 
 
 def highlight(string):
     return Fore.LIGHTBLUE_EX + string + Fore.RESET
+
+
+def bold(string):
+    return Style.BRIGHT + string + Style.RESET_ALL
+
+
+def dim(string):
+    return Style.DIM + string + Style.RESET_ALL
 
 
 def _handle_question(question):

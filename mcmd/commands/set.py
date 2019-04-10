@@ -6,6 +6,8 @@ import json
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.client.molgenis_client import get, put
+from mcmd.command import command
+from mcmd.commands._registry import arguments
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
 
@@ -14,7 +16,8 @@ from mcmd.utils.errors import McmdError
 # Arguments
 # =========
 
-def arguments(subparsers):
+@arguments('set')
+def add_arguments(subparsers):
     p_set = subparsers.add_parser('set',
                                   help='Alter settings',
                                   description="Run 'mcmd set -h' to view the help for this sub-command")
@@ -31,7 +34,7 @@ def arguments(subparsers):
                        type=str,
                        help="The value to set the attribute to")
 
-    p_set.set_defaults(func=set,
+    p_set.set_defaults(func=set_,
                        write_to_history=True)
 
 
@@ -51,6 +54,21 @@ _SETTING_SYNONYMS = {'mail': 'sys_set_MailSettings',
 # =======
 # Methods
 # =======
+
+@command
+def set_(args):
+    """
+    set sets the given setting of the given settings type to the given value
+    :param args: command line arguments containing: the settings type, the setting to set, and the value to set it to
+    :return: None
+    """
+    entity = _get_settings_entity(args.type)
+    io.start(
+        'Updating {} of {} settings to {}'.format(highlight(args.setting), highlight(args.type), highlight(args.value)))
+    row = _get_row_id(entity)
+    url = '{}{}/{}/{}'.format(config.api('rest1'), entity, row, args.setting)
+    put(url, json.dumps(args.value))
+
 
 def _get_settings():
     entity = 'sys_md_EntityType'
@@ -82,17 +100,3 @@ def _get_row_id(entity):
     query = 'attrs=~id'
     settings = _quick_get(entity, query)
     return settings[0]['id']
-
-
-def set(args):
-    """
-    set sets the given setting of the given settings type to the given value
-    :param args: command line arguments containing: the settings type, the setting to set, and the value to set it to
-    :return: None
-    """
-    entity = _get_settings_entity(args.type)
-    io.start(
-        'Updating {} of {} settings to {}'.format(highlight(args.setting), highlight(args.type), highlight(args.value)))
-    row = _get_row_id(entity)
-    url = '{}{}/{}/{}'.format(config.api('rest1'), entity, row, args.setting)
-    put(url, json.dumps(args.value))
