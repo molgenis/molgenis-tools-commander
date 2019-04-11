@@ -1,6 +1,17 @@
+import sys
+
+MIN_PYTHON = (3, 7)
+if sys.version_info < MIN_PYTHON:
+    import platform
+
+    sys.exit(
+        "Python {}.{} or later is required. You are running Python {}. Please upgrade to a newer version.\n".format(
+            MIN_PYTHON[0],
+            MIN_PYTHON[1],
+            platform.python_version()))
+
 import logging
 import signal
-import sys
 
 from mcmd import io
 from mcmd.argparser import parse_args
