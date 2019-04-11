@@ -50,8 +50,7 @@ def add_arguments(subparsers):
     p_add_user.add_argument('--with-email', '-e',
                             metavar='EMAIL',
                             type=str,
-                            help="The user's e-mail address",
-                            from_version='7.0.0')
+                            help="The user's e-mail address")
     p_add_user.add_argument('--is-inactive', '-a',
                             action='store_true',
                             help="Make user inactive")
