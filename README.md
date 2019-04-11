@@ -55,9 +55,13 @@ pip3 install --upgrade molgenis-commander
 ```
 
 #### Troubleshooting
-> I've installed the commander with pip but when I run `mcmd` I get a stacktrace referencing Python 2.x
+> I've installed the commander with `pip` but when I run `mcmd` I get a stacktrace referencing Python 2.x
 
 You've installed the commander with an old version of `pip`. Make sure your Python version is up to date (3.7 or higher) and that you've installed with the correct version of `pip`.
+
+> I've installed the commander on Debian/Ubuntu but `mcmd` can't be found
+
+`pip` installs commands in `~/.local/bin`. Make sure that this folder is added to the path variable.
 
 
 ### Writing scripts
