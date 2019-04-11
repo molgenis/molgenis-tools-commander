@@ -48,6 +48,8 @@ def check_token():
             _login()
         else:
             raise McmdError(str(e))
+    except requests.exceptions.ConnectionError:
+        raise McmdError("Can't connect to {}".format(config.url()))
 
 
 def _login():
