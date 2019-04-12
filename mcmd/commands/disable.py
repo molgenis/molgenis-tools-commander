@@ -1,10 +1,10 @@
-import mcmd.config.config as config
 from mcmd import io
+from mcmd.client import api
 from mcmd.client.molgenis_client import post
-from mcmd.utils.resources import ensure_resource_exists, ResourceType
 from mcmd.command import command
 from mcmd.commands._registry import arguments
 from mcmd.io import highlight
+from mcmd.utils.resources import ensure_resource_exists, ResourceType
 
 
 # =========
@@ -40,4 +40,4 @@ def disable_rls(args):
 
     ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
     post(api.rls(), data={'id': args.entity,
-                                  'rlsEnabled': False})
+                          'rlsEnabled': False})

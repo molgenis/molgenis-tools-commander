@@ -133,19 +133,19 @@ def add_user(args):
     ch_pwd = args.change_password
 
     post(api.rest1() + 'sys_sec_User',
-         {'username': args.username,
-          'password_': password,
-          'changePassword': ch_pwd,
-          'Email': email,
-          'active': active,
-          'superuser': superuser
-          })
+         data={'username': args.username,
+               'password_': password,
+               'changePassword': ch_pwd,
+               'Email': email,
+               'active': active,
+               'superuser': superuser
+               })
 
 
 @command
 def add_group(args):
     io.start('Adding group %s' % highlight(args.name))
-    post(api.group(), {'name': args.name.lower(), 'label': args.name})
+    post(api.group(), data={'name': args.name.lower(), 'label': args.name})
 
 
 @command
@@ -158,7 +158,7 @@ def add_package(args):
     if args.parent:
         data['parent'] = args.parent
 
-    post(api.rest1() + 'sys_md_Package', data)
+    post(api.rest1() + 'sys_md_Package', data=data)
 
 
 @command
@@ -174,7 +174,7 @@ def add_token(args):
     data = {'User': user_id,
             'token': args.token}
 
-    post(api.rest1() + 'sys_sec_Token', data)
+    post(api.rest1() + 'sys_sec_Token', data=data)
 
 
 @command

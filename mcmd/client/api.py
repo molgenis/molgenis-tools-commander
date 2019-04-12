@@ -67,3 +67,7 @@ def set_theme():
 
 def logo():
     return to_url('plugin/menumanager/upload-logo')
+
+
+def version():
+    return to_url('api/v2/version/')

@@ -66,9 +66,9 @@ def enable_theme(args):
     if one_resource_exists([theme + '.min.css', theme + '.css', 'bootstrap-' + theme + '.min.css'], ResourceType.THEME):
         # Molgenis themes start with bootstrap- but this is stripped from the name in the theme manager
         try:
-            post(api.set_theme(), theme)
+            post(api.set_theme(), data=theme)
         except:
-            post(api.set_theme(), theme.split('bootstrap-')[1])
+            post(api.set_theme(), data=theme.split('bootstrap-')[1])
     else:
         raise McmdError(
             'Applying theme failed. No themes found containing {} in the name'.format(args.theme, 'sys_set_StyleSheet'))

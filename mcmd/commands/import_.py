@@ -8,7 +8,7 @@ import requests
 import mcmd.config.config as config
 from mcmd import io
 from mcmd.client import github_client as github, api
-from mcmd.client.molgenis_client import post_file, get, import_by_url
+from mcmd.client.molgenis_client import post_file, get, post
 from mcmd.command import command
 from mcmd.commands._registry import arguments
 from mcmd.config.home import get_issues_folder
@@ -110,7 +110,7 @@ def _import_from_url(args):
 
     params['url'] = file_url
 
-    response = import_by_url(params)
+    response = post(api.import_url(), params=params)
     import_run_url = urljoin(config.get('host', 'selected'), response.text)
     status, message = _poll_for_completion(import_run_url)
     if status == 'FAILED':

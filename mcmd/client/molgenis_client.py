@@ -1,9 +1,8 @@
 import json
-from urllib.parse import urljoin
 
 import requests
 
-from mcmd.client import auth, api
+from mcmd.client import auth
 from mcmd.client.request_handler import request
 
 
@@ -14,10 +13,14 @@ def get(url):
 
 
 @request()
-def post(url, data):
-    return requests.post(url,
-                         headers=_get_default_headers(),
-                         data=json.dumps(data))
+def post(url, data=None, params=None):
+    kwargs = {'headers': _get_default_headers()}
+    if data:
+        kwargs['data'] = json.dumps(data)
+    if params:
+        kwargs['params'] = params
+
+    return requests.post(url, **kwargs)
 
 
 @request()
@@ -64,16 +67,9 @@ def put(url, data):
                         data=data)
 
 
-@request()
-def import_by_url(params):
-    return requests.post(api.import_url(),
-                         headers=_get_default_headers(),
-                         params=params)
-
-
 @request(login=False)
-def get_version():
-    return requests.get(urljoin(api.rest2(), 'version'),
+def get_no_login(url):
+    return requests.get(url,
                         headers={'Content-Type': 'application/json'})
 
 

@@ -2,9 +2,9 @@ from urllib.parse import urljoin
 
 import mcmd.client.molgenis_client as client
 from mcmd import io
+from mcmd.client import api
 from mcmd.command import command
 from mcmd.commands._registry import arguments
-from mcmd.config import config
 from mcmd.io import highlight
 from mcmd.utils.resources import detect_resource_type, ensure_resource_exists, ResourceType
 
@@ -116,7 +116,7 @@ def _delete_group(args):
     if args.force or (not args.force and io.confirm(
             'Are you sure you want to delete group {}?'.format(args.resource))):
         io.start('Deleting group {}'.format(highlight(args.resource)))
-        client.delete(urljoin(config.api('group'), args.resource))
+        client.delete(urljoin(api.group(), args.resource))
 
 
 def _delete_rows(entity_type, rows):
