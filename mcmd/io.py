@@ -157,7 +157,7 @@ def wait_for_enter():
     while True:
         if kb.kbhit():
             c = kb.getch()
-            if c == '\n':  # Enter
+            if c in ['\n', '\r\n', '\r']:  # Enter
                 break
 
 
