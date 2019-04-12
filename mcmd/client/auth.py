@@ -35,7 +35,7 @@ def set_(username, password=None, token=None, as_user=False):
 
 def check_token():
     """Queries the Token table to see if the set token is valid. The Token table is an arbitrary choice but will work
-    because it should always be accessibale to the superuser exclusively."""
+    because it should always be accessible to the superuser exclusively."""
     if _as_user:
         return
 
