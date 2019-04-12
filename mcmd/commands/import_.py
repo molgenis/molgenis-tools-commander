@@ -7,7 +7,7 @@ import requests
 
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client import github_client as github
+from mcmd.client import github_client as github, api
 from mcmd.client.molgenis_client import post_file, get, import_by_url
 from mcmd.command import command
 from mcmd.commands._registry import arguments
@@ -218,7 +218,7 @@ def _do_import(file_path, package, entity_type_id):
     if entity_type_id:
         params['entityTypeId'] = entity_type_id
 
-    response = post_file(config.api('import'), file_path.resolve(), params)
+    response = post_file(api.import_(), file_path.resolve(), params)
     import_run_url = urljoin(config.get('host', 'selected'), response.text)
     status, message = _poll_for_completion(import_run_url)
     if status == 'FAILED':

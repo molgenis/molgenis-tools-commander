@@ -4,6 +4,7 @@ from pathlib import Path
 
 import mcmd.config.config as config
 from mcmd import io
+from mcmd.client import api
 from mcmd.client.molgenis_client import post, get, post_files
 from mcmd.command import command
 from mcmd.commands._registry import arguments
@@ -131,7 +132,7 @@ def add_user(args):
     superuser = args.is_superuser
     ch_pwd = args.change_password
 
-    post(config.api('rest1') + 'sys_sec_User',
+    post(api.rest1() + 'sys_sec_User',
          {'username': args.username,
           'password_': password,
           'changePassword': ch_pwd,
@@ -144,7 +145,7 @@ def add_user(args):
 @command
 def add_group(args):
     io.start('Adding group %s' % highlight(args.name))
-    post(config.api('group'), {'name': args.name.lower(), 'label': args.name})
+    post(api.group(), {'name': args.name.lower(), 'label': args.name})
 
 
 @command
@@ -157,14 +158,14 @@ def add_package(args):
     if args.parent:
         data['parent'] = args.parent
 
-    post(config.api('rest1') + 'sys_md_Package', data)
+    post(api.rest1() + 'sys_md_Package', data)
 
 
 @command
 def add_token(args):
     io.start('Adding token %s for user %s' % (highlight(args.token), highlight(args.user)))
 
-    user = get(config.api('rest2') + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
+    user = get(api.rest2() + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
     if user.json()['total'] == 0:
         raise McmdError('Unknown user %s' % args.user)
 
@@ -173,7 +174,7 @@ def add_token(args):
     data = {'User': user_id,
             'token': args.token}
 
-    post(config.api('rest1') + 'sys_sec_Token', data)
+    post(api.rest1() + 'sys_sec_Token', data)
 
 
 @command
@@ -185,7 +186,7 @@ def add_theme(args):
     """
     _validate_args(args)
     valid_types = {'text/css'}
-    api = config.api('add_theme')
+    api_ = api.add_theme()
     bs3_name = args.bootstrap3
     bs4 = args.bootstrap4
     paths = [bs3_name]
@@ -205,7 +206,7 @@ def add_theme(args):
     if not args.from_path:
         paths = [_get_path_from_quick_folders(theme) for theme in paths]
     files = _prepare_files_for_upload(paths, names, valid_types)
-    post_files(files, api)
+    post_files(files, api_)
 
 
 @command
@@ -215,7 +216,7 @@ def add_logo(args):
     :param args: commandline arguments containing path to logo
     :return: None
     """
-    api = config.api('logo')
+    api_ = api.logo()
     valid_types = {'image/jpeg', 'image/png', 'image/gif'}
     logo = [args.logo]
     if not args.from_path:
@@ -224,7 +225,7 @@ def add_logo(args):
     else:
         io.start('Adding logo {}'.format(highlight(args.logo)))
     files = _prepare_files_for_upload(logo, ['logo'], valid_types)
-    post_files(files, api)
+    post_files(files, api_)
 
 
 def _prepare_files_for_upload(paths, names, valid_content_types):

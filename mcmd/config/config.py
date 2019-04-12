@@ -5,7 +5,6 @@ Provides access to the configuration.
 import operator
 from functools import reduce
 from pathlib import Path
-from urllib.parse import urljoin
 
 from ruamel.yaml import YAML
 
@@ -76,12 +75,6 @@ def git_paths():
         root_path = Path(root)
         paths = get('git', 'paths')
         return [root_path.joinpath(path) for path in paths]
-
-
-def api(endpoint):
-    """Returns the combination of the host's url and the API endpoint."""
-    url_ = get('host', 'selected')
-    return urljoin(url_, get('api', endpoint))
 
 
 def has_option(*args):

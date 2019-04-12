@@ -1,8 +1,8 @@
 from enum import Enum
 from typing import List
 
+from mcmd.client import api
 from mcmd.client.molgenis_client import get
-from mcmd.config import config
 from mcmd.io import multi_choice
 from mcmd.logging import get_logger
 from mcmd.utils.errors import McmdError
@@ -53,14 +53,14 @@ def detect_resource_type(resource_id, types: List[ResourceType]):
 def resource_exists(resource_id, resource_type):
     log.debug('Checking if %s %s exists' % (resource_type.get_label(), resource_id))
     query = '?q={}=={}'.format(resource_type.get_identifying_attribute(), resource_id)
-    response = get(config.api('rest2') + resource_type.get_entity_id() + query)
+    response = get(api.rest2() + resource_type.get_entity_id() + query)
     return int(response.json()['total']) > 0
 
 
 def one_resource_exists(resources, resource_type):
     log.debug('Checking if one of [{}] exists in [{}]'.format(','.join(resources), resource_type.get_label()))
     query = '?q={}=in=({})'.format(resource_type.get_identifying_attribute(), ','.join(resources))
-    response = get(config.api('rest2') + resource_type.get_entity_id() + query)
+    response = get(api.rest2() + resource_type.get_entity_id() + query)
     return int(response.json()['total']) > 0
 
 

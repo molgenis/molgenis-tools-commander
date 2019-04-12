@@ -39,5 +39,5 @@ def disable_rls(args):
     io.start('Disabling row level security on entity type %s' % highlight(args.entity))
 
     ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
-    post(config.api('rls'), data={'id': args.entity,
+    post(api.rls(), data={'id': args.entity,
                                   'rlsEnabled': False})

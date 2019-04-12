@@ -3,9 +3,8 @@ from urllib.parse import urljoin
 
 import requests
 
-from mcmd.client import auth
+from mcmd.client import auth, api
 from mcmd.client.request_handler import request
-from mcmd.config import config
 
 
 @request
@@ -67,14 +66,14 @@ def put(url, data):
 
 @request
 def import_by_url(params):
-    return requests.post(config.api('import_url'),
+    return requests.post(api.import_url(),
                          headers=_get_default_headers(),
                          params=params)
 
 
 @request
 def get_version():
-    return requests.get(urljoin(config.api('rest2'), 'version'),
+    return requests.get(urljoin(api.rest2(), 'version'),
                         headers={'Content-Type': 'application/json'})
 
 
