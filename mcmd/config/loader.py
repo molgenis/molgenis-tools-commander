@@ -128,6 +128,8 @@ def _merge(yaml_a, yaml_b):
     """
     for key, section in yaml_b.items():
         if isinstance(section, OrderedDict):
+            if key not in yaml_a:
+                yaml_a[key] = dict()
             _merge(yaml_a[key], yaml_b[key])
         elif isinstance(section, list):
             if _is_list_of_objects(section):
