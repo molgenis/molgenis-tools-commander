@@ -1,7 +1,12 @@
 from mcmd.command import command
 from mcmd.commands._registry import arguments
-from mcmd.utils import compatibility
 from mcmd.utils.compatibility import version
+
+
+@command
+def blaat(args):
+    do_action()
+    print()
 
 
 @arguments('blaat')
@@ -10,13 +15,6 @@ def add_arguments(subparsers):
                                    help='Blaat')
     p_make.set_defaults(func=blaat,
                         write_to_history=True)
-
-
-@command
-def blaat(args):
-    do_action()
-    print()
-    print(compatibility.registry)
 
 
 @version('8.0.0')
