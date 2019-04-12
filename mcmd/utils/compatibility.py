@@ -40,7 +40,7 @@ def _get_molgenis_version():
     global _molgenis_version
     if not _molgenis_version:
         v = get_no_login(urljoin(config.get('host', 'selected'), 'api/v2/version/')).json()['molgenisVersion']
-        _molgenis_version = re.match(r"\d+.\d+.\d+", v)
+        _molgenis_version = re.match(r"\d+.\d+.\d+", v).group()
     return _molgenis_version
 
 
