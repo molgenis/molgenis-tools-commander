@@ -1,16 +1,17 @@
 import re
 from collections import defaultdict
+from distutils.version import StrictVersion
 from functools import wraps
 from typing import List
 from urllib.parse import urljoin
-
-from packaging import version as version_parser
 
 from mcmd.client.molgenis_client import get_no_login
 from mcmd.config import config
 
 _molgenis_version = None
 _registry = defaultdict(dict)
+
+MIN_VERSION = '7.0.0'
 
 
 def version(version_):
@@ -45,15 +46,16 @@ def _get_molgenis_version():
 
 
 def _get_closest_version(versions: List[str]):
-    versions.sort(key=lambda s: list(map(int, s.split('.'))))
-    for i, v in enumerate(versions):
-        if version_parser.parse(_molgenis_version) < version_parser.parse(v):
-            if i == 0:
-                return versions[0]
-            else:
-                return versions[i - 1]
+    if _molgenis_version in versions:
+        return _molgenis_version
     else:
-        return versions[-1]
+        versions.append(_molgenis_version)
+        versions = sorted(versions, key=StrictVersion)
+        index = versions.index(_molgenis_version)
+        if index == 0:
+            return versions[1]
+        else:
+            return versions[index - 1]
 
 
 def _get_func_id(func):
