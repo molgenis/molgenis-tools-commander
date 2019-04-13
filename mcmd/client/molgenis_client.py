@@ -6,13 +6,13 @@ from mcmd.client import auth
 from mcmd.client.request_handler import request
 
 
-@request()
+@request
 def get(url):
     return requests.get(url,
                         headers=_get_default_headers())
 
 
-@request()
+@request
 def post(url, data=None, params=None):
     kwargs = {'headers': _get_default_headers()}
     if data:
@@ -23,7 +23,7 @@ def post(url, data=None, params=None):
     return requests.post(url, **kwargs)
 
 
-@request()
+@request
 def post_file(url, file_path, params):
     return requests.post(url,
                          headers={'x-molgenis-token': auth.get_token()},
@@ -31,14 +31,14 @@ def post_file(url, file_path, params):
                          params=params)
 
 
-@request()
+@request
 def post_files(files, url):
     return requests.post(url,
                          headers={'x-molgenis-token': auth.get_token()},
                          files=files)
 
 
-@request()
+@request
 def post_form(url, data):
     return requests.post(url,
                          headers={
@@ -47,30 +47,24 @@ def post_form(url, data):
                          data=data)
 
 
-@request()
+@request
 def delete(url):
     return requests.delete(url,
                            headers=_get_default_headers())
 
 
-@request()
+@request
 def delete_data(url, data):
     return requests.delete(url,
                            headers=_get_default_headers(),
                            data=json.dumps({"entityIds": data}))
 
 
-@request()
+@request
 def put(url, data):
     return requests.put(url=url,
                         headers=_get_default_headers(),
                         data=data)
-
-
-@request(login=False)
-def get_no_login(url):
-    return requests.get(url,
-                        headers={'Content-Type': 'application/json'})
 
 
 def _get_default_headers():
