@@ -1,17 +1,15 @@
 from colorama import Fore
 
 import mcmd.config.config as config
-from mcmd.client import api
-from mcmd.client.molgenis_client import get_no_login
 from mcmd.command import command
 from mcmd.commands._registry import arguments
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
-
-
 # =========
 # Arguments
 # =========
+from mcmd.version import molgenis_version
+
 
 @arguments('ping')
 def add_arguments(subparsers):
@@ -32,7 +30,7 @@ def ping(args):
     user = config.username()
     status = Fore.LIGHTGREEN_EX + 'Online' + Fore.RESET
     try:
-        version = get_no_login(api.version()).json()['molgenisVersion']
+        version = molgenis_version.get_version()
     except McmdError:
         status = Fore.LIGHTRED_EX + 'Offline' + Fore.RESET
         version = None
