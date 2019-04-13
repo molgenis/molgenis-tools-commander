@@ -1,7 +1,7 @@
 from urllib.parse import urljoin
 
 from mcmd.config import config
-from mcmd.utils.compatibility import version
+from mcmd.version.compatibility import version
 
 
 def to_url(endpoint):

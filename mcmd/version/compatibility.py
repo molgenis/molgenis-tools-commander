@@ -1,14 +1,10 @@
-import re
 from collections import defaultdict
 from distutils.version import StrictVersion
 from functools import wraps
 from typing import List
-from urllib.parse import urljoin
 
-from mcmd.client.molgenis_client import get_no_login
-from mcmd.config import config
+from mcmd.version import molgenis_version
 
-_molgenis_version = None
 _registry = defaultdict(dict)
 
 MIN_VERSION = '7.0.0'
@@ -19,8 +15,6 @@ def version(version_):
         @wraps(func)
         def getter():
             def wrapper(*args, **kwargs):
-                _get_molgenis_version()
-
                 id_ = _get_func_id(func)
                 available_versions = list(_registry[id_].keys())
                 v = _get_closest_version(available_versions)
@@ -37,21 +31,14 @@ def version(version_):
     return registrar
 
 
-def _get_molgenis_version():
-    global _molgenis_version
-    if not _molgenis_version:
-        v = get_no_login(urljoin(config.get('host', 'selected'), 'api/v2/version/')).json()['molgenisVersion']
-        _molgenis_version = re.match(r"\d+.\d+.\d+", v).group()
-    return _molgenis_version
-
-
 def _get_closest_version(versions: List[str]):
-    if _molgenis_version in versions:
-        return _molgenis_version
+    version_ = molgenis_version.get_version_number()
+    if version_ in versions:
+        return version_
     else:
-        versions.append(_molgenis_version)
+        versions.append(version_)
         versions = sorted(versions, key=StrictVersion)
-        index = versions.index(_molgenis_version)
+        index = versions.index(version_)
         if index == 0:
             return versions[1]
         else:
