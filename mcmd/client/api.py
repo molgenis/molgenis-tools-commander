@@ -4,70 +4,87 @@ from mcmd.config import config
 from mcmd.version.compatibility import version
 
 
-def to_url(endpoint):
-    url_ = config.get('host', 'selected')
-    return urljoin(url_, endpoint)
+def endpoint(func):
+    def wrapper():
+        return urljoin(config.get('host', 'selected'), func())
+
+    return wrapper
 
 
+@endpoint
 def rest1():
-    return to_url('api/v1/')
+    return 'api/v1/'
 
 
+@endpoint
 def rest2():
-    return to_url('api/v2/')
+    return 'api/v2/'
 
 
+@endpoint
 def login():
-    return to_url('api/v1/login/')
+    return 'api/v1/login/'
 
 
+@endpoint
 @version('7.0.0')
 def group():
-    return to_url('api/plugin/security/group/')
+    return 'api/plugin/security/group/'
 
 
+@endpoint
 @version('8.0.0')
 def group():
-    return to_url('api/identities/v1/group/')
+    return 'api/identities/v1/group/'
 
 
+@endpoint
 @version('7.0.0')
-def member():
-    return to_url('api/plugin/security/group/{}/member/')
+def member(group_name):
+    return 'api/plugin/security/group/{}/member/'.format(group_name)
 
 
+@endpoint
 @version('8.0.0')
-def member():
-    return to_url('api/identities/v1/group/{}/member/')
+def member(group_name):
+    return 'api/identities/v1/group/{}/member/'.format(group_name)
 
 
+@endpoint
 def import_():
-    return to_url('plugin/importwizard/importFile/')
+    return 'plugin/importwizard/importFile/'
 
 
+@endpoint
 def import_url():
-    return to_url('plugin/importwizard/importByUrl/')
+    return 'plugin/importwizard/importByUrl/'
 
 
+@endpoint
 def permissions():
-    return to_url('menu/admin/permissionmanager/update/')
+    return 'menu/admin/permissionmanager/update/'
 
 
+@endpoint
 def rls():
-    return to_url('menu/admin/permissionmanager/update/entityclass/rls')
+    return 'menu/admin/permissionmanager/update/entityclass/rls'
 
 
+@endpoint
 def add_theme():
-    return to_url('plugin/thememanager/add-bootstrap-theme')
+    return 'plugin/thememanager/add-bootstrap-theme'
 
 
+@endpoint
 def set_theme():
-    return to_url('plugin/thememanager/set-bootstrap-theme')
+    return 'plugin/thememanager/set-bootstrap-theme'
 
 
+@endpoint
 def logo():
-    return to_url('plugin/menumanager/upload-logo')
+    return 'plugin/menumanager/upload-logo'
 
 
+@endpoint
 def version():
-    return to_url('api/v2/version/')
+    return 'api/v2/version/'

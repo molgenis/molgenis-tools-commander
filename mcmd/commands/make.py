@@ -36,7 +36,7 @@ def make(args):
 
     group_name = _find_group(args.role)
 
-    url = api.member().format(group_name)
+    url = api.member(group_name)
     post(url, data={'username': args.user, 'roleName': args.role.upper()})
 
 
