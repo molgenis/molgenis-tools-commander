@@ -1,5 +1,5 @@
 """
-This module houses the framework for ensuring compatibility over multiple MOLGENIS versions.
+This module houses the framework responsible for ensuring compatibility over multiple MOLGENIS versions.
 """
 
 from collections import defaultdict
