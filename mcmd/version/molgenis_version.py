@@ -5,8 +5,7 @@ import requests
 from requests import HTTPError
 
 from mcmd.client import api
-from mcmd.config import config
-from mcmd.utils.errors import McmdError
+from mcmd.utils.errors import McmdError, MolgenisOfflineError
 
 _version_number = None
 _version = None
@@ -45,4 +44,4 @@ def _get_version():
     except HTTPError as e:
         raise McmdError(str(e))
     except requests.exceptions.ConnectionError:
-        raise McmdError("Can't connect to {}".format(config.url()))
+        raise MolgenisOfflineError()

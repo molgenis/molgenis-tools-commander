@@ -7,8 +7,7 @@ Error responses can come back in varying forms which this decorator tries to uni
 import requests
 
 from mcmd.client import auth
-from mcmd.config import config
-from mcmd.utils.errors import McmdError
+from mcmd.utils.errors import McmdError, MolgenisOfflineError
 
 
 def request(func):
@@ -28,7 +27,7 @@ def request(func):
             else:
                 raise McmdError(str(e))
         except requests.exceptions.ConnectionError:
-            raise McmdError("Can't connect to {}".format(config.url()))
+            raise MolgenisOfflineError()
         except requests.RequestException as e:
             raise McmdError(str(e))
 

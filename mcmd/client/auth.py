@@ -12,7 +12,7 @@ from requests import HTTPError
 from mcmd import io
 from mcmd.client import api
 from mcmd.config import config
-from mcmd.utils.errors import McmdError
+from mcmd.utils.errors import McmdError, MolgenisOfflineError
 
 _username = None
 _password = None
@@ -50,7 +50,7 @@ def check_token():
         else:
             raise McmdError(str(e))
     except requests.exceptions.ConnectionError:
-        raise McmdError("Can't connect to {}".format(config.url()))
+        raise MolgenisOfflineError()
 
 
 def _login():
