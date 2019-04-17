@@ -40,8 +40,12 @@ def _get_version():
         global _version
         global _version_number
         _version = response.json()['molgenisVersion']
-        _version_number = re.match(r"\d+.\d+.\d+", _version).group()
+        _version_number = _extract_version_number(_version)
     except HTTPError as e:
         raise McmdError(str(e))
     except requests.exceptions.ConnectionError:
         raise MolgenisOfflineError()
+
+
+def _extract_version_number(_version):
+    return re.match(r"\d+.\d+.\d+", _version).group()

@@ -26,7 +26,7 @@ def version(version_):
     >>> def impl():
     >>>     print('Implementation for 8.0 and up')
 
-    Methods using this decorator should have the same name and be in a module with the same name.
+    Functions using this decorator should have the same name and be in a module with the same name.
 
     MOLGENIS versions lower than MIN_VERSION aren't supported but the chosen implementation will default to the
     closest match.
