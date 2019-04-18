@@ -10,6 +10,7 @@ import requests
 from requests import HTTPError
 
 from mcmd import io
+from mcmd.client import api
 from mcmd.config import config
 from mcmd.utils.errors import McmdError, MolgenisOfflineError
 
@@ -40,7 +41,7 @@ def check_token():
         return
 
     try:
-        response = requests.get(urljoin(config.api('rest2'), 'sys_sec_Token?q=token=={}'.format(_token)),
+        response = requests.get(urljoin(api.rest2(), 'sys_sec_Token?q=token=={}'.format(_token)),
                                 headers={'Content-Type': 'application/json', 'x-molgenis-token': _token})
         response.raise_for_status()
     except HTTPError as e:
@@ -61,7 +62,7 @@ def _login():
 
     try:
         io.debug('Logging in as user {}'.format(_username))
-        response = requests.post(config.api('login'),
+        response = requests.post(api.login(),
                                  headers={'Content-Type': 'application/json'},
                                  data=json.dumps({"username": _username, "password": _password}))
         response.raise_for_status()

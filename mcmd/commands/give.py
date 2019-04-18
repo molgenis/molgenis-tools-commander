@@ -6,10 +6,10 @@ principal doesn't exist, the program will terminate.
 from urllib.parse import urljoin
 
 from mcmd import io
+from mcmd.client import api
 from mcmd.client.molgenis_client import post_form
 from mcmd.command import command
 from mcmd.commands._registry import arguments
-from mcmd.config import config
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
 from mcmd.utils.principals import ensure_principal_exists, detect_principal_type, PrincipalType
@@ -94,7 +94,7 @@ def _grant(principal_type, principal_name, resource_type, identifier, permission
     else:
         raise McmdError('Unknown principal type: %s' % principal_type)
 
-    url = urljoin(config.api('perm'), '{}/{}'.format(resource_type.get_resource_name(), principal_type.value))
+    url = urljoin(api.permissions(), '{}/{}'.format(resource_type.get_resource_name(), principal_type.value))
     post_form(url, data)
 
 
