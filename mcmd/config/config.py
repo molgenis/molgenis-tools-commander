@@ -5,11 +5,10 @@ Provides access to the configuration.
 import operator
 from functools import reduce
 from pathlib import Path
-from urllib.parse import urljoin
 
 from ruamel.yaml import YAML
 
-from mcmd.utils.errors import ConfigError
+import mcmd.utils.errors as errors
 
 _config = None
 _properties_file: Path = None
@@ -43,21 +42,21 @@ def get(*args):
             prop = prop[at]
         return prop
     except KeyError as e:
-        raise ConfigError('missing property: {}'.format(_key_error_string(e)))
+        raise errors.ConfigError('missing property: {}'.format(_key_error_string(e)))
 
 
 def url():
     try:
         return _get_selected_host_auth()['url']
     except KeyError as e:
-        raise ConfigError('missing property: {}'.format(_key_error_string(e)))
+        raise errors.ConfigError('missing property: {}'.format(_key_error_string(e)))
 
 
 def username():
     try:
         return _get_selected_host_auth()['username']
     except KeyError as e:
-        raise ConfigError('missing property: {}'.format(_key_error_string(e)))
+        raise errors.ConfigError('missing property: {}'.format(_key_error_string(e)))
 
 
 def token():
@@ -78,12 +77,6 @@ def git_paths():
         return [root_path.joinpath(path) for path in paths]
 
 
-def api(endpoint):
-    """Returns the combination of the host's url and the API endpoint."""
-    url_ = get('host', 'selected')
-    return urljoin(url_, get('api', endpoint))
-
-
 def has_option(*args):
     try:
         reduce(operator.getitem, list(args), _config)
@@ -97,7 +90,7 @@ def set_host(url_):
     if url_ in [host_['url'] for host_ in hosts]:
         _config['host']['selected'] = url_
     else:
-        raise ConfigError("There is no host with url {}".format(url_))
+        raise errors.ConfigError("There is no host with url {}".format(url_))
 
     _persist()
 
@@ -123,7 +116,7 @@ def _get_selected_host_auth():
         if host_['url'] == selected:
             return host_
 
-    raise ConfigError("The selected host doesn't exist.")
+    raise errors.ConfigError("The selected host doesn't exist.")
 
 
 def set_token(token_):

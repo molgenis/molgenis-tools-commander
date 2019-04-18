@@ -3,8 +3,8 @@ Alter settings
 """
 import json
 
-import mcmd.config.config as config
 from mcmd import io
+from mcmd.client import api
 from mcmd.client.molgenis_client import get, put
 from mcmd.command import command
 from mcmd.commands._registry import arguments
@@ -66,7 +66,7 @@ def set_(args):
     io.start(
         'Updating {} of {} settings to {}'.format(highlight(args.setting), highlight(args.type), highlight(args.value)))
     row = _get_row_id(entity)
-    url = '{}{}/{}/{}'.format(config.api('rest1'), entity, row, args.setting)
+    url = '{}{}/{}/{}'.format(api.rest1(), entity, row, args.setting)
     put(url, json.dumps(args.value))
 
 
@@ -91,7 +91,7 @@ def _get_settings_entity(setting):
 
 
 def _quick_get(entity, q):
-    rest = config.api('rest2')
+    rest = api.rest2()
     url = '{}{}?{}'.format(rest, entity, q)
     return get(url).json()['items']
 
