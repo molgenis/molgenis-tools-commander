@@ -33,6 +33,12 @@ host:
           username: henk
         - url: master.dev.molgenis.org
           username: admin
+    removed-auth: value
+removed-from-defaults:
+    key: value
+    list:
+    - item1
+    - item2
 """
 
 MERGED_CONFIG = """
@@ -50,6 +56,12 @@ host:
           username: henk
         - url: master.dev.molgenis.org
           username: admin
+    removed-auth: value
+removed-from-defaults:
+    key: value
+    list:
+    - item1
+    - item2
 """
 
 
