@@ -49,4 +49,7 @@ def _get_version():
 
 
 def _extract_version_number(_version):
-    return re.match(r"\d+.\d+.\d+", _version).group()
+    match = re.match(r"\d+.\d+.\d+", _version)
+    if not match:
+        raise McmdError('Unparsable MOLGENIS version: {}'.format(_version))
+    return match.group()

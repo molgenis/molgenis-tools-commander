@@ -2,6 +2,7 @@ import unittest
 
 import pytest
 
+from mcmd.utils.errors import McmdError
 from mcmd.version import molgenis_version
 
 
@@ -27,3 +28,7 @@ class MolgenisVersionTest(unittest.TestCase):
     def test_extract_version_number_multi():
         version = molgenis_version._extract_version_number('7.2.3-APP-1.0.0')
         assert version == '7.2.3'
+
+    def test_extract_version_number_invalid(self):
+        with self.assertRaises(McmdError):
+            molgenis_version._extract_version_number('4.0-TESTING')
