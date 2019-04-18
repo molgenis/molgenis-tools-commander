@@ -7,37 +7,31 @@ Error responses can come back in varying forms which this decorator tries to uni
 import requests
 
 from mcmd.client import auth
-from mcmd.config import config
-from mcmd.utils.errors import McmdError
+from mcmd.utils.errors import McmdError, MolgenisOfflineError
 
 
-def request(login=True):
+def request(func):
     """Request decorator."""
 
-    def decorator(func):
+    def handle_request(*args, **kwargs):
+        auth.check_token()
 
-        def handle_request(*args, **kwargs):
-            if login:
-                auth.check_token()
-
-            response = str()
-            try:
-                response = func(*args, **kwargs)
-                response.raise_for_status()
-                return response
-            except requests.HTTPError as e:
-                if _is_json(response):
-                    _handle_json_error(response.json())
-                else:
-                    raise McmdError(str(e))
-            except requests.exceptions.ConnectionError:
-                raise McmdError("Can't connect to {}".format(config.url()))
-            except requests.RequestException as e:
+        response = str()
+        try:
+            response = func(*args, **kwargs)
+            response.raise_for_status()
+            return response
+        except requests.HTTPError as e:
+            if _is_json(response):
+                _handle_json_error(response.json())
+            else:
                 raise McmdError(str(e))
+        except requests.exceptions.ConnectionError:
+            raise MolgenisOfflineError()
+        except requests.RequestException as e:
+            raise McmdError(str(e))
 
-        return handle_request
-
-    return decorator
+    return handle_request
 
 
 def _handle_json_error(response_json):
