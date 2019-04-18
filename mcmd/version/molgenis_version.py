@@ -5,7 +5,8 @@ import requests
 from requests import HTTPError
 
 from mcmd.client import api
-from mcmd.utils.errors import McmdError, MolgenisOfflineError
+from mcmd.client.errors import MolgenisOfflineError
+from mcmd.utils.errors import McmdError
 
 _version_number = None
 _version = None

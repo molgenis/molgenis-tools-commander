@@ -8,7 +8,16 @@ from pathlib import Path
 
 from ruamel.yaml import YAML
 
-from mcmd.utils.errors import ConfigError
+from mcmd.utils.errors import McmdError
+
+
+class ConfigError(McmdError):
+    def __init__(self, message):
+        self.message = "There's an error in the configuration file: {}".format(message)
+
+    def __str__(self):
+        return repr(self.message)
+
 
 _config = None
 _properties_file: Path = None
