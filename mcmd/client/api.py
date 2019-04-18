@@ -83,8 +83,3 @@ def set_theme():
 @endpoint
 def logo():
     return 'plugin/menumanager/upload-logo'
-
-
-@endpoint
-def version():
-    return 'api/v2/version/'

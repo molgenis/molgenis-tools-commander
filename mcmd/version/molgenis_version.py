@@ -1,10 +1,11 @@
 """Contains the MOLGENIS version of the current host."""
 import re
+from urllib.parse import urljoin
 
 import requests
 from requests import HTTPError
 
-from mcmd.client import api
+from mcmd.config import config
 from mcmd.utils.errors import McmdError, MolgenisOfflineError
 
 _version_number = None
@@ -33,7 +34,7 @@ def get_version_number():
 
 def _get_version():
     try:
-        response = requests.get(api.version(),
+        response = requests.get(urljoin(config.get('host', 'selected'), 'api/v2/version'),
                                 headers={'Content-Type': 'application/json'})
         response.raise_for_status()
 
