@@ -2,7 +2,7 @@ from collections import deque
 from os import path
 
 from mcmd.config.home import get_history_file
-from mcmd.utils.errors import McmdError
+from mcmd.core.errors import McmdError
 
 _USER_HISTORY = get_history_file()
 
