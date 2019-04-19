@@ -1,7 +1,7 @@
 from enum import Enum
 
-from mcmd.client import api
-from mcmd.client.molgenis_client import get
+from mcmd.molgenis import api
+from mcmd.molgenis.client import get
 from mcmd.io import multi_choice
 from mcmd.logging import get_logger
 from mcmd.utils.errors import McmdError

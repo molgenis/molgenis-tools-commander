@@ -6,17 +6,17 @@ principal doesn't exist, the program will terminate.
 from urllib.parse import urljoin
 
 from mcmd import io
-from mcmd.client import api
-from mcmd.client.molgenis_client import post_form
+from mcmd.molgenis import api
+from mcmd.molgenis.client import post_form
 from mcmd.command import command
 from mcmd.commands._registry import arguments
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
-from mcmd.utils.principals import ensure_principal_exists, detect_principal_type, PrincipalType
+from mcmd.molgenis.principals import ensure_principal_exists, detect_principal_type, PrincipalType
 # =========
 # Arguments
 # =========
-from mcmd.utils.resources import detect_resource_type, ensure_resource_exists, ResourceType
+from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists, ResourceType
 
 
 @arguments('give')

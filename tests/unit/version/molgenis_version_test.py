@@ -2,8 +2,8 @@ import unittest
 
 import pytest
 
-from mcmd.utils.errors import McmdError
-from mcmd.version import molgenis_version
+import mcmd.molgenis.version as molgenis_version
+from mcmd.core.errors import McmdError
 
 
 @pytest.mark.unit
