@@ -1,7 +1,7 @@
 import pytest
 from mock import patch
 
-from mcmd.config.home import get_issues_folder
+from mcmd.core.home import get_issues_folder
 from tests.integration.loader_mock import get_dataset_folder
 from tests.integration.utils import run_commander, run_commander_fail, random_name
 
@@ -91,7 +91,7 @@ def test_import_from_path_in_package(session, package):
 
 
 @pytest.mark.integration
-@patch('mcmd.io.multi_choice')
+@patch('mcmd.io.io.multi_choice')
 def test_import_from_issue(which_file_question, session):
     file_name = 'emx_package-only.xlsx'
     which_file_question.return_value = file_name
