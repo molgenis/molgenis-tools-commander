@@ -4,8 +4,8 @@ from mcmd.config import config
 
 
 def endpoint(func):
-    def wrapper():
-        return urljoin(config.get('host', 'selected'), func())
+    def wrapper(*args, **kwargs):
+        return urljoin(config.get('host', 'selected'), func(*args, **kwargs))
 
     return wrapper
 
