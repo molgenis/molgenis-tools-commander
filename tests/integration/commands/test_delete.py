@@ -40,6 +40,15 @@ def test_delete_entity_data(session, entity_type):
 
 
 @pytest.mark.integration
+@patch('mcmd.io.confirm')
+def test_delete_entity_attribute(are_you_sure, session, entity_type):
+    are_you_sure.return_value = True
+    run_commander('delete --entity-type {} --attribute firstName'.format(entity_type))
+
+    assert len(session.get_entity_meta_data(entity_type)['attributes']) == 2
+
+
+@pytest.mark.integration
 def test_delete_package_contents(session, entity_type):
     package = entity_type.split('_')[0]
     child_package = random_name()
