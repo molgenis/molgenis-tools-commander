@@ -3,8 +3,8 @@ from colorama import Fore, Style
 from halo import Halo
 
 import mcmd.config.config as config
-from mcmd.logging import get_logger
-from mcmd.utils.kbhit import KBHit
+from mcmd.io.logging import get_logger
+from mcmd.io.kbhit import KBHit
 
 log = get_logger()
 

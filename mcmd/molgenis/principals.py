@@ -2,8 +2,8 @@ from enum import Enum
 
 from mcmd.molgenis import api
 from mcmd.molgenis.client import get
-from mcmd.io import multi_choice
-from mcmd.logging import get_logger
+from mcmd.io.io import multi_choice
+from mcmd.io.logging import get_logger
 from mcmd.utils.errors import McmdError
 
 log = get_logger()

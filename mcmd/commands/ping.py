@@ -1,11 +1,11 @@
 from colorama import Fore
 
 import mcmd.config.config as config
-import mcmd.molgenis.version as molgenis_version
+from mcmd.command import command
 from mcmd.commands._registry import arguments
-from mcmd.core.command import command
-from mcmd.core.errors import McmdError
 from mcmd.io.io import highlight
+from mcmd.utils.errors import McmdError
+from mcmd.version import molgenis_version
 
 
 # =========
