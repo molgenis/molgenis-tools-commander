@@ -3,7 +3,7 @@ import unittest
 import pytest
 from mock import patch
 
-from mcmd.client.github_client import Attachment
+from mcmd.github.client import Attachment
 from mcmd.commands import import_
 
 
