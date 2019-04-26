@@ -1,9 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='molgenis-commander',
     version='1.3.1',
-    packages=['mcmd', 'mcmd.client', 'mcmd.commands', 'mcmd.config', 'mcmd.utils'],
+    packages=find_packages(),
     description='A command line interface for Molgenis',
     url='https://github.com/molgenis/molgenis-tools-commander',
     author='Tommy de Boer',
