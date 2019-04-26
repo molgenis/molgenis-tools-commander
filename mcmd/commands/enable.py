@@ -1,10 +1,13 @@
-from mcmd.io import io
-from mcmd.molgenis import api
-from mcmd.molgenis.client import post
-from mcmd.core.command import command
+from urllib.parse import urljoin
+
+from mcmd import io
 from mcmd.commands._registry import arguments
-from mcmd.io.io import highlight
+from mcmd.core.command import command
 from mcmd.core.errors import McmdError
+from mcmd.io import io
+from mcmd.io.io import highlight
+from mcmd.molgenis import api
+from mcmd.molgenis.client import post, put
 from mcmd.molgenis.resources import one_resource_exists, ensure_resource_exists, ResourceType
 
 
@@ -36,6 +39,14 @@ def add_arguments(subparsers):
                                 type=str,
                                 help='The bootstrap theme you want to enable, specify the name with or without '
                                      '(.min).css and with or without bootstrap- prefix.')
+
+    p_enable_language = p_enable_subparsers.add_parser('language',
+                                                       help='Enables a language')
+    p_enable_language.set_defaults(func=enable_language,
+                                   write_to_history=True)
+    p_enable_language.add_argument('language',
+                                   type=str,
+                                   help="The language you want to enable, specified by the two letter code (e.g. 'en')")
 
 
 # =======
@@ -72,3 +83,10 @@ def enable_theme(args):
     else:
         raise McmdError(
             'Applying theme failed. No themes found containing {} in the name'.format(args.theme, 'sys_set_StyleSheet'))
+
+
+@command
+def enable_language(args):
+    io.start('Enabling language {}'.format(highlight(args.language)))
+    url = urljoin(api.rest1(), 'sys_Language/{}/active'.format(args.language))
+    put(url, 'true')
