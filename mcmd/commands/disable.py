@@ -1,10 +1,12 @@
+from urllib.parse import urljoin
+
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client.molgenis_client import post
-from mcmd.utils.resources import ensure_resource_exists, ResourceType
+from mcmd.client.molgenis_client import post, put
 from mcmd.command import command
 from mcmd.commands._registry import arguments
 from mcmd.io import highlight
+from mcmd.utils.resources import ensure_resource_exists, ResourceType
 
 
 # =========
@@ -26,6 +28,15 @@ def add_arguments(subparsers):
                                type=str,
                                help="The entity type to remove the row level security from")
 
+    p_disable_language = p_disable_subparsers.add_parser('language',
+                                                         help='Enables a language')
+    p_disable_language.set_defaults(func=disable_language,
+                                    write_to_history=True)
+    p_disable_language.add_argument('language',
+                                    type=str,
+                                    help="The language you want to disable, specified by the two letter code (e.g. "
+                                         "'en')")
+
 
 # =======
 # Methods
@@ -41,3 +52,10 @@ def disable_rls(args):
     ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
     post(config.api('rls'), data={'id': args.entity,
                                   'rlsEnabled': False})
+
+
+@command
+def disable_language(args):
+    io.start('Disabling language {}'.format(highlight(args.language)))
+    url = urljoin(config.api('rest1'), 'sys_Language/{}/active'.format(args.language))
+    put(url, 'false')
