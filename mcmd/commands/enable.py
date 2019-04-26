@@ -1,7 +1,7 @@
 from urllib.parse import urljoin
 
-import mcmd.config.config as config
 from mcmd import io
+from mcmd.client import api
 from mcmd.client.molgenis_client import post, put
 from mcmd.command import command
 from mcmd.commands._registry import arguments
@@ -57,8 +57,8 @@ def enable_rls(args):
     io.start('Enabling row level security on entity type %s' % highlight(args.entity))
 
     ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
-    post(config.api('rls'), data={'id': args.entity,
-                                  'rlsEnabled': True})
+    post(api.rls(), data={'id': args.entity,
+                          'rlsEnabled': True})
 
 
 @command
@@ -76,9 +76,9 @@ def enable_theme(args):
     if one_resource_exists([theme + '.min.css', theme + '.css', 'bootstrap-' + theme + '.min.css'], ResourceType.THEME):
         # Molgenis themes start with bootstrap- but this is stripped from the name in the theme manager
         try:
-            post(config.api('set_theme'), theme)
+            post(api.set_theme(), data=theme)
         except:
-            post(config.api('set_theme'), theme.split('bootstrap-')[1])
+            post(api.set_theme(), data=theme.split('bootstrap-')[1])
     else:
         raise McmdError(
             'Applying theme failed. No themes found containing {} in the name'.format(args.theme, 'sys_set_StyleSheet'))
@@ -87,5 +87,5 @@ def enable_theme(args):
 @command
 def enable_language(args):
     io.start('Enabling language {}'.format(highlight(args.language)))
-    url = urljoin(config.api('rest1'), 'sys_Language/{}/active'.format(args.language))
+    url = urljoin(api.rest1(), 'sys_Language/{}/active'.format(args.language))
     put(url, 'true')
