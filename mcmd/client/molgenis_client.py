@@ -7,8 +7,9 @@ from mcmd.client.request_handler import request
 
 
 @request
-def get(url):
+def get(url, params=None):
     return requests.get(url,
+                        params=params,
                         headers=_get_default_headers())
 
 

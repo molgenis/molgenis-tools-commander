@@ -1,23 +1,23 @@
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 
 from mcmd.config import config
 
 
 def endpoint(func):
     def wrapper(*args, **kwargs):
-        return urljoin(config.get('host', 'selected'), func(*args, **kwargs))
+        return urljoin(config.get('host', 'selected'), quote(func(*args, **kwargs)))
 
     return wrapper
 
 
 @endpoint
-def rest1():
-    return 'api/v1/'
+def rest1(path: str):
+    return urljoin('api/v1/', path)
 
 
 @endpoint
-def rest2():
-    return 'api/v2/'
+def rest2(path: str):
+    return urljoin('api/v2/', path)
 
 
 @endpoint

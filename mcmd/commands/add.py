@@ -132,7 +132,7 @@ def add_user(args):
     superuser = args.is_superuser
     ch_pwd = args.change_password
 
-    post(api.rest1() + 'sys_sec_User',
+    post(api.rest1('sys_sec_User'),
          data={'username': args.username,
                'password_': password,
                'changePassword': ch_pwd,
@@ -158,14 +158,18 @@ def add_package(args):
     if args.parent:
         data['parent'] = args.parent
 
-    post(api.rest1() + 'sys_md_Package', data=data)
+    post(api.rest1('sys_md_Package'), data=data)
 
 
 @command
 def add_token(args):
     io.start('Adding token %s for user %s' % (highlight(args.token), highlight(args.user)))
 
-    user = get(api.rest2() + 'sys_sec_User?attrs=id&q=username==%s' % args.user)
+    user = get(api.rest2('sys_sec_User'),
+               params={
+                   'attrs': 'id',
+                   'q': 'username=={}'.format(args.user)
+               })
     if user.json()['total'] == 0:
         raise McmdError('Unknown user %s' % args.user)
 
@@ -174,7 +178,7 @@ def add_token(args):
     data = {'User': user_id,
             'token': args.token}
 
-    post(api.rest1() + 'sys_sec_Token', data=data)
+    post(api.rest1('sys_sec_Token'), data=data)
 
 
 @command

@@ -4,7 +4,6 @@ invalidated or simply not present it tries to login with the provided credential
 """
 
 import json
-from urllib.parse import urljoin
 
 import requests
 from requests import HTTPError
@@ -41,7 +40,10 @@ def check_token():
         return
 
     try:
-        response = requests.get(urljoin(api.rest2(), 'sys_sec_Token?q=token=={}'.format(_token)),
+        response = requests.get(api.rest2('sys_sec_Token'),
+                                params={
+                                    'q': 'token=={}'.format(_token)
+                                },
                                 headers={'Content-Type': 'application/json', 'x-molgenis-token': _token})
         response.raise_for_status()
     except HTTPError as e:

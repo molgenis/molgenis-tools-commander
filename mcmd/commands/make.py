@@ -42,7 +42,10 @@ def make(args):
 
 def _find_group(role):
     io.debug('Fetching groups')
-    groups = get(api.rest2() + 'sys_sec_Group?attrs=name')
+    groups = get(api.rest2('sys_sec_Group'),
+                 params={
+                     'attrs': 'name'
+                 })
     role = lower_kebab(role)
 
     matches = {len(group['name']): group['name'] for group in groups.json()['items'] if role.startswith(group['name'])}
