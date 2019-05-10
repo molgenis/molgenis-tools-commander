@@ -3,13 +3,14 @@ from os import path as os_path
 from pathlib import Path
 
 import mcmd.config.config as config
+from mcmd.args.shared import as_user_parser
+from mcmd.commands._registry import arguments
+from mcmd.core.command import command
+from mcmd.core.errors import McmdError
 from mcmd.io import io
+from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get, post_files
-from mcmd.core.command import command
-from mcmd.commands._registry import arguments
-from mcmd.io.io import highlight
-from mcmd.core.errors import McmdError
 from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
 
 # Store a reference to the parser so that we can show an error message for the custom validation rule
@@ -24,10 +25,10 @@ p_add_theme = None
 def add_arguments(subparsers):
     global p_add_theme
     p_add = subparsers.add_parser('add',
-                                  help='Add users, groups, tokens, themes and logos',
+                                  help='add and upload resources',
                                   description="Run 'mcmd add group -h' or 'mcmd add user -h' to view the help for those"
-                                              " sub-commands")
-    p_add_subparsers = p_add.add_subparsers(dest="type")
+                                              " subcommands")
+    p_add_subparsers = p_add.add_subparsers(dest="type", metavar='')
 
     p_add_group = p_add_subparsers.add_parser('group',
                                               help='Add a group')
@@ -38,6 +39,7 @@ def add_arguments(subparsers):
                              help="The group's name")
 
     p_add_user = p_add_subparsers.add_parser('user',
+                                             parents=[as_user_parser()],
                                              help='Add a user')
     p_add_user.set_defaults(func=add_user,
                             write_to_history=True)
@@ -63,6 +65,7 @@ def add_arguments(subparsers):
                             help="Set change password to true for user")
 
     p_add_package = p_add_subparsers.add_parser('package',
+                                                parents=[as_user_parser()],
                                                 help='Add a package')
     p_add_package.set_defaults(func=add_package,
                                write_to_history=True)
@@ -75,6 +78,7 @@ def add_arguments(subparsers):
                                help="The id of the parent")
 
     p_add_token = p_add_subparsers.add_parser('token',
+                                              parents=[as_user_parser()],
                                               help='Add a token')
     p_add_token.set_defaults(func=add_token,
                              write_to_history=True)
@@ -86,6 +90,7 @@ def add_arguments(subparsers):
                              help="The token")
 
     p_add_theme = p_add_subparsers.add_parser('theme',
+                                              parents=[as_user_parser()],
                                               help='Upload a bootstrap theme')
     p_add_theme.set_defaults(func=add_theme,
                              write_to_history=True)
@@ -107,6 +112,7 @@ def add_arguments(subparsers):
                                   "be applied on bootstrap4 pages)")
 
     p_add_logo = p_add_subparsers.add_parser('logo',
+                                             parents=[as_user_parser()],
                                              help='Upload a logo to be placed on the left top of the menu')
     p_add_logo.set_defaults(func=add_logo,
                             write_to_history=True)

@@ -5,6 +5,7 @@ principal doesn't exist, the program will terminate.
 """
 from urllib.parse import urljoin
 
+from mcmd.args.shared import as_user_parser
 from mcmd.io import io
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post_form
@@ -22,7 +23,8 @@ from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists
 @arguments('give')
 def add_arguments(subparsers):
     p_give = subparsers.add_parser('give',
-                                   help='Give permissions on resources to roles or users.')
+                                   parents=[as_user_parser()],
+                                   help='give permissions on resources to roles or users')
     p_give.set_defaults(func=give,
                         write_to_history=True)
     p_give_resource = p_give.add_mutually_exclusive_group()

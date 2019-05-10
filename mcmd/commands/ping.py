@@ -15,7 +15,7 @@ import mcmd.molgenis.version as molgenis_version
 @arguments('ping')
 def add_arguments(subparsers):
     p_make = subparsers.add_parser('ping',
-                                   help='Pings the selected host')
+                                   help='ping the selected host')
     p_make.set_defaults(func=ping,
                         write_to_history=False)
 

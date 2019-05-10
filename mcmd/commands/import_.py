@@ -6,6 +6,7 @@ import polling
 import requests
 
 import mcmd.config.config as config
+from mcmd.args.shared import as_user_parser
 from mcmd.io import io
 from mcmd.molgenis import api
 from mcmd.github import client as github
@@ -29,7 +30,8 @@ _p_import = None
 def add_arguments(subparsers):
     global _p_import
     _p_import = subparsers.add_parser('import',
-                                      help='Import a file')
+                                      parents=[as_user_parser()],
+                                      help='import a dataset')
     _p_import.set_defaults(func=import_,
                            write_to_history=True)
     _p_import.add_argument('resource',

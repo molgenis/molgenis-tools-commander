@@ -4,6 +4,7 @@ from mcmd import io
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.errors import McmdError
+from mcmd.args.shared import as_user_parser
 from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
@@ -18,11 +19,13 @@ from mcmd.molgenis.resources import one_resource_exists, ensure_resource_exists,
 @arguments('enable')
 def add_arguments(subparsers):
     p_enable = subparsers.add_parser('enable',
-                                     help='Enable resources/functionality',
+                                     help='enable resources and functionality',
                                      description="Run 'mcmd enable rls -h' to view the help for those sub-commands")
-    p_enable_subparsers = p_enable.add_subparsers(dest="type")
+    p_enable_subparsers = p_enable.add_subparsers(dest="type", metavar='')
 
-    p_enable_rls = p_enable_subparsers.add_parser('rls',
+    p_enable_rls = p_enable_subparsers.add_parser('row-level-security',
+                                                  aliases=['rls'],
+                                                  parents=[as_user_parser()],
                                                   help='Enables row level security on an entity type')
     p_enable_rls.set_defaults(func=enable_rls,
                               write_to_history=True)
@@ -31,6 +34,7 @@ def add_arguments(subparsers):
                               help="The entity type to secure")
 
     p_enable_theme = p_enable_subparsers.add_parser('theme',
+                                                    parents=[as_user_parser()],
                                                     help='Enables the bootstrap theme which changes the styling of your'
                                                          ' MOLGENIS')
     p_enable_theme.set_defaults(func=enable_theme,
@@ -41,6 +45,7 @@ def add_arguments(subparsers):
                                      '(.min).css and with or without bootstrap- prefix.')
 
     p_enable_language = p_enable_subparsers.add_parser('language',
+                                                       parents=[as_user_parser()],
                                                        help='Enables a language')
     p_enable_language.set_defaults(func=enable_language,
                                    write_to_history=True)

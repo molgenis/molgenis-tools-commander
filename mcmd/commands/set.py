@@ -3,13 +3,14 @@ Alter settings
 """
 import json
 
+from mcmd.commands._registry import arguments
+from mcmd.core.command import command
+from mcmd.core.errors import McmdError
+from mcmd.args.shared import as_user_parser
 from mcmd.io import io
+from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import get, put
-from mcmd.core.command import command
-from mcmd.commands._registry import arguments
-from mcmd.io.io import highlight
-from mcmd.core.errors import McmdError
 
 
 # =========
@@ -19,7 +20,8 @@ from mcmd.core.errors import McmdError
 @arguments('set')
 def add_arguments(subparsers):
     p_set = subparsers.add_parser('set',
-                                  help='Alter settings',
+                                  parents=[as_user_parser()],
+                                  help='alter settings',
                                   description="Run 'mcmd set -h' to view the help for this sub-command")
 
     p_set.add_argument('type',

@@ -1,3 +1,4 @@
+from mcmd.args.shared import as_user_parser
 from mcmd.io import io
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get
@@ -15,7 +16,8 @@ from mcmd.utils.utils import lower_kebab, upper_snake
 @arguments('make')
 def add_arguments(subparsers):
     p_make = subparsers.add_parser('make',
-                                   help='Make a user member of a role')
+                                   parents=[as_user_parser()],
+                                   help='make a user member of a role')
     p_make.set_defaults(func=make,
                         write_to_history=True)
     p_make.add_argument('user',
