@@ -3,10 +3,10 @@ Alter settings
 """
 import json
 
+from mcmd.args.shared import as_user_parser
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.errors import McmdError
-from mcmd.args.shared import as_user_parser
 from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
@@ -22,19 +22,19 @@ def add_arguments(subparsers):
     p_set = subparsers.add_parser('set',
                                   parents=[as_user_parser()],
                                   help='alter settings',
-                                  description="Run 'mcmd set -h' to view the help for this sub-command")
+                                  description="run 'mcmd set -h' to view the help for this sub-command")
 
     p_set.add_argument('type',
                        type=str,
-                       help="Simple name of the settings entity (app, mail, opencpu, etc.) or the ID")
+                       help="simple name of the settings entity (app, mail, opencpu, etc.) or the ID")
 
     p_set.add_argument('setting',
                        type=str,
-                       help="The attribute to set")
+                       help="the attribute to set")
 
     p_set.add_argument('value',
                        type=str,
-                       help="The value to set the attribute to")
+                       help="the value to set the attribute to")
 
     p_set.set_defaults(func=set_,
                        write_to_history=True)

@@ -6,13 +6,13 @@ principal doesn't exist, the program will terminate.
 from urllib.parse import urljoin
 
 from mcmd.args.shared import as_user_parser
+from mcmd.commands._registry import arguments
+from mcmd.core.command import command
+from mcmd.core.errors import McmdError
 from mcmd.io import io
+from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post_form
-from mcmd.core.command import command
-from mcmd.commands._registry import arguments
-from mcmd.io.io import highlight
-from mcmd.core.errors import McmdError
 from mcmd.molgenis.principals import ensure_principal_exists, detect_principal_type, PrincipalType
 # =========
 # Arguments
@@ -30,29 +30,29 @@ def add_arguments(subparsers):
     p_give_resource = p_give.add_mutually_exclusive_group()
     p_give_resource.add_argument('--entity-type', '-e',
                                  action='store_true',
-                                 help='Flag to specify that the resource is an entity type')
+                                 help='flag to specify that the resource is an entity type')
     p_give_resource.add_argument('--package', '-p',
                                  action='store_true',
-                                 help='Flag to specify that the resource is a package')
+                                 help='flag to specify that the resource is a package')
     p_give_resource.add_argument('--plugin', '-pl',
                                  action='store_true',
-                                 help='Flag to specify that the resource is a plugin')
+                                 help='flag to specify that the resource is a plugin')
     p_give_receiver = p_give.add_mutually_exclusive_group()
     p_give_receiver.add_argument('--user', '-u',
                                  action='store_true',
-                                 help='Flag to specify that the receiver is a user')
+                                 help='flag to specify that the receiver is a user')
     p_give_receiver.add_argument('--role', '-r',
                                  action='store_true',
-                                 help='Flag to specify that the receiver is a role')
+                                 help='flag to specify that the receiver is a role')
     p_give.add_argument('receiver',
                         type=str,
-                        help='The role (or user) to give the permission to')
+                        help='the role (or user) to give the permission to')
     p_give.add_argument('permission',
                         choices=['none', 'writemeta', 'readmeta', 'write', 'edit', 'read', 'view', 'count'],
-                        help='The permission type to give. Synonyms are allowed (e.g. write/edit).')
+                        help='the permission type to give - synonyms are allowed (e.g. write/edit)')
     p_give.add_argument('resource',
                         type=str,
-                        help='The resource to which permission is given')
+                        help='the resource to which permission is given')
 
 
 # =======

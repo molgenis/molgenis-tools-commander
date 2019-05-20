@@ -1,10 +1,10 @@
 from urllib.parse import urljoin
 
 from mcmd import io
+from mcmd.args.shared import as_user_parser
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.errors import McmdError
-from mcmd.args.shared import as_user_parser
 from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
@@ -26,32 +26,32 @@ def add_arguments(subparsers):
     p_enable_rls = p_enable_subparsers.add_parser('row-level-security',
                                                   aliases=['rls'],
                                                   parents=[as_user_parser()],
-                                                  help='Enables row level security on an entity type')
+                                                  help='enables row level security on an entity type')
     p_enable_rls.set_defaults(func=enable_rls,
                               write_to_history=True)
     p_enable_rls.add_argument('entity',
                               type=str,
-                              help="The entity type to secure")
+                              help="the entity type to secure")
 
     p_enable_theme = p_enable_subparsers.add_parser('theme',
                                                     parents=[as_user_parser()],
-                                                    help='Enables the bootstrap theme which changes the styling of your'
+                                                    help='enables the bootstrap theme which changes the styling of your'
                                                          ' MOLGENIS')
     p_enable_theme.set_defaults(func=enable_theme,
                                 write_to_history=True)
     p_enable_theme.add_argument('theme',
                                 type=str,
-                                help='The bootstrap theme you want to enable, specify the name with or without '
+                                help='the bootstrap theme you want to enable, specify the name with or without '
                                      '(.min).css and with or without bootstrap- prefix.')
 
     p_enable_language = p_enable_subparsers.add_parser('language',
                                                        parents=[as_user_parser()],
-                                                       help='Enables a language')
+                                                       help='enables a language')
     p_enable_language.set_defaults(func=enable_language,
                                    write_to_history=True)
     p_enable_language.add_argument('language',
                                    type=str,
-                                   help="The language you want to enable, specified by the two letter code (e.g. 'en')")
+                                   help="the language you want to enable, specified by the two letter code (e.g. 'en')")
 
 
 # =======

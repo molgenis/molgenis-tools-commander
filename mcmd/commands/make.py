@@ -1,11 +1,11 @@
 from mcmd.args.shared import as_user_parser
+from mcmd.commands._registry import arguments
+from mcmd.core.command import command
+from mcmd.core.errors import McmdError
 from mcmd.io import io
+from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get
-from mcmd.core.command import command
-from mcmd.commands._registry import arguments
-from mcmd.io.io import highlight
-from mcmd.core.errors import McmdError
 from mcmd.utils.utils import lower_kebab, upper_snake
 
 
@@ -22,10 +22,10 @@ def add_arguments(subparsers):
                         write_to_history=True)
     p_make.add_argument('user',
                         type=str,
-                        help='The user to make a member')
+                        help='the user to make a member')
     p_make.add_argument('role',
                         type=str,
-                        help='The role to make the user a member of')
+                        help='the role to make the user a member of')
 
 
 # =======

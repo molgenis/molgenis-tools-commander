@@ -31,97 +31,97 @@ def add_arguments(subparsers):
     p_add_subparsers = p_add.add_subparsers(dest="type", metavar='')
 
     p_add_group = p_add_subparsers.add_parser('group',
-                                              help='Add a group')
+                                              help='add a group')
     p_add_group.set_defaults(func=add_group,
                              write_to_history=True)
     p_add_group.add_argument('name',
                              type=str,
-                             help="The group's name")
+                             help="the group's name")
 
     p_add_user = p_add_subparsers.add_parser('user',
                                              parents=[as_user_parser()],
-                                             help='Add a user')
+                                             help='add a user')
     p_add_user.set_defaults(func=add_user,
                             write_to_history=True)
     p_add_user.add_argument('username',
                             type=str,
-                            help="The user's name")
+                            help="the user's name")
     p_add_user.add_argument('--set-password', '-p',
                             metavar='PASSWORD',
                             type=str,
-                            help="The user's password")
+                            help="the user's password")
     p_add_user.add_argument('--with-email', '-e',
                             metavar='EMAIL',
                             type=str,
-                            help="The user's e-mail address")
+                            help="the user's e-mail address")
     p_add_user.add_argument('--is-inactive', '-a',
                             action='store_true',
-                            help="Make user inactive")
+                            help="make user inactive")
     p_add_user.add_argument('--is-superuser', '-s',
                             action='store_true',
-                            help="Make user superuser")
+                            help="make user superuser")
     p_add_user.add_argument('--change-password', '-c',
                             action='store_true',
-                            help="Set change password to true for user")
+                            help="set change password to true for user")
 
     p_add_package = p_add_subparsers.add_parser('package',
                                                 parents=[as_user_parser()],
-                                                help='Add a package')
+                                                help='add a package')
     p_add_package.set_defaults(func=add_package,
                                write_to_history=True)
     p_add_package.add_argument('id',
                                type=str,
-                               help="The id of the Package")
+                               help="the id of the Package")
     p_add_package.add_argument('--in',
                                type=str,
                                dest='parent',
-                               help="The id of the parent")
+                               help="the id of the parent")
 
     p_add_token = p_add_subparsers.add_parser('token',
                                               parents=[as_user_parser()],
-                                              help='Add a token')
+                                              help='add a token')
     p_add_token.set_defaults(func=add_token,
                              write_to_history=True)
     p_add_token.add_argument('user',
                              type=str,
-                             help="The user to give the token to")
+                             help="the user to give the token to")
     p_add_token.add_argument('token',
                              type=str,
-                             help="The token")
+                             help="the token")
 
     p_add_theme = p_add_subparsers.add_parser('theme',
                                               parents=[as_user_parser()],
-                                              help='Upload a bootstrap theme')
+                                              help='upload a bootstrap theme')
     p_add_theme.set_defaults(func=add_theme,
                              write_to_history=True)
     p_add_theme.add_argument('--from-path', '-p',
                              action='store_true',
-                             help='Add a bootstrap theme by specifying a path')
+                             help='add a bootstrap theme by specifying a path')
 
     required_named = p_add_theme.add_argument_group('required named arguments')
     required_named.add_argument('--bootstrap3', '-3',
                                 type=str,
                                 metavar='STYLESHEET',
-                                help="The bootstrap3 css theme file (when not specified, the default molgenis theme "
+                                help="the bootstrap3 css theme file (when not specified, the default molgenis theme "
                                      "will be applied on bootstrap3 pages)")
 
     p_add_theme.add_argument('--bootstrap4', '-4',
                              type=str,
                              metavar='STYLESHEET',
-                             help="The bootstrap4 css theme file (when not specified, the default molgenis theme will "
+                             help="the bootstrap4 css theme file (when not specified, the default molgenis theme will "
                                   "be applied on bootstrap4 pages)")
 
     p_add_logo = p_add_subparsers.add_parser('logo',
                                              parents=[as_user_parser()],
-                                             help='Upload a logo to be placed on the left top of the menu')
+                                             help='upload a logo to be placed on the left top of the menu')
     p_add_logo.set_defaults(func=add_logo,
                             write_to_history=True)
     p_add_logo.add_argument('--from-path', '-p',
                             action='store_true',
-                            help='Add a logo by specifying a path')
+                            help='add a logo by specifying a path')
     p_add_logo.add_argument('logo',
                             type=str,
-                            help="The image you want to use as logo")
+                            help="the image you want to use as logo")
 
 
 # =======

@@ -1,9 +1,9 @@
 from urllib.parse import urljoin
 
 from mcmd import io
+from mcmd.args.shared import as_user_parser
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
-from mcmd.args.shared import as_user_parser
 from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
@@ -25,21 +25,21 @@ def add_arguments(subparsers):
     p_disable_rls = p_disable_subparsers.add_parser('row-level-security',
                                                     aliases=['rls'],
                                                     parents=[as_user_parser()],
-                                                    help='Disables row level security on an entity type')
+                                                    help='disables row level security on an entity type')
     p_disable_rls.set_defaults(func=disable_rls,
                                write_to_history=True)
     p_disable_rls.add_argument('entity-type',
                                type=str,
-                               help="The entity type to remove the row level security from")
+                               help="the entity type to remove the row level security from")
 
     p_disable_language = p_disable_subparsers.add_parser('language',
                                                          parents=[as_user_parser()],
-                                                         help='Enables a language')
+                                                         help='enables a language')
     p_disable_language.set_defaults(func=disable_language,
                                     write_to_history=True)
     p_disable_language.add_argument('language',
                                     type=str,
-                                    help="The language you want to disable, specified by the two letter code (e.g. "
+                                    help="the language you want to disable, specified by the two letter code (e.g. "
                                          "'en')")
 
 

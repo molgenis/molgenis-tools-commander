@@ -7,15 +7,15 @@ import requests
 
 import mcmd.config.config as config
 from mcmd.args.shared import as_user_parser
-from mcmd.io import io
-from mcmd.molgenis import api
-from mcmd.github import client as github
-from mcmd.molgenis.client import post_file, get, post
-from mcmd.core.command import command
 from mcmd.commands._registry import arguments
-from mcmd.core.home import get_issues_folder
-from mcmd.io.io import highlight
+from mcmd.core.command import command
 from mcmd.core.errors import McmdError
+from mcmd.core.home import get_issues_folder
+from mcmd.github import client as github
+from mcmd.io import io
+from mcmd.io.io import highlight
+from mcmd.molgenis import api
+from mcmd.molgenis.client import post_file, get, post
 from mcmd.utils.file_helpers import scan_folders_for_files, select_path
 
 # =========
@@ -36,30 +36,30 @@ def add_arguments(subparsers):
                            write_to_history=True)
     _p_import.add_argument('resource',
                            nargs='?',
-                           help='The resource to import. Depending on the other options this can be a path, file name, '
-                                'or URL.')
+                           help='the resource to import - depending on the other options this can be a path, '
+                                'file name, or URL')
     p_import_source = _p_import.add_mutually_exclusive_group()
     p_import_source.add_argument('--from-path', '-p',
                                  action='store_true',
-                                 help='Import a file the old school way: by path.')
+                                 help='import a file the old school way: by path')
     p_import_source.add_argument('--from-issue', '-i',
                                  metavar='NUMBER',
-                                 help="Import a file attachment from a GitHub issue. It's possible (but not required) "
-                                      "to specify the file name of the attachment.")
+                                 help="import a file attachment from a GitHub issue - optionally supply the file name "
+                                      "of the attachment")
     p_import_source.add_argument('--from-url', '-u',
                                  action='store_true',
-                                 help='Import a file from a URL. Uses the importByUrl endpoint of the MOLGENIS '
-                                      'importer, without downloading the file first.')
+                                 help='import a file from a URL - uses the importByUrl endpoint of the MOLGENIS '
+                                      'importer, without downloading the file first')
     _p_import.add_argument('--in',
                            dest='to_package',
                            type=str,
                            metavar='PACKAGE_ID',
-                           help='The package to import to.')
+                           help='the package to import to')
     _p_import.add_argument('--as',
                            dest='entity_type_id',
                            type=str,
                            metavar='ENTITY_TYPE_ID',
-                           help='The id of the entity type (only used when importing VCF files)')
+                           help='the id of the entity type (only used when importing VCF files)')
     return _p_import
 
 
