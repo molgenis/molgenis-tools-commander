@@ -95,11 +95,13 @@ def _delete_entity_type_attribute(args):
     if args.force or (not args.force and io.confirm(
             'Are you sure you want to delete attribute {} of entity type {}?'.format(args.attribute, args.resource))):
         io.start('Deleting attribute {} of entity {}'.format(highlight(args.attribute), highlight(args.resource)))
-        response = client.get(urljoin(config.api('rest2'),
-                                      'sys_md_Attribute?q=entity=={};name=={}'.format(args.resource,
-                                                                                      args.attribute)))
+        response = client.get(api.rest2('sys_md_Attribute'),
+                              params={
+                                  'q': 'entity=={};name=={}'.format(args.resource,
+                                                                    args.attribute)
+                              })
         attribute_id = response.json()['items'][0]['id']
-        client.delete(urljoin(config.api('rest2'), 'sys_md_Attribute/{}'.format(attribute_id)))
+        client.delete(api.rest2('sys_md_Attribute/{}'.format(attribute_id)))
 
 
 def _delete_package(args):
