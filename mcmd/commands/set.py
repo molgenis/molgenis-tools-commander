@@ -3,8 +3,8 @@ Alter settings
 """
 import json
 
-import mcmd.config.config as config
 from mcmd import io
+from mcmd.client import api
 from mcmd.client.molgenis_client import get, put
 from mcmd.command import command
 from mcmd.commands._registry import arguments
@@ -65,15 +65,17 @@ def set_(args):
     entity = _get_settings_entity(args.type)
     io.start(
         'Updating {} of {} settings to {}'.format(highlight(args.setting), highlight(args.type), highlight(args.value)))
-    row = _get_row_id(entity)
-    url = '{}{}/{}/{}'.format(config.api('rest1'), entity, row, args.setting)
+    row = _get_first_row_id(entity)
+    url = api.rest1('{}/{}/{}'.format(entity, row, args.setting))
     put(url, json.dumps(args.value))
 
 
 def _get_settings():
-    entity = 'sys_md_EntityType'
-    query = 'q=extends==sys_set_settings&attrs=~id'
-    molgenis_settings = _quick_get(entity, query)
+    molgenis_settings = get(api.rest2('sys_md_EntityType'),
+                            params={
+                                'q': 'extends==sys_set_settings',
+                                'attrs': '~id'
+                            }).json()['items']
     return [setting['id'] for setting in molgenis_settings]
 
 
@@ -90,13 +92,9 @@ def _get_settings_entity(setting):
             raise McmdError('Setting [{}] is not a valid settings entity'.format(setting))
 
 
-def _quick_get(entity, q):
-    rest = config.api('rest2')
-    url = '{}{}?{}'.format(rest, entity, q)
-    return get(url).json()['items']
-
-
-def _get_row_id(entity):
-    query = 'attrs=~id'
-    settings = _quick_get(entity, query)
+def _get_first_row_id(entity):
+    settings = get(api.rest2(entity),
+                   params={
+                       'attrs': '~id'
+                   }).json()['items']
     return settings[0]['id']
