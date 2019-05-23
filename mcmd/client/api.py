@@ -1,6 +1,7 @@
 from urllib.parse import urljoin, quote
 
 from mcmd.config import config
+from mcmd.version.compatibility import version
 
 
 def endpoint(func):
@@ -26,13 +27,27 @@ def login():
 
 
 @endpoint
+@version('7.0.0')
 def group():
     return 'api/plugin/security/group/'
 
 
 @endpoint
+@version('8.0.0')
+def group():
+    return 'api/identities/group/'
+
+
+@endpoint
+@version('7.0.0')
 def member(group_name):
     return 'api/plugin/security/group/{}/member/'.format(group_name)
+
+
+@endpoint
+@version('8.0.0')
+def member(group_name):
+    return 'api/identities/group/{}/member/'.format(group_name)
 
 
 @endpoint
