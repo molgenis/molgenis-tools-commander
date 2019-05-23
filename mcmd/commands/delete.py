@@ -2,9 +2,9 @@ from urllib.parse import urljoin
 
 import mcmd.client.molgenis_client as client
 from mcmd import io
+from mcmd.client import api
 from mcmd.command import command
 from mcmd.commands._registry import arguments
-from mcmd.config import config
 from mcmd.io import highlight
 from mcmd.utils.resources import detect_resource_type, ensure_resource_exists, ResourceType
 
@@ -88,8 +88,7 @@ def _delete_entity_type_data(args):
     if args.force or (not args.force and io.confirm(
             'Are you sure you want to delete all data in entity type {}?'.format(args.resource))):
         io.start('Deleting all data from entity {}'.format(highlight(args.resource)))
-        url = urljoin(config.api('rest1'), args.resource)
-        client.delete(url)
+        client.delete(api.rest1(args.resource))
 
 
 def _delete_entity_type_attribute(args):
@@ -119,16 +118,22 @@ def _delete_package_contents(args):
 
 
 def _delete_entity_types_in_package(package_id):
-    response = client.get(
-        config.api('rest2') + ResourceType.ENTITY_TYPE.get_entity_id() + '?attrs=id&q=package==' + package_id)
+    response = client.get(api.rest2(ResourceType.ENTITY_TYPE.get_entity_id()),
+                          params={
+                              'attrs': 'id',
+                              'q': 'package==' + package_id
+                          })
     entity_ids = [entity_type['id'] for entity_type in response.json()['items']]
     if len(entity_ids) > 0:
         _delete_rows(ResourceType.ENTITY_TYPE.get_entity_id(), entity_ids)
 
 
 def _delete_packages_in_package(package_id):
-    response = client.get(
-        config.api('rest2') + ResourceType.PACKAGE.get_entity_id() + '?attrs=id&q=parent==' + package_id)
+    response = client.get(api.rest2(ResourceType.PACKAGE.get_entity_id()),
+                          params={
+                              'attrs': 'id',
+                              'q': 'parent==' + package_id
+                          })
     package_ids = [entity_type['id'] for entity_type in response.json()['items']]
     if len(package_ids) > 0:
         _delete_rows(ResourceType.PACKAGE.get_entity_id(), package_ids)
@@ -138,12 +143,11 @@ def _delete_group(args):
     if args.force or (not args.force and io.confirm(
             'Are you sure you want to delete group {}?'.format(args.resource))):
         io.start('Deleting group {}'.format(highlight(args.resource)))
-        client.delete(urljoin(config.api('group'), args.resource))
+        client.delete(urljoin(api.group(), args.resource))
 
 
 def _delete_rows(entity_type, rows):
-    url = '{}{}'.format(config.api('rest2'), entity_type)
-    client.delete_data(url, rows)
+    client.delete_data(api.rest2(entity_type), rows)
 
 
 def _get_resource_type(args):

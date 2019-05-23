@@ -4,14 +4,14 @@ invalidated or simply not present it tries to login with the provided credential
 """
 
 import json
-from urllib.parse import urljoin
 
 import requests
 from requests import HTTPError
 
 from mcmd import io
+from mcmd.client import api
 from mcmd.config import config
-from mcmd.utils.errors import McmdError
+from mcmd.utils.errors import McmdError, MolgenisOfflineError
 
 _username = None
 _password = None
@@ -40,7 +40,10 @@ def check_token():
         return
 
     try:
-        response = requests.get(urljoin(config.api('rest2'), 'sys_sec_Token?q=token=={}'.format(_token)),
+        response = requests.get(api.rest2('sys_sec_Token'),
+                                params={
+                                    'q': 'token=={}'.format(_token)
+                                },
                                 headers={'Content-Type': 'application/json', 'x-molgenis-token': _token})
         response.raise_for_status()
     except HTTPError as e:
@@ -49,7 +52,7 @@ def check_token():
         else:
             raise McmdError(str(e))
     except requests.exceptions.ConnectionError:
-        raise McmdError("Can't connect to {}".format(config.url()))
+        raise MolgenisOfflineError()
 
 
 def _login():
@@ -61,7 +64,7 @@ def _login():
 
     try:
         io.debug('Logging in as user {}'.format(_username))
-        response = requests.post(config.api('login'),
+        response = requests.post(api.login(),
                                  headers={'Content-Type': 'application/json'},
                                  data=json.dumps({"username": _username, "password": _password}))
         response.raise_for_status()
