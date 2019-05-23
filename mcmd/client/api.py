@@ -35,7 +35,7 @@ def group():
 @endpoint
 @version('8.0.0')
 def group():
-    return 'api/identities/v1/group/'
+    return 'api/identities/group/'
 
 
 @endpoint
@@ -47,7 +47,7 @@ def member(group_name):
 @endpoint
 @version('8.0.0')
 def member(group_name):
-    return 'api/identities/v1/group/{}/member/'.format(group_name)
+    return 'api/identities/group/{}/member/'.format(group_name)
 
 
 @endpoint
