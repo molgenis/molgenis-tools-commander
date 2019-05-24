@@ -30,12 +30,21 @@ def add_arguments(subparsers):
     p_delete_resource.add_argument('--group', '-g',
                                    action='store_true',
                                    help='Flag to specify that the resource is a group')
-    p_delete.add_argument('--data',
-                          action='store_true',
-                          help='Use in conjunction with --entity-type to only delete the rows of the entity type')
-    p_delete.add_argument('--contents',
-                          action='store_true',
-                          help='Use in conjunction with --package to only delete the contents of the package')
+
+    p_delete_options = p_delete.add_mutually_exclusive_group()
+    p_delete_options.add_argument('--data',
+                                  action='store_true',
+                                  help='Use in conjunction with --entity-type to only delete the rows of the entity '
+                                       'type')
+    p_delete_options.add_argument('--attribute',
+                                  metavar='NAME',
+                                  type=str,
+                                  help='Use in conjunction with --entity-type to only delete an attribute of the '
+                                       'entity type')
+    p_delete_options.add_argument('--contents',
+                                  action='store_true',
+                                  help='Use in conjunction with --package to only delete the contents of the package')
+
     p_delete.add_argument('--force', '-f',
                           action='store_true',
                           help='Forces the delete action without asking for confirmation')
@@ -55,6 +64,8 @@ def delete(args):
     if resource_type is ResourceType.ENTITY_TYPE:
         if args.data:
             _delete_entity_type_data(args)
+        elif args.attribute:
+            _delete_entity_type_attribute(args)
         else:
             _delete_entity_type(args)
     elif resource_type is ResourceType.PACKAGE:
@@ -78,6 +89,19 @@ def _delete_entity_type_data(args):
             'Are you sure you want to delete all data in entity type {}?'.format(args.resource))):
         io.start('Deleting all data from entity {}'.format(highlight(args.resource)))
         client.delete(api.rest1(args.resource))
+
+
+def _delete_entity_type_attribute(args):
+    if args.force or (not args.force and io.confirm(
+            'Are you sure you want to delete attribute {} of entity type {}?'.format(args.attribute, args.resource))):
+        io.start('Deleting attribute {} of entity {}'.format(highlight(args.attribute), highlight(args.resource)))
+        response = client.get(api.rest2('sys_md_Attribute'),
+                              params={
+                                  'q': 'entity=={};name=={}'.format(args.resource,
+                                                                    args.attribute)
+                              })
+        attribute_id = response.json()['items'][0]['id']
+        client.delete(api.rest2('sys_md_Attribute/{}'.format(attribute_id)))
 
 
 def _delete_package(args):
