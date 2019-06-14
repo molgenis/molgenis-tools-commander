@@ -1,6 +1,6 @@
 import sys
 
-MIN_PYTHON = (3, 7)
+MIN_PYTHON = (3, 6)
 if sys.version_info < MIN_PYTHON:
     import platform
 
