@@ -83,7 +83,7 @@ def test_import_in_package(session, package):
 
 @pytest.mark.integration
 def test_import_from_path_in_package(session, package):
-    file = get_dataset_folder().joinpath('testautoId_unpackaged.xlsx')
+    file = get_dataset_folder().joinpath('testAutoId_unpackaged.xlsx')
     run_commander('import --from-path {} --in {}'.format(file, package))
 
     result = session.get('{}_testAutoId'.format(package))
