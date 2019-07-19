@@ -91,7 +91,7 @@ def test_import_from_path_in_package(session, package):
 
 
 @pytest.mark.integration
-@patch('mcmd.io.multi_choice')
+@patch('mcmd.io.io.multi_choice')
 def test_import_from_issue(which_file_question, session):
     file_name = 'emx_package-only.xlsx'
     which_file_question.return_value = file_name

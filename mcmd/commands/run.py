@@ -4,7 +4,8 @@ from mcmd.core import argparser as arg_parser
 from mcmd.core.command import command
 from mcmd.commands._registry import arguments
 from mcmd.core.home import get_scripts_folder
-from mcmd.io.io import bold, dim, io
+from mcmd.io import io
+from mcmd.io.io import bold, dim
 from mcmd.io.logging import get_logger
 from mcmd.core.errors import McmdError
 

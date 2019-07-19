@@ -7,7 +7,7 @@ from distutils.version import StrictVersion
 from functools import wraps
 from typing import List
 
-from mcmd.molgenis import version
+from mcmd.molgenis import version as molgenis_version
 
 MIN_VERSION = '7.0.0'
 _registry = defaultdict(dict)
@@ -63,7 +63,7 @@ def version(version_):
 
 
 def _get_closest_version(versions: List[str]):
-    mol_version = version.get_version_number()
+    mol_version = molgenis_version.get_version_number()
     if mol_version in versions:
         return mol_version
     else:

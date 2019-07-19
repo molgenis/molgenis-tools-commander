@@ -2,7 +2,8 @@ from mcmd.molgenis import api
 from mcmd.molgenis.client import post, put
 from mcmd.core.command import command
 from mcmd.commands._registry import arguments
-from mcmd.io.io import highlight, io
+from mcmd.io import io
+from mcmd.io.io import highlight
 from mcmd.molgenis.resources import ensure_resource_exists, ResourceType
 
 

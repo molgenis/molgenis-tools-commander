@@ -1,10 +1,11 @@
 from colorama import Fore
 
 import mcmd.config.config as config
-from mcmd.core.command import command
 from mcmd.commands._registry import arguments
-from mcmd.io.io import highlight
+from mcmd.core.command import command
 from mcmd.core.errors import McmdError
+from mcmd.io.io import highlight
+from mcmd.molgenis import version as molgenis_version
 
 
 # =========
@@ -30,7 +31,7 @@ def ping(args):
     user = config.username()
     status = Fore.LIGHTGREEN_EX + 'Online' + Fore.RESET
     try:
-        version = version.get_version()
+        version = molgenis_version.get_version()
     except McmdError:
         status = Fore.LIGHTRED_EX + 'Offline' + Fore.RESET
         version = None

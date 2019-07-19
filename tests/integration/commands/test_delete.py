@@ -6,7 +6,7 @@ from tests.integration.utils import run_commander, entity_type_exists, entity_is
 
 
 @pytest.mark.integration
-@patch('mcmd.io.confirm')
+@patch('mcmd.io.io.confirm')
 def test_delete_entity(are_you_sure, session, entity_type):
     are_you_sure.return_value = True
     run_commander('delete --entity-type {}'.format(entity_type))
@@ -15,7 +15,7 @@ def test_delete_entity(are_you_sure, session, entity_type):
 
 
 @pytest.mark.integration
-@patch('mcmd.io.confirm')
+@patch('mcmd.io.io.confirm')
 def test_delete_entity_cancel(are_you_sure, session, entity_type):
     are_you_sure.return_value = False
     run_commander('delete --entity-type {}'.format(entity_type))
@@ -24,7 +24,7 @@ def test_delete_entity_cancel(are_you_sure, session, entity_type):
 
 
 @pytest.mark.integration
-@patch('mcmd.io.confirm')
+@patch('mcmd.io.io.confirm')
 def test_delete_force(are_you_sure, session, package):
     run_commander('delete --force --package {}'.format(package))
 
@@ -40,7 +40,7 @@ def test_delete_entity_data(session, entity_type):
 
 
 @pytest.mark.integration
-@patch('mcmd.io.confirm')
+@patch('mcmd.io.io.confirm')
 def test_delete_entity_attribute(are_you_sure, session, entity_type):
     are_you_sure.return_value = True
     run_commander('delete --entity-type {} --attribute firstName'.format(entity_type))

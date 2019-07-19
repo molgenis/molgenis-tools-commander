@@ -3,12 +3,13 @@ Alter settings
 """
 import json
 
+from mcmd.commands._registry import arguments
+from mcmd.core.command import command
+from mcmd.core.errors import McmdError
+from mcmd.io import io
+from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import get, put
-from mcmd.core.command import command
-from mcmd.commands._registry import arguments
-from mcmd.io.io import highlight, io
-from mcmd.core.errors import McmdError
 
 
 # =========
