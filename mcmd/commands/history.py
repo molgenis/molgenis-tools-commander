@@ -1,8 +1,8 @@
-from mcmd import history as hist
-from mcmd import io
-from mcmd.command import command
+from mcmd.core import history as hist
+from mcmd.io import io
+from mcmd.core.command import command
 from mcmd.commands._registry import arguments
-from mcmd.logging import get_logger
+from mcmd.io.logging import get_logger
 
 
 # =========

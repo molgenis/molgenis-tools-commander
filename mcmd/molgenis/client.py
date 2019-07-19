@@ -2,8 +2,8 @@ import json
 
 import requests
 
-from mcmd.client import auth
-from mcmd.client.request_handler import request
+from mcmd.molgenis import auth
+from mcmd.molgenis.request_handler import request
 
 
 @request

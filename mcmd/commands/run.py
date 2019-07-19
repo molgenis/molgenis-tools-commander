@@ -1,13 +1,13 @@
 import shlex
 
-from mcmd import argparser as arg_parser
-from mcmd import io
-from mcmd.command import command
+from mcmd.core import argparser as arg_parser
+from mcmd.core.command import command
 from mcmd.commands._registry import arguments
-from mcmd.config.home import get_scripts_folder
-from mcmd.io import bold, dim
-from mcmd.logging import get_logger
-from mcmd.utils.errors import McmdError
+from mcmd.core.home import get_scripts_folder
+from mcmd.io import io
+from mcmd.io.io import bold, dim
+from mcmd.io.logging import get_logger
+from mcmd.core.errors import McmdError
 
 
 # =========

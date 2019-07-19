@@ -7,7 +7,7 @@ from distutils.version import StrictVersion
 from functools import wraps
 from typing import List
 
-from mcmd.version import molgenis_version
+from mcmd.molgenis import version as molgenis_version
 
 MIN_VERSION = '7.0.0'
 _registry = defaultdict(dict)

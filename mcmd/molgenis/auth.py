@@ -8,10 +8,10 @@ import json
 import requests
 from requests import HTTPError
 
-from mcmd import io
-from mcmd.client import api
+from mcmd.io import io
+from mcmd.molgenis import api
 from mcmd.config import config
-from mcmd.utils.errors import McmdError, MolgenisOfflineError
+from mcmd.core.errors import McmdError, MolgenisOfflineError
 
 _username = None
 _password = None

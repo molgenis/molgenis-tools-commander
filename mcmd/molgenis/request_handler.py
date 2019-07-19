@@ -6,8 +6,8 @@ Error responses can come back in varying forms which this decorator tries to uni
 
 import requests
 
-from mcmd.client import auth
-from mcmd.utils.errors import McmdError, MolgenisOfflineError
+from mcmd.molgenis import auth
+from mcmd.core.errors import McmdError, MolgenisOfflineError
 
 
 def request(func):

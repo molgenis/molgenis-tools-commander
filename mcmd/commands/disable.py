@@ -1,10 +1,10 @@
-from mcmd import io
-from mcmd.client import api
-from mcmd.client.molgenis_client import post, put
-from mcmd.command import command
+from mcmd.molgenis import api
+from mcmd.molgenis.client import post, put
+from mcmd.core.command import command
 from mcmd.commands._registry import arguments
-from mcmd.io import highlight
-from mcmd.utils.resources import ensure_resource_exists, ResourceType
+from mcmd.io import io
+from mcmd.io.io import highlight
+from mcmd.molgenis.resources import ensure_resource_exists, ResourceType
 
 
 # =========

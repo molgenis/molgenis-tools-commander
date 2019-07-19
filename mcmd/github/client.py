@@ -2,7 +2,7 @@ import re
 
 from github import Github, UnknownObjectException
 
-from mcmd.utils.errors import McmdError
+from mcmd.core.errors import McmdError
 
 _MOLGENIS_FILES_URL = 'https://github.com/molgenis/molgenis/files/'
 

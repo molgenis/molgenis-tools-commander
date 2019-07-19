@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from mcmd.utils.errors import McmdError
+from mcmd.core.errors import McmdError
 from tests.integration.loader_mock import get_host
 from tests.integration.utils import run_commander
 
@@ -19,7 +19,7 @@ def test_ping_online(capsys):
 
 
 @pytest.mark.integration
-@mock.patch('mcmd.version.molgenis_version.get_version')
+@mock.patch('mcmd.molgenis.version.get_version')
 def test_ping_offline(get_version_mock, capsys):
     get_version_mock.side_effect = McmdError('')
     run_commander('ping')
