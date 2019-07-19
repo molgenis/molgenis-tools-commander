@@ -12,5 +12,10 @@ host:
   auth:
     - url: http://localhost:8080/
       username: admin
+local:
+  pg_user: postgres
+  pg_password: postgres
+  molgenis_home:
+  minio_data:
 settings:
   import_action: add_update_existing
