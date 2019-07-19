@@ -6,14 +6,13 @@ import polling
 import requests
 
 import mcmd.config.config as config
-from mcmd import io
 from mcmd.molgenis import api
 from mcmd.github import client as github
 from mcmd.molgenis.client import post_file, get, post
 from mcmd.command import command
 from mcmd.commands._registry import arguments
 from mcmd.config.home import get_issues_folder
-from mcmd.io import highlight
+from mcmd.io.io import highlight, io
 from mcmd.utils.errors import McmdError
 from mcmd.utils.file_helpers import scan_folders_for_files, select_path
 

@@ -1,4 +1,5 @@
-from mcmd import history, io
+from mcmd import history
+from mcmd.io import io
 from mcmd.molgenis import auth
 from mcmd.config import config
 from mcmd.utils.errors import McmdError

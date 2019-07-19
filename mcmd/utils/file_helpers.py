@@ -2,7 +2,7 @@ from collections.__init__ import defaultdict
 from os import path
 from pathlib import Path
 
-from mcmd import io
+from mcmd.io import io
 from mcmd.utils.errors import McmdError
 
 

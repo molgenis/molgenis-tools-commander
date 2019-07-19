@@ -1,9 +1,8 @@
-from mcmd import io
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get
 from mcmd.command import command
 from mcmd.commands._registry import arguments
-from mcmd.io import highlight
+from mcmd.io.io import highlight, io
 from mcmd.utils.errors import McmdError
 from mcmd.utils.utils import lower_kebab, upper_snake
 
