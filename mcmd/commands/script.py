@@ -1,10 +1,10 @@
-from mcmd import history
-from mcmd.command import command
+from mcmd.core import history
+from mcmd.core.command import command
 from mcmd.commands._registry import arguments
-from mcmd.config.home import get_scripts_folder
+from mcmd.core.home import get_scripts_folder
 from mcmd.io.io import confirm, highlight, io
 from mcmd.io.logging import get_logger
-from mcmd.utils.errors import McmdError
+from mcmd.core.errors import McmdError
 
 
 # =========

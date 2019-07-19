@@ -2,7 +2,7 @@ from urllib.parse import urljoin
 
 import mcmd.molgenis.client as client
 from mcmd.molgenis import api
-from mcmd.command import command
+from mcmd.core.command import command
 from mcmd.commands._registry import arguments
 from mcmd.io.io import highlight, io
 from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists, ResourceType

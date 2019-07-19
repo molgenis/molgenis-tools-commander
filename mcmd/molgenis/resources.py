@@ -5,7 +5,7 @@ from mcmd.molgenis import api
 from mcmd.molgenis.client import get
 from mcmd.io.io import multi_choice
 from mcmd.io.logging import get_logger
-from mcmd.utils.errors import McmdError
+from mcmd.core.errors import McmdError
 
 log = get_logger()
 

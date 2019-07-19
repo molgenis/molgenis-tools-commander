@@ -13,7 +13,7 @@ if sys.version_info < MIN_PYTHON:
 import logging
 import signal
 
-from mcmd.argparser import parse_args
+from mcmd.core.argparser import parse_args
 from mcmd.config.loader import load_config
 from mcmd.io.io import set_debug, io
 from mcmd.io.logging import set_level

@@ -3,7 +3,7 @@ import os
 import pytest
 from mock import patch, mock, mock_open
 
-from mcmd.config.home import get_scripts_folder
+from mcmd.core.home import get_scripts_folder
 from tests.integration.utils import run_commander
 
 _expected_list_messages = [file for file in os.listdir(get_scripts_folder())]

@@ -5,10 +5,10 @@ from pathlib import Path
 import mcmd.config.config as config
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get, post_files
-from mcmd.command import command
+from mcmd.core.command import command
 from mcmd.commands._registry import arguments
 from mcmd.io.io import highlight, io
-from mcmd.utils.errors import McmdError
+from mcmd.core.errors import McmdError
 from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
 
 # Store a reference to the parser so that we can show an error message for the custom validation rule

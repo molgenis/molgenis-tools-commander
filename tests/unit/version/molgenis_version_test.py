@@ -2,7 +2,7 @@ import unittest
 
 import pytest
 
-from mcmd.utils.errors import McmdError
+from mcmd.core.errors import McmdError
 from mcmd.molgenis import version
 
 

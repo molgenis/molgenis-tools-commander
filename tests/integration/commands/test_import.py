@@ -1,7 +1,7 @@
 import pytest
 from mock import patch
 
-from mcmd.config.home import get_issues_folder
+from mcmd.core.home import get_issues_folder
 from tests.integration.loader_mock import get_dataset_folder
 from tests.integration.utils import run_commander, run_commander_fail, random_name
 

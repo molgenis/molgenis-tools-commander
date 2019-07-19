@@ -3,7 +3,7 @@ import unittest
 import pytest
 from mock import patch
 
-from mcmd.version.compatibility import version
+from mcmd.core.compatibility import version
 
 
 @version('2.0.0')

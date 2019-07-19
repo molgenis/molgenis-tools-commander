@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from mcmd.utils.errors import McmdError
+from mcmd.core.errors import McmdError
 from tests.integration.loader_mock import get_host
 from tests.integration.utils import run_commander
 
