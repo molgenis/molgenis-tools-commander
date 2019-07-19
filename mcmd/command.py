@@ -1,5 +1,5 @@
 from mcmd import history, io
-from mcmd.client import auth
+from mcmd.molgenis import auth
 from mcmd.config import config
 from mcmd.utils.errors import McmdError
 

@@ -5,7 +5,7 @@ from mcmd.command import command
 from mcmd.commands._registry import arguments
 from mcmd.io import highlight
 from mcmd.utils.errors import McmdError
-from mcmd.version import molgenis_version
+from mcmd.molgenis import version
 
 
 # =========
@@ -31,7 +31,7 @@ def ping(args):
     user = config.username()
     status = Fore.LIGHTGREEN_EX + 'Online' + Fore.RESET
     try:
-        version = molgenis_version.get_version()
+        version = version.get_version()
     except McmdError:
         status = Fore.LIGHTRED_EX + 'Offline' + Fore.RESET
         version = None

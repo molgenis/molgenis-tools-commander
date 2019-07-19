@@ -7,9 +7,9 @@ import requests
 
 import mcmd.config.config as config
 from mcmd import io
-from mcmd.client import api
+from mcmd.molgenis import api
 from mcmd.github import client as github
-from mcmd.client.molgenis_client import post_file, get, post
+from mcmd.molgenis.client import post_file, get, post
 from mcmd.command import command
 from mcmd.commands._registry import arguments
 from mcmd.config.home import get_issues_folder
