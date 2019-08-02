@@ -25,7 +25,7 @@ _parser = None
 def arguments(subparsers):
     global _parser
     _parser = subparsers.add_parser('backup',
-                                    help='create a backup of the local MOLGENIS instance')
+                                    help='create a backup of a locally installed MOLGENIS')
     _parser.set_defaults(func=backup,
                          write_to_history=True)
 
@@ -69,17 +69,14 @@ def _validate_args(args):
         _parser.error('choose at least one thing to back up')
     if args.to_path and not Path(args.to_path).exists():
         raise McmdError("Folder {} doesn't exist".format(args.to_path))
-    if args.filestore and config.get('local', 'molgenis_home') is None:
-        raise McmdError('molgenis_home not set')
-    if args.minio and config.get('local', 'minio_data') is None:
-        raise McmdError('minio_data not set')
-    if args.database:
-        if config.get('local', 'pg_user') is None:
-            raise McmdError('pg_user not set')
-        if config.get('local', 'pg_password') is None:
-            raise McmdError('pg_password not set')
-        if config.get('local', 'database_name') is None:
-            raise McmdError('database_name not set')
+    if args.filestore or args.all:
+        config.raise_if_empty('local', 'molgenis_home')
+    if args.minio or args.all:
+        config.raise_if_empty('local', 'minio_data')
+    if args.database or args.all:
+        config.raise_if_empty('local', 'database', 'pg_user')
+        config.raise_if_empty('local', 'database', 'pg_password')
+        config.raise_if_empty('local', 'database', 'name')
 
 
 def _determine_file_name(args):
@@ -109,9 +106,9 @@ def _backup_database(archive):
     io.start('Backing up database')
     with tempfile.NamedTemporaryFile(delete=False) as dump_file:
         try:
-            os.environ['PGUSER'] = config.get('local', 'pg_user')
-            os.environ['PGPASSWORD'] = config.get('local', 'pg_password')
-            subprocess.check_output(['pg_dump', config.get('local', 'database_name'),
+            os.environ['PGUSER'] = config.get('local', 'database', 'pg_user')
+            os.environ['PGPASSWORD'] = config.get('local', 'database', 'pg_password')
+            subprocess.check_output(['pg_dump', config.get('local', 'database', 'name'),
                                      '-f', str(dump_file.name)],
                                     stderr=subprocess.STDOUT)
             archive.add(dump_file.name, arcname='database/dump.sql')

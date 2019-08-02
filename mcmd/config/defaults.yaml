@@ -13,8 +13,10 @@ host:
     - url: http://localhost:8080/
       username: admin
 local:
-  pg_user: postgres
-  pg_password: postgres
+  database:
+    pg_user:
+    pg_password:
+    name: molgenis
   molgenis_home:
   minio_data:
 settings:

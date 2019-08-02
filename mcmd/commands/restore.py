@@ -21,21 +21,21 @@ from mcmd.io import io
 
 @arguments('restore')
 def arguments(subparsers):
-    p_restore = subparsers.add_parser('restore',
-                                      help='Restores a backup')
+    _parser = subparsers.add_parser('restore',
+                                    help='Restores a backup')
 
-    p_restore.set_defaults(func=restore,
-                           write_to_history=True)
-    p_restore.add_argument('name',
-                           help='the backup to restore (or path to the backup when using --from-path)')
-    p_restore.add_argument('--force', '-f',
-                           action='store_true',
-                           help='forces the restore without asking for confirmation')
-    p_restore.add_argument('--from-path', '-p',
-                           action='store_true',
-                           help='get a backup from a path instead of the MCMD backup folder')
+    _parser.set_defaults(func=restore,
+                         write_to_history=True)
+    _parser.add_argument('name',
+                         help='the backup to restore (or path to the backup when using --from-path)')
+    _parser.add_argument('--force', '-f',
+                         action='store_true',
+                         help='forces the restore without asking for confirmation')
+    _parser.add_argument('--from-path', '-p',
+                         action='store_true',
+                         help='get a backup from a path instead of the MCMD backup folder')
 
-    return p_restore
+    return _parser
 
 
 # =======
@@ -64,24 +64,39 @@ def _get_backup(args):
 
 
 def _restore_backup(backup):
+    restore_database = False
+    restore_filestore = False
+    restore_minio = False
     with tarfile.open(backup) as archive:
-        try:
-            archive.getmember('database/dump.sql')
+        if _archive_has_member(archive, 'database/dump.sql'):
+            config.raise_if_empty('local', 'database', 'pg_user')
+            config.raise_if_empty('local', 'database', 'pg_password')
+            config.raise_if_empty('local', 'database', 'name')
+            restore_database = True
+
+        if _archive_has_member(archive, 'filestore'):
+            config.raise_if_empty('local', 'molgenis_home')
+            restore_filestore = True
+
+        if _archive_has_member(archive, 'minio'):
+            config.raise_if_empty('local', 'minio_data')
+            restore_filestore = True
+
+        if restore_database:
             _restore_database(archive)
-        except KeyError:
-            pass
-
-        try:
-            archive.getmember('filestore')
+        if restore_filestore:
             _restore_filestore(archive)
-        except KeyError:
-            pass
-
-        try:
-            archive.getmember('minio')
+        if restore_minio:
             _restore_minio(archive)
-        except KeyError:
-            pass
+
+
+def _archive_has_member(archive, member):
+    try:
+        archive.getmember(member)
+    except KeyError:
+        return False
+    else:
+        return True
 
 
 def _restore_database(archive):
@@ -91,17 +106,18 @@ def _restore_database(archive):
         archive.extractall(path=tempdir, members=[archive.getmember('database/dump.sql')])
         dumpfile = tempdir + '/database/dump.sql'
 
-        user = config.get('local', 'pg_user')
-        os.environ['PGPASSWORD'] = config.get('local', 'pg_password')
+        user = config.get('local', 'database', 'pg_user')
+        os.environ['PGPASSWORD'] = config.get('local', 'database', 'pg_password')
 
         try:
             subprocess.check_output(['psql',
                                      '-U', user,
-                                     '-c', 'DROP DATABASE IF EXISTS {}'.format(config.get('local', 'database_name'))],
+                                     '-c',
+                                     'DROP DATABASE IF EXISTS {}'.format(config.get('local', 'database', 'name'))],
                                     stderr=subprocess.STDOUT)
             subprocess.check_output(['psql',
                                      '-U', user,
-                                     '-c', 'CREATE DATABASE {}'.format(config.get('local', 'database_name'))],
+                                     '-c', 'CREATE DATABASE {}'.format(config.get('local', 'database', 'name'))],
                                     stderr=subprocess.STDOUT)
             subprocess.check_output(['psql',
                                      '-U', user,

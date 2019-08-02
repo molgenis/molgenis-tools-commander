@@ -23,7 +23,8 @@ _DEFAULT_PROPERTIES = pkg_resources.resource_stream('mcmd.config', 'defaults.yam
 def property_configurers():
     return {
         'git': _configure_git_root,
-        'host': _configure_host
+        'host': _configure_host,
+        'local': _configure_local
     }
 
 
@@ -47,13 +48,18 @@ def load_config():
 
 
 def _upgrade(default_config, user_config):
-    mcmd.io.io.info("Some properties haven't been configured yet. Let's take a moment to fix that.")
+    mcmd.io.io.info("Some properties haven't been configured yet. Let's take a moment to fix that. You don't need to"
+                    " fill in everything but some commands might not be available if you don't.")
     mcmd.io.io.newline()
 
     for prop, configurer in property_configurers().items():
         if prop not in user_config:
             configurer(default_config)
 
+    # merge the configs so that new properties and list items are added
+    _merge(default_config, user_config)
+
+    # pass result to the config module and save to disk
     config.set_config(default_config, get_properties_file())
 
     mcmd.io.io.newline()
@@ -64,8 +70,8 @@ def _upgrade(default_config, user_config):
 
 def _install(default_config):
     mcmd.io.io.info("Looks like this is your first time running {}!\n  "
-                 "Let's take a moment to set things up. It's OK to leave some fields empty, you can always change "
-                 "them later.".format(highlight("Molgenis Commander")))
+                    "Let's take a moment to set things up. It's OK to leave some fields empty, you can always change "
+                    "them later.".format(highlight("Molgenis Commander")))
     mcmd.io.io.newline()
 
     for configurer in property_configurers().values():
@@ -92,22 +98,55 @@ def _configure_host(values):
 
 
 def _configure_url(values):
-    host = mcmd.io.io.input_('Enter the host name of your Molgenis (Default: http://localhost:8080/)')
+    host = mcmd.io.io.input_('Enter the host name of your MOLGENIS (default: http://localhost:8080/)')
     if len(host) > 0:
         values['host']['selected'] = host
         values['host']['auth'][0]['url'] = host
 
 
 def _configure_username(values):
-    username = mcmd.io.io.input_('Enter the username of the super user (Default: admin)')
+    username = mcmd.io.io.input_('Enter the username of the super user (default: admin)')
     if len(username) > 0:
         values['host']['auth'][0]['username'] = username
 
 
 def _configure_password(values):
-    password = mcmd.io.io.password('Enter the password of the super user (Leave blank to use command line authentication)')
+    password = mcmd.io.io.password(
+        'Enter the password of the super user (Leave blank to use command line authentication)')
     if len(password) > 0:
         values['host']['auth'][0]['password'] = password
+
+
+def _configure_local(values):
+    _configure_database(values)
+    _configure_molgenis_home(values)
+    _configure_minio_data(values)
+
+
+def _configure_database(values):
+    pg_user = mcmd.io.io.input_('Enter the name of the (super)user of the PostgreSQL database')
+    if len(pg_user) > 0:
+        values['local']['database']['pg_user'] = pg_user
+
+    pg_password = mcmd.io.io.password('Enter the password of the (super)user of the PostgreSQL database')
+    if len(pg_password) > 0:
+        values['local']['database']['pg_password'] = pg_password
+
+    name = mcmd.io.io.input_('Enter the name of the MOLGENIS database (default: molgenis)')
+    if len(name) > 0:
+        values['local']['database']['name'] = name
+
+
+def _configure_molgenis_home(values):
+    molgenis_home = mcmd.io.io.input_('Enter the MOLGENIS home folder (e.g. /Users/me/.molgenis/molgenis/)')
+    if len(molgenis_home) > 0:
+        values['local']['molgenis_home'] = molgenis_home
+
+
+def _configure_minio_data(values):
+    minio_data = mcmd.io.io.input_('Enter the location of the MinIO data folder')
+    if len(minio_data) > 0:
+        values['local']['minio_data'] = minio_data
 
 
 def _is_install_required():

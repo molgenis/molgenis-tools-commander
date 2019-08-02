@@ -9,6 +9,7 @@ from pathlib import Path
 from ruamel.yaml import YAML
 
 import mcmd.core.errors as errors
+from mcmd.core.home import get_properties_file
 
 _config = None
 _properties_file: Path = None
@@ -78,11 +79,19 @@ def git_paths():
 
 
 def has_option(*args):
+    """Checks that a property exists."""
     try:
         reduce(operator.getitem, list(args), _config)
         return True
     except KeyError:
         return False
+
+
+def raise_if_empty(*args):
+    """Raises an error when a property hasn't been set."""
+    if get(*args) is None:
+        raise errors.McmdError(
+            'Property {} not set. Set it in the configuration file: {}'.format('/'.join(args), get_properties_file()))
 
 
 def set_host(url_):
