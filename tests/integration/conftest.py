@@ -10,11 +10,21 @@ from tests.integration.utils import setup_entity, run_commander, random_name
 def pytest_configure(config):
     """Sets the host config values before any tests are run."""
 
-    url = config.getoption('url')
-    username = config.getoption('username')
-    password = config.getoption('password')
+    options = dict()
+    if 'integration' in config.getoption('-m'):
+        options['url'] = config.getoption('url')
+        options['username'] = config.getoption('username')
+        options['password'] = config.getoption('password')
 
-    mock_config(url, username, password)
+    if 'local' in config.getoption('-m'):
+        options['pg_user'] = config.getoption('pg_user')
+        options['pg_password'] = config.getoption('pg_password')
+        options['db_name'] = config.getoption('db_name')
+        options['molgenis_home'] = config.getoption('molgenis_home')
+        options['minio_data'] = config.getoption('minio_data')
+
+    mock_config(options)
+
 
 
 @pytest.fixture(scope='session')

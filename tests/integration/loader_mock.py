@@ -22,6 +22,13 @@ host:
     password: {password}
 settings:
   import_action: add_update_existing
+local:
+  database:
+    pg_user: {pg_user}
+    pg_password: {pg_password}
+    name: {db_name}
+  molgenis_home: {molgenis_home}
+  minio_data: {minio_data}
 """
 
 _url: str = None
@@ -55,20 +62,25 @@ def get_host():
     }
 
 
-def mock_config(url, username, password):
+def mock_config(options):
     git_root = get_files_folder().joinpath('git_root')
     git_folder = 'git_folder'
 
     global _url, _username, _password
-    _url = url
-    _username = username
-    _password = password
+    _url = options.get('url')
+    _username = options.get('username')
+    _password = options.get('password')
 
     global _TEST_CONFIG
-    _TEST_CONFIG = _TEST_CONFIG.format(url=url,
-                                       username=username,
-                                       password=password,
+    _TEST_CONFIG = _TEST_CONFIG.format(url=options.get('url'),
+                                       username=options.get('username'),
+                                       password=options.get('password'),
                                        dataset_folder=get_dataset_folder(),
                                        resource_folder=get_resource_folder(),
                                        git_root=git_root,
-                                       git_folder=git_folder)
+                                       git_folder=git_folder,
+                                       pg_user=options.get('pg_user'),
+                                       pg_password=options.get('pg_password'),
+                                       db_name=options.get('db_name'),
+                                       molgenis_home=options.get('molgenis_home'),
+                                       minio_data=options.get('minio_data'))

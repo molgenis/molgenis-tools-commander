@@ -5,6 +5,7 @@ from tests.integration.loader_mock import get_files_folder
 
 _TEMP_HISTORY = None
 _TEMP_ISSUES_FOLDER = None
+_TEMP_BACKUP_FOLDER = None
 
 
 def _raise_exception(msg):
@@ -39,4 +40,7 @@ def get_mcmd_home():
 
 
 def get_backups_folder():
-    return _raise_exception("")
+    global _TEMP_BACKUP_FOLDER
+    if not _TEMP_BACKUP_FOLDER:
+        _TEMP_BACKUP_FOLDER = Path(tempfile.mkdtemp())
+    return _TEMP_BACKUP_FOLDER
