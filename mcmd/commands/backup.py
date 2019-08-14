@@ -1,10 +1,11 @@
 import os
-import subprocess
 import tarfile
 import tempfile
+import textwrap
 from datetime import datetime
 from pathlib import Path
 
+from mcmd.backend import database
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.core.command import command
@@ -106,16 +107,8 @@ def _backup_database(archive):
     io.start('Backing up database')
     with tempfile.NamedTemporaryFile(delete=False) as dump_file:
         try:
-            os.environ['PGUSER'] = config.get('local', 'database', 'pg_user')
-            os.environ['PGPASSWORD'] = config.get('local', 'database', 'pg_password')
-            subprocess.check_output(['pg_dump', config.get('local', 'database', 'name'),
-                                     '-f', str(dump_file.name)],
-                                    stderr=subprocess.STDOUT)
+            database.dump(dump_file.name)
             archive.add(dump_file.name, arcname='database/dump.sql')
-        except FileNotFoundError:
-            raise McmdError("pg_dump is not a recognized command")
-        except subprocess.CalledProcessError as e:
-            raise McmdError(e.output.decode('ascii').strip())
         except OSError as e:
             raise McmdError("Error writing to backup zip: {}".format(e))
         finally:

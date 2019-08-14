@@ -1,12 +1,11 @@
-import os
 import shutil
-import subprocess
 import tarfile
 from distutils.dir_util import copy_tree
 from distutils.errors import DistutilsFileError
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from mcmd.backend import database
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.core.command import command
@@ -18,6 +17,7 @@ from mcmd.io import io
 # =========
 # Arguments
 # =========
+
 
 @arguments('restore')
 def arguments(subparsers):
@@ -106,26 +106,9 @@ def _restore_database(archive):
         archive.extractall(path=tempdir, members=[archive.getmember('database/dump.sql')])
         dumpfile = tempdir + '/database/dump.sql'
 
-        user = config.get('local', 'database', 'pg_user')
-        os.environ['PGPASSWORD'] = config.get('local', 'database', 'pg_password')
-
-        try:
-            subprocess.check_output(['psql',
-                                     '-U', user,
-                                     '-c',
-                                     'DROP DATABASE IF EXISTS {}'.format(config.get('local', 'database', 'name'))],
-                                    stderr=subprocess.STDOUT)
-            subprocess.check_output(['psql',
-                                     '-U', user,
-                                     '-c', 'CREATE DATABASE {}'.format(config.get('local', 'database', 'name'))],
-                                    stderr=subprocess.STDOUT)
-            subprocess.check_output(['psql',
-                                     '-U', user,
-                                     'molgenis',
-                                     '-f', dumpfile],
-                                    stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-            raise McmdError(e.output.decode('ascii').strip())
+        database.drop()
+        database.create()
+        database.restore(dumpfile)
 
     io.succeed()
 
