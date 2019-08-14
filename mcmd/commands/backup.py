@@ -5,7 +5,7 @@ import textwrap
 from datetime import datetime
 from pathlib import Path
 
-from mcmd.backend import database
+from mcmd.backend import database, filestore, minio
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.core.command import command
@@ -26,7 +26,11 @@ _parser = None
 def arguments(subparsers):
     global _parser
     _parser = subparsers.add_parser('backup',
-                                    help='create a backup of a locally installed MOLGENIS')
+                                    help='create a backup of a locally installed MOLGENIS',
+                                    description=textwrap.dedent(
+                                        """This command makes a backup of a locally installed MOLGENIS. Resources that 
+                                        can be included are: the database, the filestore and MinIO data. It's advised to
+                                        shut down the MinIO server when making a backup to prevent data corruption."""))
     _parser.set_defaults(func=backup,
                          write_to_history=True)
 
@@ -122,14 +126,13 @@ def _backup_database(archive):
 
 def _backup_filestore(archive):
     io.start('Backing up filestore')
-    filestore = Path(config.get('local', 'molgenis_home')).joinpath('data').joinpath('filestore')
-    archive.add(filestore, arcname='filestore', recursive=True)
+    archive.add(filestore.get_path(), arcname='filestore', recursive=True)
     io.succeed()
 
 
 def _backup_minio(archive):
     io.start('Backing up MinIO data')
-    archive.add(config.get('local', 'minio_data'), arcname='minio', recursive=True)
+    archive.add(minio.get_path(), arcname='minio', recursive=True)
     io.succeed()
 
 

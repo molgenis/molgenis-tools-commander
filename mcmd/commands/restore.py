@@ -1,11 +1,10 @@
-import shutil
 import tarfile
 from distutils.dir_util import copy_tree
 from distutils.errors import DistutilsFileError
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from mcmd.backend import database
+from mcmd.backend import database, filestore, minio
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.core.command import command
@@ -80,7 +79,7 @@ def _restore_backup(backup):
 
         if _archive_has_member(archive, 'minio'):
             config.raise_if_empty('local', 'minio_data')
-            restore_filestore = True
+            restore_minio = True
 
         if restore_database:
             _restore_database(archive)
@@ -115,21 +114,19 @@ def _restore_database(archive):
 
 def _restore_filestore(archive):
     io.start('Restoring filestore')
-    filestore = Path(config.get('local', 'molgenis_home')).joinpath('data').joinpath('filestore')
-    _drop(filestore, "filestore")
-    _extract_files(archive, filestore.parent, "filestore")
+    filestore.drop()
+    _extract_files(archive, filestore.get_path().parent, "filestore")
     io.succeed()
 
 
 def _restore_minio(archive):
     io.start('Restoring MinIO data')
-    minio = Path(config.get('local', 'minio_data'))
-    _drop(minio, "MinIO")
+    minio.drop()
 
     # the minio folder can have any name so we need to extract the folder to a temporary location first
     with TemporaryDirectory() as tempdir:
         _extract_files(archive, tempdir, "minio")
-        _copy_files(tempdir + '/minio', minio, 'minio')
+        _copy_files(tempdir + '/minio', minio.get_path(), 'minio')
     io.succeed()
 
 
@@ -138,14 +135,6 @@ def _copy_files(backup_location, location, name):
         copy_tree(str(backup_location), str(location))
     except (DistutilsFileError, OSError) as e:
         raise McmdError("Error restoring {}: {}".format(name, e))
-
-
-def _drop(location, name):
-    try:
-        if location.exists():
-            shutil.rmtree(location)
-    except Exception as e:
-        raise McmdError("Error dropping {}: {}".format(name, e))
 
 
 def _extract_files(archive, location, name):

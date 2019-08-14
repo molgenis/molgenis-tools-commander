@@ -4,17 +4,19 @@ import subprocess
 from mcmd.config import config
 from mcmd.core.errors import McmdError
 
+_connection_options = ['--host', 'localhost',
+                       '--port', '5432']
+
 
 def dump(file_name):
     try:
-        os.environ['PGUSER'] = config.get('local', 'database', 'pg_user')
-        os.environ['PGPASSWORD'] = config.get('local', 'database', 'pg_password')
+        _set_env_var_user()
+        _set_env_var_password()
         subprocess.check_output(
             ['pg_dump',
-             '-h', 'localhost',
-             '-p', '5432',
              config.get('local', 'database', 'name'),
-             '-f', file_name],
+             '-f', file_name] +
+            _connection_options,
             stderr=subprocess.STDOUT)
     except FileNotFoundError:
         raise McmdError("pg_dump is not a recognized command")
@@ -23,13 +25,12 @@ def dump(file_name):
 
 
 def drop():
-    os.environ['PGPASSWORD'] = config.get('local', 'database', 'pg_password')
     try:
+        _set_env_var_password()
         subprocess.check_output(['psql',
                                  '-U', config.get('local', 'database', 'pg_user'),
-                                 '-h', 'localhost',
-                                 '-p', '5432',
-                                 '-c', 'DROP DATABASE IF EXISTS {}'.format(config.get('local', 'database', 'name'))],
+                                 '-c', 'DROP DATABASE IF EXISTS {}'.format(config.get('local', 'database', 'name'))] +
+                                _connection_options,
                                 stderr=subprocess.STDOUT)
     except FileNotFoundError:
         raise McmdError("psql is not a recognized command")
@@ -38,13 +39,12 @@ def drop():
 
 
 def create():
-    os.environ['PGPASSWORD'] = config.get('local', 'database', 'pg_password')
     try:
+        _set_env_var_password()
         subprocess.check_output(['psql',
                                  '-U', config.get('local', 'database', 'pg_user'),
-                                 '-h', 'localhost',
-                                 '-p', '5432',
-                                 '-c', 'CREATE DATABASE {}'.format(config.get('local', 'database', 'name'))],
+                                 '-c', 'CREATE DATABASE {}'.format(config.get('local', 'database', 'name'))] +
+                                _connection_options,
                                 stderr=subprocess.STDOUT)
     except FileNotFoundError:
         raise McmdError("psql is not a recognized command")
@@ -53,16 +53,23 @@ def create():
 
 
 def restore(dump_file):
-    os.environ['PGPASSWORD'] = config.get('local', 'database', 'pg_password')
     try:
+        _set_env_var_password()
         subprocess.check_output(['psql',
                                  '-U', config.get('local', 'database', 'pg_user'),
-                                 '-h', 'localhost',
-                                 '-p', '5432',
-                                 'molgenis',
-                                 '-f', dump_file],
+                                 config.get('local', 'database', 'name'),
+                                 '-f', dump_file] +
+                                _connection_options,
                                 stderr=subprocess.STDOUT)
     except FileNotFoundError:
         raise McmdError("psql is not a recognized command")
     except subprocess.CalledProcessError as e:
         raise McmdError(e.output.decode('ascii').strip())
+
+
+def _set_env_var_user():
+    os.environ['PGUSER'] = config.get('local', 'database', 'pg_user')
+
+
+def _set_env_var_password():
+    os.environ['PGPASSWORD'] = config.get('local', 'database', 'pg_password')
