@@ -68,17 +68,15 @@ def _restore_backup(backup):
     restore_minio = False
     with tarfile.open(backup) as archive:
         if _archive_has_member(archive, 'database/dump.sql'):
-            config.raise_if_empty('local', 'database', 'pg_user')
-            config.raise_if_empty('local', 'database', 'pg_password')
-            config.raise_if_empty('local', 'database', 'name')
+            _validate_restore_database()
             restore_database = True
 
         if _archive_has_member(archive, 'filestore'):
-            config.raise_if_empty('local', 'molgenis_home')
+            _validate_restore_filestore()
             restore_filestore = True
 
         if _archive_has_member(archive, 'minio'):
-            config.raise_if_empty('local', 'minio_data')
+            _validate_restore_minio()
             restore_minio = True
 
         if restore_database:
@@ -87,6 +85,24 @@ def _restore_backup(backup):
             _restore_filestore(archive)
         if restore_minio:
             _restore_minio(archive)
+
+
+def _validate_restore_database():
+    config.raise_if_empty('local', 'database', 'pg_user')
+    config.raise_if_empty('local', 'database', 'pg_password')
+    config.raise_if_empty('local', 'database', 'name')
+
+
+def _validate_restore_filestore():
+    config.raise_if_empty('local', 'molgenis_home')
+    if not filestore.is_empty():
+        raise McmdError('The filestore ({}) is not empty - drop it before restoring'.format(filestore.get_path()))
+
+
+def _validate_restore_minio():
+    config.raise_if_empty('local', 'minio_data')
+    if not minio.is_empty():
+        raise McmdError('The MinIO data folder ({}) is not empty - drop it before restoring'.format(minio.get_path()))
 
 
 def _archive_has_member(archive, member):
@@ -105,7 +121,6 @@ def _restore_database(archive):
         archive.extractall(path=tempdir, members=[archive.getmember('database/dump.sql')])
         dumpfile = tempdir + '/database/dump.sql'
 
-        database.drop()
         database.create()
         database.restore(dumpfile)
 
@@ -114,15 +129,12 @@ def _restore_database(archive):
 
 def _restore_filestore(archive):
     io.start('Restoring filestore')
-    filestore.drop()
     _extract_files(archive, filestore.get_path().parent, "filestore")
     io.succeed()
 
 
 def _restore_minio(archive):
     io.start('Restoring MinIO data')
-    minio.drop()
-
     # the minio folder can have any name so we need to extract the folder to a temporary location first
     with TemporaryDirectory() as tempdir:
         _extract_files(archive, tempdir, "minio")
