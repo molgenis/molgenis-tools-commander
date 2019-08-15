@@ -27,9 +27,6 @@ def arguments(subparsers):
                          write_to_history=True)
     _parser.add_argument('name',
                          help='the backup to restore (or path to the backup when using --from-path)')
-    _parser.add_argument('--force', '-f',
-                         action='store_true',
-                         help='forces the restore without asking for confirmation')
     _parser.add_argument('--from-path', '-p',
                          action='store_true',
                          help='get a backup from a path instead of the MCMD backup folder')
@@ -44,11 +41,6 @@ def arguments(subparsers):
 @command
 def restore(args):
     backup = _get_backup(args)
-
-    if not args.force and not io.confirm(
-            'Are you sure you want to restore this backup? This will overwrite your current database and/or files'):
-        return
-
     _restore_backup(backup)
 
 
