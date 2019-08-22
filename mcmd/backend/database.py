@@ -3,73 +3,61 @@ import subprocess
 
 from mcmd.config import config
 from mcmd.core.errors import McmdError
-
-_connection_options = ['--host', 'localhost',
-                       '--port', '5432']
+from mcmd.utils.utils import Singleton
 
 
-def dump(file_name):
-    try:
-        _set_env_var_user()
-        _set_env_var_password()
+def _handle_subprocess(program):
+    def handler(func):
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except FileNotFoundError:
+                raise McmdError("{} is not a recognized command".format(program))
+            except subprocess.CalledProcessError as e:
+                raise McmdError(e.output.decode('ascii').strip())
+
+        return wrapper
+
+    return handler
+
+
+@Singleton
+class Database:
+    _CONNECTION_OPTIONS = ('--host', 'localhost',
+                           '--port', '5432')
+
+    def __init__(self):
+        os.environ['PGUSER'] = config.get('local', 'database', 'pg_user')
+        os.environ['PGPASSWORD'] = config.get('local', 'database', 'pg_password')
+        self.database_name = config.get('local', 'database', 'name')
+
+    @_handle_subprocess('pg_dump')
+    def dump(self, file_name):
         subprocess.check_output(
             ['pg_dump',
              config.get('local', 'database', 'name'),
              '-f', file_name] +
-            _connection_options,
+            list(self._CONNECTION_OPTIONS),
             stderr=subprocess.STDOUT)
-    except FileNotFoundError:
-        raise McmdError("pg_dump is not a recognized command")
-    except subprocess.CalledProcessError as e:
-        raise McmdError(e.output.decode('ascii').strip())
 
-
-def drop():
-    try:
-        _set_env_var_password()
+    @_handle_subprocess('psql')
+    def create(self):
         subprocess.check_output(['psql',
-                                 '-U', config.get('local', 'database', 'pg_user'),
-                                 '-c', 'DROP DATABASE IF EXISTS {}'.format(config.get('local', 'database', 'name'))] +
-                                _connection_options,
+                                 '-c', 'CREATE DATABASE {}'.format(self.database_name)] +
+                                list(self._CONNECTION_OPTIONS),
                                 stderr=subprocess.STDOUT)
-    except FileNotFoundError:
-        raise McmdError("psql is not a recognized command")
-    except subprocess.CalledProcessError as e:
-        raise McmdError(e.output.decode('ascii').strip())
 
-
-def create():
-    try:
-        _set_env_var_password()
+    @_handle_subprocess('psql')
+    def drop(self):
         subprocess.check_output(['psql',
-                                 '-U', config.get('local', 'database', 'pg_user'),
-                                 '-c', 'CREATE DATABASE {}'.format(config.get('local', 'database', 'name'))] +
-                                _connection_options,
+                                 '-c', 'DROP DATABASE IF EXISTS {}'.format(self.database_name)] +
+                                list(self._CONNECTION_OPTIONS),
                                 stderr=subprocess.STDOUT)
-    except FileNotFoundError:
-        raise McmdError("psql is not a recognized command")
-    except subprocess.CalledProcessError as e:
-        raise McmdError(e.output.decode('ascii').strip())
 
-
-def restore(dump_file):
-    try:
-        _set_env_var_password()
+    @_handle_subprocess('psql')
+    def restore(self, dump_file):
         subprocess.check_output(['psql',
-                                 '-U', config.get('local', 'database', 'pg_user'),
-                                 config.get('local', 'database', 'name'),
+                                 self.database_name,
                                  '-f', dump_file] +
-                                _connection_options,
+                                list(self._CONNECTION_OPTIONS),
                                 stderr=subprocess.STDOUT)
-    except FileNotFoundError:
-        raise McmdError("psql is not a recognized command")
-    except subprocess.CalledProcessError as e:
-        raise McmdError(e.output.decode('ascii').strip())
-
-
-def _set_env_var_user():
-    os.environ['PGUSER'] = config.get('local', 'database', 'pg_user')
-
-
-def _set_env_var_password():
-    os.environ['PGPASSWORD'] = config.get('local', 'database', 'pg_password')

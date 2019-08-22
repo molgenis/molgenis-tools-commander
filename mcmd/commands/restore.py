@@ -4,7 +4,8 @@ from distutils.errors import DistutilsFileError
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from mcmd.backend import database, filestore, minio
+from mcmd.backend import filestore, minio
+from mcmd.backend.database import Database
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.core.command import command
@@ -113,7 +114,7 @@ def _restore_database(archive):
         archive.extractall(path=tempdir, members=[archive.getmember('database/dump.sql')])
         dumpfile = tempdir + '/database/dump.sql'
 
-        database.restore(dumpfile)
+        Database.instance().restore(dumpfile)
 
     io.succeed()
 

@@ -5,7 +5,8 @@ import textwrap
 from datetime import datetime
 from pathlib import Path
 
-from mcmd.backend import database, filestore, minio
+from mcmd.backend import filestore, minio
+from mcmd.backend.database import Database
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.core.command import command
@@ -115,7 +116,7 @@ def _backup_database(archive):
     io.start('Backing up database')
     with tempfile.NamedTemporaryFile(delete=False) as dump_file:
         try:
-            database.dump(dump_file.name)
+            Database.instance().dump(dump_file.name)
             archive.add(dump_file.name, arcname='database/dump.sql')
         except OSError as e:
             raise McmdError("Error writing to backup zip: {}".format(e))

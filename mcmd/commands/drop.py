@@ -1,4 +1,5 @@
-from mcmd.backend import database, filestore, minio
+from mcmd.backend import filestore, minio
+from mcmd.backend.database import Database
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.core.command import command
@@ -61,8 +62,8 @@ def drop(args):
 
 def _drop_database():
     io.start('Dropping database')
-    database.drop()
-    database.create()
+    Database.instance().drop()
+    Database.instance().create()
     io.succeed()
 
 
