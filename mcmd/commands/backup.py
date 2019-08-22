@@ -5,8 +5,8 @@ import textwrap
 from datetime import datetime
 from pathlib import Path
 
-from mcmd.backend import filestore, minio
 from mcmd.backend.database import Database
+from mcmd.backend.files import Filestore, MinIO
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.core.command import command
@@ -76,12 +76,12 @@ def _validate_args(args):
     if args.to_path and not Path(args.to_path).exists():
         raise McmdError("Folder {} doesn't exist".format(args.to_path))
     if args.filestore or args.all:
-        if not filestore.get_path().exists():
-            raise McmdError("Filestore ({}) doesn't exist".format(filestore.get_path()))
+        if not Filestore.instance().exists():
+            raise McmdError("Filestore ({}) doesn't exist".format(Filestore.instance().get_path()))
         config.raise_if_empty('local', 'molgenis_home')
     if args.minio or args.all:
-        if not minio.get_path().exists():
-            raise McmdError("MinIO data folder ({}) doesn't exist".format(minio.get_path()))
+        if not MinIO.instance().exists():
+            raise McmdError("MinIO data folder ({}) doesn't exist".format(MinIO.instance().get_path()))
         config.raise_if_empty('local', 'minio_data')
     if args.database or args.all:
         config.raise_if_empty('local', 'database', 'pg_user')
@@ -131,8 +131,9 @@ def _backup_database(archive):
 
 def _backup_filestore(archive):
     io.start('Backing up filestore')
-    if not filestore.get_path().exists():
-        raise McmdError('')
+    filestore = Filestore.instance()
+    if not filestore.exists():
+        raise McmdError("Filestore ({}) doesn't exist".format(filestore.get_path()))
     else:
         archive.add(filestore.get_path(), arcname='filestore', recursive=True)
         io.succeed()
@@ -140,7 +141,8 @@ def _backup_filestore(archive):
 
 def _backup_minio(archive):
     io.start('Backing up MinIO data')
-    if minio.get_path().exists():
+    minio = MinIO.instance()
+    if minio.exists():
         archive.add(minio.get_path(), arcname='minio', recursive=True)
     else:
         raise McmdError("MinIO data folder ({}) doesn't exist".format(minio.get_path()))

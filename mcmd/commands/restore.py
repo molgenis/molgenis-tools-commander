@@ -4,8 +4,8 @@ from distutils.errors import DistutilsFileError
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from mcmd.backend import filestore, minio
 from mcmd.backend.database import Database
+from mcmd.backend.files import Filestore, MinIO
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.core.command import command
@@ -88,14 +88,16 @@ def _validate_restore_database():
 
 def _validate_restore_filestore():
     config.raise_if_empty('local', 'molgenis_home')
-    if not filestore.is_empty():
-        raise McmdError('The filestore ({}) is not empty - drop it before restoring'.format(filestore.get_path()))
+    if not Filestore.instance().is_empty():
+        raise McmdError(
+            'The filestore ({}) is not empty - drop it before restoring'.format(Filestore.instance().get_path()))
 
 
 def _validate_restore_minio():
     config.raise_if_empty('local', 'minio_data')
-    if not minio.is_empty():
-        raise McmdError('The MinIO data folder ({}) is not empty - drop it before restoring'.format(minio.get_path()))
+    if not MinIO.instance().is_empty():
+        raise McmdError(
+            'The MinIO data folder ({}) is not empty - drop it before restoring'.format(MinIO.instance().get_path()))
 
 
 def _archive_has_member(archive, member):
@@ -121,7 +123,7 @@ def _restore_database(archive):
 
 def _restore_filestore(archive):
     io.start('Restoring filestore')
-    _extract_files(archive, filestore.get_path().parent, "filestore")
+    _extract_files(archive, Filestore.instance().get_path().parent, "filestore")
     io.succeed()
 
 
@@ -130,6 +132,7 @@ def _restore_minio(archive):
     # the minio folder can have any name so we need to extract the folder to a temporary location first
     with TemporaryDirectory() as tempdir:
         _extract_files(archive, tempdir, "minio")
+        minio = MinIO.instance()
         minio.drop()
         _copy_files(tempdir + '/minio', minio.get_path(), 'minio')
     io.succeed()

@@ -1,5 +1,5 @@
-from mcmd.backend import filestore, minio
 from mcmd.backend.database import Database
+from mcmd.backend.files import Filestore, MinIO
 from mcmd.commands._registry import arguments
 from mcmd.config import config
 from mcmd.core.command import command
@@ -69,15 +69,15 @@ def _drop_database():
 
 def _drop_filestore():
     io.start('Dropping filestore')
-    filestore.drop()
-    filestore.create()
+    Filestore.instance().drop()
+    Filestore.instance().create()
     io.succeed()
 
 
 def _drop_minio():
     io.start('Dropping minio')
-    minio.drop()
-    minio.create()
+    MinIO.instance().drop()
+    MinIO.instance().create()
     io.succeed()
 
 
