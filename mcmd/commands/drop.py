@@ -36,8 +36,6 @@ def arguments(subparsers):
                          action='store_true',
                          help='forces the drops without asking for confirmation')
 
-    # TODO index
-
     return _parser
 
 
@@ -64,18 +62,21 @@ def drop(args):
 def _drop_database():
     io.start('Dropping database')
     database.drop()
+    database.create()
     io.succeed()
 
 
 def _drop_filestore():
     io.start('Dropping filestore')
     filestore.drop()
+    filestore.create()
     io.succeed()
 
 
 def _drop_minio():
     io.start('Dropping minio')
     minio.drop()
+    minio.create()
     io.succeed()
 
 

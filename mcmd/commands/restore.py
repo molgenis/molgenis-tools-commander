@@ -1,5 +1,5 @@
+import shutil
 import tarfile
-from distutils.dir_util import copy_tree
 from distutils.errors import DistutilsFileError
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -113,7 +113,6 @@ def _restore_database(archive):
         archive.extractall(path=tempdir, members=[archive.getmember('database/dump.sql')])
         dumpfile = tempdir + '/database/dump.sql'
 
-        database.create()
         database.restore(dumpfile)
 
     io.succeed()
@@ -130,13 +129,14 @@ def _restore_minio(archive):
     # the minio folder can have any name so we need to extract the folder to a temporary location first
     with TemporaryDirectory() as tempdir:
         _extract_files(archive, tempdir, "minio")
+        minio.drop()
         _copy_files(tempdir + '/minio', minio.get_path(), 'minio')
     io.succeed()
 
 
 def _copy_files(backup_location, location, name):
     try:
-        copy_tree(str(backup_location), str(location))
+        shutil.copytree(str(backup_location), str(location))
     except (DistutilsFileError, OSError) as e:
         raise McmdError("Error restoring {}: {}".format(name, e))
 

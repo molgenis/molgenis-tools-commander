@@ -75,8 +75,12 @@ def _validate_args(args):
     if args.to_path and not Path(args.to_path).exists():
         raise McmdError("Folder {} doesn't exist".format(args.to_path))
     if args.filestore or args.all:
+        if not filestore.get_path().exists():
+            raise McmdError("Filestore ({}) doesn't exist".format(filestore.get_path()))
         config.raise_if_empty('local', 'molgenis_home')
     if args.minio or args.all:
+        if not minio.get_path().exists():
+            raise McmdError("MinIO data folder ({}) doesn't exist".format(minio.get_path()))
         config.raise_if_empty('local', 'minio_data')
     if args.database or args.all:
         config.raise_if_empty('local', 'database', 'pg_user')
@@ -126,13 +130,19 @@ def _backup_database(archive):
 
 def _backup_filestore(archive):
     io.start('Backing up filestore')
-    archive.add(filestore.get_path(), arcname='filestore', recursive=True)
-    io.succeed()
+    if not filestore.get_path().exists():
+        raise McmdError('')
+    else:
+        archive.add(filestore.get_path(), arcname='filestore', recursive=True)
+        io.succeed()
 
 
 def _backup_minio(archive):
     io.start('Backing up MinIO data')
-    archive.add(minio.get_path(), arcname='minio', recursive=True)
+    if minio.get_path().exists():
+        archive.add(minio.get_path(), arcname='minio', recursive=True)
+    else:
+        raise McmdError("MinIO data folder ({}) doesn't exist".format(minio.get_path()))
     io.succeed()
 
 
