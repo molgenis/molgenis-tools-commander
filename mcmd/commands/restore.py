@@ -134,15 +134,15 @@ def _restore_minio(archive):
         _extract_files(archive, tempdir, "minio")
         minio = MinIO.instance()
         minio.drop()
-        _copy_files(tempdir + '/minio', minio.get_path(), 'minio')
+        _copy_minio_files(tempdir + '/minio', minio.get_path())
     io.succeed()
 
 
-def _copy_files(backup_location, location, name):
+def _copy_minio_files(backup_location, location):
     try:
         shutil.copytree(str(backup_location), str(location))
     except (DistutilsFileError, OSError) as e:
-        raise McmdError("Error restoring {}: {}".format(name, e))
+        raise McmdError("Error restoring MinIO data: {}".format(e))
 
 
 def _extract_files(archive, location, name):

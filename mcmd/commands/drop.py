@@ -32,7 +32,7 @@ def arguments(subparsers):
                          help='drop the MinIO data folder')
     _parser.add_argument('--all', '-a',
                          action='store_true',
-                         help='drop everything (same as using -dfme)')
+                         help='drop everything (same as using -dfm)')
     _parser.add_argument('--force', '-F',
                          action='store_true',
                          help='forces the drops without asking for confirmation')
