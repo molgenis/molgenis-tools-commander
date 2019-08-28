@@ -2,6 +2,7 @@ import os
 import tarfile
 import tempfile
 import textwrap
+from argparse import RawDescriptionHelpFormatter
 from datetime import datetime
 from pathlib import Path
 
@@ -27,11 +28,22 @@ _parser = None
 def arguments(subparsers):
     global _parser
     _parser = subparsers.add_parser('backup',
-                                    help='create a backup of a locally installed MOLGENIS',
+                                    help='Create a backup of backend resources',
+                                    formatter_class=RawDescriptionHelpFormatter,
                                     description=textwrap.dedent(
-                                        """This command makes a backup of a locally installed MOLGENIS. Resources that 
-                                        can be included are: the database, the filestore and MinIO data. It's advised to
-                                        shut down the MinIO server when making a backup to prevent data corruption."""))
+                                        """
+                                        This command creates a backup archive of MOLGENIS backend resoures. Resources 
+                                        that can be included are: the database, the filestore and MinIO data.
+                                        
+                                        The filestore and MinIO data are backed up by copying their folders. 
+                                        The database is backed up with 'pg_dump'.
+                                        
+                                        Requirements:
+                                        - Correctly configured 'local' properties (in ~/.mcmd/mcmd.yaml)
+                                        - 'pg_dump' must be installed (only when backing up the database)
+                                        
+                                        For safe use, make sure MOLGENIS and the MinIO server are not running.
+                                        """))
     _parser.set_defaults(func=backup,
                          write_to_history=True)
 

@@ -1,3 +1,6 @@
+import textwrap
+from argparse import RawDescriptionHelpFormatter
+
 from mcmd.backend.database import Database
 from mcmd.backend.files import Filestore, MinIO
 from mcmd.commands._registry import arguments
@@ -17,7 +20,20 @@ _parser = None
 def arguments(subparsers):
     global _parser
     _parser = subparsers.add_parser('drop',
-                                    help='drop backend resources')
+                                    help='Drop backend resources',
+                                    formatter_class=RawDescriptionHelpFormatter,
+                                    description=textwrap.dedent(
+                                        """
+                                        This command drops backend resources. The filestore and MinIO data folders are 
+                                        emptied. The database is dropped and a new one gets created.
+
+                                        Requirements:
+                                        - Correctly configured 'local' properties (in ~/.mcmd/mcmd.yaml)
+                                        - 'psql' must be installed (when dropping the database) 
+
+                                        For safe use, make sure MOLGENIS and the MinIO server are not running.
+                                        """)
+                                    )
     _parser.set_defaults(func=drop,
                          write_to_history=True)
 

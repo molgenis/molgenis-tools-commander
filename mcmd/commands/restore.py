@@ -1,5 +1,7 @@
 import shutil
 import tarfile
+import textwrap
+from argparse import RawDescriptionHelpFormatter
 from distutils.errors import DistutilsFileError
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -22,7 +24,21 @@ from mcmd.io import io
 @arguments('restore')
 def arguments(subparsers):
     _parser = subparsers.add_parser('restore',
-                                    help='Restores a backup')
+                                    help='Restore a backup',
+                                    formatter_class=RawDescriptionHelpFormatter,
+                                    description=textwrap.dedent(
+                                        """
+                                        This command restores a previously made backup. 
+                                        
+                                        Requirements:
+                                        - Correctly configured 'local' properties (in ~/.mcmd/mcmd.yaml)
+                                        - 'psql' must be installed (when restoring a backup of a database)
+                                        - The database, filestore and MinIO should be empty before restoring (use the
+                                          'drop' command if they aren't) 
+                                        
+                                        For safe use, make sure MOLGENIS and the MinIO server are not running.
+                                        """)
+                                    )
 
     _parser.set_defaults(func=restore,
                          write_to_history=True)
