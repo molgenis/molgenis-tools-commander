@@ -1,7 +1,8 @@
 import os
+from unittest import mock
+from unittest.mock import patch, mock_open
 
 import pytest
-from mock import patch, mock, mock_open
 
 from mcmd.core.home import get_scripts_folder
 from tests.integration.utils import run_commander

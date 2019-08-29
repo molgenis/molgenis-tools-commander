@@ -1,7 +1,7 @@
 import unittest
+from unittest.mock import patch
 
 import pytest
-from mock import patch
 
 from mcmd.core.compatibility import version
 

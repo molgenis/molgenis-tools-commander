@@ -1,5 +1,6 @@
+from unittest.mock import patch
+
 import pytest
-from mock import patch
 
 from tests.integration.loader_mock import get_host
 from tests.integration.utils import run_commander, random_name, entity_type_exists
