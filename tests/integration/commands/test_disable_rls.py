@@ -1,5 +1,6 @@
+from unittest.mock import patch
+
 import pytest
-from mock import patch
 
 from tests.integration.permission_client import entity_is_row_level_secured
 from tests.integration.utils import run_commander

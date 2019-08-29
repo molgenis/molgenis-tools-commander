@@ -1,5 +1,6 @@
+from unittest.mock import patch
+
 import pytest
-from mock import patch
 
 from mcmd.core.home import get_issues_folder
 from tests.integration.loader_mock import get_dataset_folder

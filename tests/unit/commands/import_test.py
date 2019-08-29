@@ -1,10 +1,10 @@
 import unittest
+from unittest.mock import patch
 
 import pytest
-from mock import patch
 
-from mcmd.github.client import Attachment
 from mcmd.commands import import_
+from mcmd.github.client import Attachment
 
 
 @pytest.mark.unit
