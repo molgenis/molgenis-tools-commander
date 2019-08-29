@@ -153,22 +153,7 @@ def _create_backup_name(args, location):
         if location.joinpath(args.name + '.tar.gz').exists():
             raise McmdError('File {} already exists'.format(args.name + '.tar.gz'))
         return args.name
+    elif args.timestamp:
+        return io.input_file_name(location, extension='.tar.gz', suffix='-' + timestamp())
     else:
-        return _input_backup_name(args, location)
-
-
-def _input_backup_name(args, location):
-    file_name = ''
-    while not file_name:
-        name = io.input_('Please supply the name of this backup:', required=True)
-        if args.timestamp:
-            name += '-' + timestamp()
-
-        if location.joinpath(name + '.tar.gz').exists():
-            overwrite = io.confirm('{} already exists. Overwrite?'.format(location.joinpath(name + '.tar.gz')))
-            if overwrite:
-                file_name = name
-        else:
-            file_name = name
-
-    return file_name
+        return io.input_file_name(location, extension='.tar.gz')

@@ -1,10 +1,12 @@
+from pathlib import Path
+
 from PyInquirer import prompt
 from colorama import Fore, Style
 from halo import Halo
 
 import mcmd.config.config as config
-from mcmd.io.logging import get_logger
 from mcmd.io.kbhit import KBHit
+from mcmd.io.logging import get_logger
 
 log = get_logger()
 
@@ -122,6 +124,30 @@ def input_(message, required=False):
         message['validate'] = lambda answer: "This field can't be empty." if len(answer) == 0 else True
 
     return _handle_question(message)
+
+
+def input_file_name(location: Path, extension: str = '', suffix: str = ''):
+    """
+    Asks the user to enter a file name.
+    Will check if the file name already exists and ask the user to overwrite or enter a new name.
+    :param location: the Path to which the file should be stored
+    :param extension: the file extension (e.g. tar.gz)
+    :param suffix: a suffix for the file name (for example a timestamp)
+    :return: a unique file name
+    """
+    file_name = ''
+    while not file_name:
+        name = input_('Please enter a name:', required=True)
+        name += suffix
+
+        if location.joinpath(name + extension).exists():
+            overwrite = confirm('{} already exists. Overwrite?'.format(location.joinpath(name + extension)))
+            if overwrite:
+                file_name = name
+        else:
+            file_name = name
+
+    return file_name
 
 
 def password(message):

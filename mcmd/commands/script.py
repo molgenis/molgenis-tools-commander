@@ -1,11 +1,11 @@
+from mcmd.commands._registry import arguments
 from mcmd.core import history
 from mcmd.core.command import command
-from mcmd.commands._registry import arguments
+from mcmd.core.errors import McmdError
 from mcmd.core.home import get_scripts_folder
 from mcmd.io import io
-from mcmd.io.io import confirm, highlight
+from mcmd.io.io import highlight
 from mcmd.io.logging import get_logger
-from mcmd.core.errors import McmdError
 
 
 # =========
@@ -100,7 +100,7 @@ def _create_script(args):
 
     options = [line[1] for line in lines]
     commands = io.checkbox('Pick the lines that will form the script:', options)
-    file_name = _input_script_name()
+    file_name = io.input_file_name(get_scripts_folder())
     try:
         with open(get_scripts_folder().joinpath(file_name), 'w') as script_file:
             for command in commands:
@@ -112,17 +112,3 @@ def _create_script(args):
 def _check_script_exists(path):
     if not path.exists():
         raise McmdError("Script %s doesn't exist" % path.name)
-
-
-def _input_script_name():
-    file_name = ''
-    while not file_name:
-        name = io.input_('Supply the name of the script:')
-        if get_scripts_folder().joinpath(name).exists():
-            overwrite = confirm('%s already exists. Overwrite?' % name)
-            if overwrite:
-                file_name = name
-        else:
-            file_name = name
-
-    return file_name
