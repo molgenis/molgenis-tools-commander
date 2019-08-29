@@ -21,6 +21,12 @@ def _handle_subprocess(program):
     return handler
 
 
+def raise_if_unconfigured():
+    config.raise_if_empty('local', 'database', 'pg_user')
+    config.raise_if_empty('local', 'database', 'pg_password')
+    config.raise_if_empty('local', 'database', 'name')
+
+
 @Singleton
 class Database:
     _CONNECTION_OPTIONS = ('--host', 'localhost',

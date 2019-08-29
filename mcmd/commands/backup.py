@@ -6,10 +6,10 @@ from argparse import RawDescriptionHelpFormatter
 from datetime import datetime
 from pathlib import Path
 
+from mcmd.backend import database, files
 from mcmd.backend.database import Database
 from mcmd.backend.files import Filestore, MinIO
 from mcmd.commands._registry import arguments
-from mcmd.config import config
 from mcmd.core.command import command
 from mcmd.core.errors import McmdError
 from mcmd.core.home import get_backups_folder
@@ -90,15 +90,13 @@ def _validate_args(args):
     if args.filestore or args.all:
         if not Filestore.instance().exists():
             raise McmdError("Filestore ({}) doesn't exist".format(Filestore.instance().get_path()))
-        config.raise_if_empty('local', 'molgenis_home')
+        files.raise_if_filestore_unconfigured()
     if args.minio or args.all:
         if not MinIO.instance().exists():
             raise McmdError("MinIO data folder ({}) doesn't exist".format(MinIO.instance().get_path()))
-        config.raise_if_empty('local', 'minio_data')
+        files.raise_if_minio_unconfigured()
     if args.database or args.all:
-        config.raise_if_empty('local', 'database', 'pg_user')
-        config.raise_if_empty('local', 'database', 'pg_password')
-        config.raise_if_empty('local', 'database', 'name')
+        database.raise_if_unconfigured()
 
 
 def _determine_file_name(args):

@@ -58,3 +58,11 @@ class MinIO(AbstractFilesFolder):
     def __init__(self):
         super().__init__('MinIO data folder',
                          Path(config.get('local', 'minio_data')))
+
+
+def raise_if_filestore_unconfigured():
+    config.raise_if_empty('local', 'molgenis_home')
+
+
+def raise_if_minio_unconfigured():
+    config.raise_if_empty('local', 'minio_data')

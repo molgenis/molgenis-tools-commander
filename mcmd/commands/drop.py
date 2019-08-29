@@ -1,10 +1,10 @@
 import textwrap
 from argparse import RawDescriptionHelpFormatter
 
+from mcmd.backend import database, files
 from mcmd.backend.database import Database
 from mcmd.backend.files import Filestore, MinIO
 from mcmd.commands._registry import arguments
-from mcmd.config import config
 from mcmd.core.command import command
 from mcmd.io import io
 
@@ -101,10 +101,8 @@ def _validate_args(args):
     if not (args.database or args.filestore or args.minio or args.all):
         _parser.error('choose at least one thing to drop')
     if args.filestore or args.all:
-        config.raise_if_empty('local', 'molgenis_home')
+        files.raise_if_filestore_unconfigured()
     if args.minio or args.all:
-        config.raise_if_empty('local', 'minio_data')
+        files.raise_if_minio_unconfigured()
     if args.database or args.all:
-        config.raise_if_empty('local', 'database', 'pg_user')
-        config.raise_if_empty('local', 'database', 'pg_password')
-        config.raise_if_empty('local', 'database', 'name')
+        database.raise_if_unconfigured()

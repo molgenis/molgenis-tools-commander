@@ -6,10 +6,10 @@ from distutils.errors import DistutilsFileError
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from mcmd.backend import database, files
 from mcmd.backend.database import Database
 from mcmd.backend.files import Filestore, MinIO
 from mcmd.commands._registry import arguments
-from mcmd.config import config
 from mcmd.core.command import command
 from mcmd.core.errors import McmdError
 from mcmd.core.home import get_backups_folder
@@ -77,7 +77,7 @@ def _restore_backup(backup):
     restore_minio = False
     with tarfile.open(backup) as archive:
         if _archive_has_member(archive, 'database/dump.sql'):
-            _validate_restore_database()
+            database.raise_if_unconfigured()
             restore_database = True
 
         if _archive_has_member(archive, 'filestore'):
@@ -96,21 +96,15 @@ def _restore_backup(backup):
             _restore_minio(archive)
 
 
-def _validate_restore_database():
-    config.raise_if_empty('local', 'database', 'pg_user')
-    config.raise_if_empty('local', 'database', 'pg_password')
-    config.raise_if_empty('local', 'database', 'name')
-
-
 def _validate_restore_filestore():
-    config.raise_if_empty('local', 'molgenis_home')
+    files.raise_if_filestore_unconfigured()
     if not Filestore.instance().is_empty():
         raise McmdError(
             'The filestore ({}) is not empty - drop it before restoring'.format(Filestore.instance().get_path()))
 
 
 def _validate_restore_minio():
-    config.raise_if_empty('local', 'minio_data')
+    files.raise_if_minio_unconfigured()
     if not MinIO.instance().is_empty():
         raise McmdError(
             'The MinIO data folder ({}) is not empty - drop it before restoring'.format(MinIO.instance().get_path()))
