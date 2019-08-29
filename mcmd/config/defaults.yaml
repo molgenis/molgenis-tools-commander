@@ -14,8 +14,8 @@ host:
       username: admin
 local:
   database:
-    pg_user:
-    pg_password:
+    pg_user: postgres
+    pg_password: postgres
     name: molgenis
   molgenis_home:
   minio_data:

@@ -124,11 +124,12 @@ def _configure_local(values):
 
 
 def _configure_database(values):
-    pg_user = mcmd.io.io.input_('Enter the name of the (super)user of the PostgreSQL database')
+    pg_user = mcmd.io.io.input_('Enter the name of the (super)user of the PostgreSQL database (default: postgres)')
     if len(pg_user) > 0:
         values['local']['database']['pg_user'] = pg_user
 
-    pg_password = mcmd.io.io.password('Enter the password of the (super)user of the PostgreSQL database')
+    pg_password = mcmd.io.io.password(
+        'Enter the password of the (super)user of the PostgreSQL database (default: postgres)')
     if len(pg_password) > 0:
         values['local']['database']['pg_password'] = pg_password
 

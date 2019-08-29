@@ -91,7 +91,7 @@ def _drop_filestore():
 
 
 def _drop_minio():
-    io.start('Dropping minio')
+    io.start('Dropping MinIO')
     MinIO.instance().drop()
     MinIO.instance().create()
     io.succeed()
