@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 def upper_snake(string):
     """
     Transforms a string to uppercase snake style.
@@ -12,6 +15,11 @@ def lower_kebab(string):
     E.g. 'SCREAMING_SNAKE' becomes 'screaming-snake'.
     """
     return string.lower().replace('_', '-')
+
+
+def timestamp() -> str:
+    """Returns a timestamp of the current time in the following format: YYYYmmddTHHMMSS"""
+    return datetime.now().strftime('%Y%m%dT%H%M%S')
 
 
 class Singleton:

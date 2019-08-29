@@ -1,9 +1,7 @@
-import os
 import tarfile
 import tempfile
 import textwrap
 from argparse import RawDescriptionHelpFormatter
-from datetime import datetime
 from pathlib import Path
 
 from mcmd.backend import database, files
@@ -15,6 +13,7 @@ from mcmd.core.errors import McmdError
 from mcmd.core.home import get_backups_folder
 from mcmd.io import io
 from mcmd.io.io import highlight
+from mcmd.utils.utils import timestamp
 
 # =========
 # Arguments
@@ -116,52 +115,40 @@ def _do_backup(args, file_name):
 
             if args.minio or args.all:
                 _backup_minio(archive)
+
+        io.info('Backup saved at: {}'.format(highlight(file_name)))
     except McmdError as error:
+        # Remove the incomplete archive if something went wrong
         Path(file_name).unlink()
         raise error
-    io.info('Backup saved at: {}'.format(highlight(file_name)))
 
 
 def _backup_database(archive):
     io.start('Backing up database')
-    with tempfile.NamedTemporaryFile(delete=False) as dump_file:
+    with tempfile.NamedTemporaryFile() as dump_file:
         try:
             Database.instance().dump(dump_file.name)
             archive.add(dump_file.name, arcname='database/dump.sql')
         except OSError as e:
             raise McmdError("Error writing to backup zip: {}".format(e))
-        finally:
-            try:
-                dump_file.close()
-                os.unlink(dump_file.name)
-            except OSError as e:
-                raise McmdError('Error removing temporary file: {}'.format(e))
     io.succeed()
 
 
 def _backup_filestore(archive):
     io.start('Backing up filestore')
-    filestore = Filestore.instance()
-    if not filestore.exists():
-        raise McmdError("Filestore ({}) doesn't exist".format(filestore.get_path()))
-    else:
-        archive.add(filestore.get_path(), arcname='filestore', recursive=True)
-        io.succeed()
+    archive.add(Filestore.instance().get_path(), arcname='filestore', recursive=True)
+    io.succeed()
 
 
 def _backup_minio(archive):
     io.start('Backing up MinIO data')
-    minio = MinIO.instance()
-    if minio.exists():
-        archive.add(minio.get_path(), arcname='minio', recursive=True)
-    else:
-        raise McmdError("MinIO data folder ({}) doesn't exist".format(minio.get_path()))
+    archive.add(MinIO.instance().get_path(), arcname='minio', recursive=True)
     io.succeed()
 
 
 def _create_backup_name(args, location):
     if args.name and args.timestamp:
-        return args.name + _timestamp()
+        return args.name + '-' + timestamp()
     elif args.name:
         if location.joinpath(args.name + '.tar.gz').exists():
             raise McmdError('File {} already exists'.format(args.name + '.tar.gz'))
@@ -170,16 +157,12 @@ def _create_backup_name(args, location):
         return _input_backup_name(args, location)
 
 
-def _timestamp() -> str:
-    return datetime.now().strftime('-%Y%m%dT%H%M%S')
-
-
 def _input_backup_name(args, location):
     file_name = ''
     while not file_name:
-        name = io.input_('Please supply the name of this backup:')
+        name = io.input_('Please supply the name of this backup:', required=True)
         if args.timestamp:
-            name += _timestamp()
+            name += '-' + timestamp()
 
         if location.joinpath(name + '.tar.gz').exists():
             overwrite = io.confirm('{} already exists. Overwrite?'.format(location.joinpath(name + '.tar.gz')))

@@ -1,3 +1,8 @@
+"""
+These tests test the commands that interact with the backend resources of MOLGENIS (database, filestore and MinIO). They
+don't require a running MOLGENIS application
+"""
+
 import tarfile
 import tempfile
 from pathlib import Path
