@@ -23,7 +23,7 @@ def add_arguments(subparsers):
                                                     help='disables row level security on an entity type')
     p_disable_rls.set_defaults(func=disable_rls,
                                write_to_history=True)
-    p_disable_rls.add_argument('entity-type',
+    p_disable_rls.add_argument('entity',
                                type=str,
                                help="the entity type to remove the row level security from")
 

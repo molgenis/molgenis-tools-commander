@@ -1,5 +1,5 @@
 """
-Each command's argument adder is registered here.
+Houses the @arguments decorator, which registers each command's arguments.
 """
 from collections import defaultdict
 

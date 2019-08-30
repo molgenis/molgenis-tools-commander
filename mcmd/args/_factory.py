@@ -21,12 +21,20 @@ def create_parser():
                                        )
 
     # add general optionals
+    parser.add_argument('--as-user', '-u',
+                        type=str,
+                        metavar='USER',
+                        help="execute a MOLGENIS command as a user")
+    parser.add_argument('--with-password', '-p',
+                        type=str,
+                        metavar='PASSWORD',
+                        help="the password to use when logging in")
     parser.add_argument('--verbose', '-v',
                         action='count',
                         help='print verbose messages')
     parser.add_argument('--version',
                         action='version',
-                        version='Molgenis Commander {version}'.format(version=_get_version()))
+                        version='MOLGENIS Commander {version}'.format(version=_get_version()))
 
     # Remove the 'commands' section title because we will be replacing it
     parser._positionals.title = None
