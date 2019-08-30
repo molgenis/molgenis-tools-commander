@@ -148,6 +148,7 @@ def _restore_minio(archive):
     io.start('Restoring MinIO data')
     # the minio folder can have any name so we need to extract the folder to a temporary location first
     with TemporaryDirectory() as tempdir:
+        Path(tempdir).joinpath('minio').mkdir()
         _extract_files(archive, tempdir, "minio")
         minio = MinIO.instance()
         minio.drop()
