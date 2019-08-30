@@ -1,10 +1,10 @@
-from mcmd.molgenis import api
-from mcmd.molgenis.client import post, put
-from mcmd.core.command import command
 from mcmd.commands._registry import arguments
+from mcmd.core.command import command
+from mcmd.core.errors import McmdError
 from mcmd.io import io
 from mcmd.io.io import highlight
-from mcmd.core.errors import McmdError
+from mcmd.molgenis import api
+from mcmd.molgenis.client import post, put
 from mcmd.molgenis.resources import one_resource_exists, ensure_resource_exists, ResourceType
 
 
@@ -15,7 +15,7 @@ from mcmd.molgenis.resources import one_resource_exists, ensure_resource_exists,
 @arguments('enable')
 def add_arguments(subparsers):
     p_enable = subparsers.add_parser('enable',
-                                     help='Enable resources/functionality',
+                                     help='enable resources/functionality',
                                      description="Run 'mcmd enable rls -h' to view the help for those sub-commands")
     p_enable_subparsers = p_enable.add_subparsers(dest="type")
 

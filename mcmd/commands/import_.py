@@ -30,7 +30,7 @@ _p_import = None
 def add_arguments(subparsers):
     global _p_import
     _p_import = subparsers.add_parser('import',
-                                      help='Import a file')
+                                      help='import a dataset')
     _p_import.set_defaults(func=import_,
                            write_to_history=True)
     _p_import.add_argument('resource',

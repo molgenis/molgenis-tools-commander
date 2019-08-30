@@ -2,11 +2,11 @@ from urllib.parse import urljoin
 
 import mcmd.io.ask
 import mcmd.molgenis.client as client
-from mcmd.molgenis import api
-from mcmd.core.command import command
 from mcmd.commands._registry import arguments
+from mcmd.core.command import command
 from mcmd.io import io
 from mcmd.io.io import highlight
+from mcmd.molgenis import api
 from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists, ResourceType
 
 
@@ -18,7 +18,7 @@ from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists
 @arguments('delete')
 def add_arguments(subparsers):
     p_delete = subparsers.add_parser('delete',
-                                     help='Delete resources')
+                                     help='delete resources')
     p_delete.set_defaults(func=delete,
                           write_to_history=True)
     p_delete_resource = p_delete.add_mutually_exclusive_group()

@@ -1,13 +1,13 @@
 import shlex
 
-from mcmd.core import argparser as arg_parser
-from mcmd.core.command import command
+from mcmd.args import parser as arg_parser
 from mcmd.commands._registry import arguments
+from mcmd.core.command import command, CommandType
+from mcmd.core.errors import McmdError
 from mcmd.core.home import get_scripts_folder
 from mcmd.io import io
 from mcmd.io.io import bold, dim
 from mcmd.io.logging import get_logger
-from mcmd.core.errors import McmdError
 
 
 # =========
@@ -15,10 +15,10 @@ from mcmd.core.errors import McmdError
 # =========
 
 
-@arguments('run')
+@arguments('run', CommandType.META)
 def add_arguments(subparsers):
     p_run = subparsers.add_parser('run',
-                                  help='Run an mcmd script')
+                                  help='run a commander script')
     p_run.set_defaults(func=run,
                        write_to_history=False)
     p_run.add_argument('script',

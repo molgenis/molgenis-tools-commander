@@ -1,11 +1,5 @@
-import collections
-import json
-from typing import Optional, List
-from urllib.parse import urljoin
-
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
-from mcmd.core.errors import McmdError
 from mcmd.io import io, ask
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
@@ -22,7 +16,7 @@ Membership = collections.namedtuple('Membership', ['id', 'role_name', 'role_labe
 @arguments('make')
 def add_arguments(subparsers):
     p_make = subparsers.add_parser('make',
-                                   help='Make a user member of a role')
+                                   help='make a user member of a role')
     p_make.set_defaults(func=make,
                         write_to_history=True)
     p_make.add_argument('user',

@@ -19,7 +19,7 @@ from mcmd.molgenis.client import get, put
 @arguments('set')
 def add_arguments(subparsers):
     p_set = subparsers.add_parser('set',
-                                  help='Alter settings',
+                                  help='alter settings',
                                   description="Run 'mcmd set -h' to view the help for this sub-command")
 
     p_set.add_argument('type',

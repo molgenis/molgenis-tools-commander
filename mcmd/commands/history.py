@@ -1,7 +1,7 @@
-from mcmd.core import history as hist
-from mcmd.io import io
-from mcmd.core.command import command
 from mcmd.commands._registry import arguments
+from mcmd.core import history as hist
+from mcmd.core.command import command, CommandType
+from mcmd.io import io
 from mcmd.io.logging import get_logger
 
 
@@ -9,11 +9,10 @@ from mcmd.io.logging import get_logger
 # Arguments
 # =========
 
-@arguments('history')
+@arguments('history', CommandType.META)
 def add_arguments(subparsers):
     p_history = subparsers.add_parser('history',
-                                      help="Shows the history of commands that were run. Commands from scripts are"
-                                           " also included.")
+                                      help="shows the history of commands that were run")
     p_history.set_defaults(func=history,
                            write_to_history=False)
     p_history.add_argument('--number', '-n',
