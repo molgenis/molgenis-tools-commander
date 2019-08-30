@@ -23,25 +23,25 @@ def add_arguments(subparsers):
     p_script_action = p_script.add_mutually_exclusive_group()
     p_script_action.add_argument('--create',
                                  action='store_true',
-                                 help='Create a script from the history. (This is the default action.)')
+                                 help='create a script from the history (this is the default action)')
     p_script_action.add_argument('--list', '-l',
                                  action='store_true',
-                                 help='List the stored scripts.')
+                                 help='list the stored scripts')
     p_script_action.add_argument('--delete', '-D',
                                  metavar='SCRIPT NAME',
                                  type=str,
-                                 help='Remove a script.')
+                                 help='remove a script')
     p_script_action.add_argument('--read', '-r',
                                  metavar='SCRIPT NAME',
                                  type=str,
-                                 help='Read the contents of a script.')
+                                 help='read the contents of a script')
     p_script.add_argument('--number', '-n',
                           type=int,
                           default=10,
-                          help='Number of lines of history to choose from. Default: 10')
+                          help='number of lines of history to choose from (default: 10)')
     p_script.add_argument('--show-fails', '-f',
                           action='store_true',
-                          help='Also show the failed commands from history. Disabled by default.')
+                          help='also show the failed commands from history (disabled by default)')
 
 
 # =======

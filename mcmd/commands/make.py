@@ -21,10 +21,10 @@ def add_arguments(subparsers):
                         write_to_history=True)
     p_make.add_argument('user',
                         type=str,
-                        help='The user to make a member')
+                        help='the user to make a member')
     p_make.add_argument('role',
                         type=str,
-                        help='The role to make the user a member of')
+                        help='the role to make the user a member of')
 
 
 # =======

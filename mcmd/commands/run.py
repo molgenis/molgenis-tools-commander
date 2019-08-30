@@ -23,17 +23,17 @@ def add_arguments(subparsers):
                        write_to_history=False)
     p_run.add_argument('script',
                        type=str,
-                       help='The script to run')
+                       help='the script to run')
     p_run.add_argument('--ignore-errors', '-i',
                        action='store_true',
-                       help='Let the script continue when one or more commands throw an error')
+                       help='let the script continue when one or more commands throw an error')
     p_run.add_argument('--hide-comments', '-c',
                        action='store_true',
-                       help="Don't print comments and whitespace during script execution")
+                       help="don't print comments and whitespace during script execution")
     p_run.add_argument('--from-line', '-l',
                        type=int,
                        default=1,
-                       help="The line number to start the script at")
+                       help="the line number to start the script at")
 
 
 # =======

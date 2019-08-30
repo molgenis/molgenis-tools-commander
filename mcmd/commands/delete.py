@@ -24,34 +24,34 @@ def add_arguments(subparsers):
     p_delete_resource = p_delete.add_mutually_exclusive_group()
     p_delete_resource.add_argument('--entity-type', '-e',
                                    action='store_true',
-                                   help='Flag to specify that the resource is an entity type')
+                                   help='flag to specify that the resource is an entity type')
     p_delete_resource.add_argument('--package', '-p',
                                    action='store_true',
-                                   help='Flag to specify that the resource is a package')
+                                   help='flag to specify that the resource is a package')
     p_delete_resource.add_argument('--group', '-g',
                                    action='store_true',
-                                   help='Flag to specify that the resource is a group')
+                                   help='flag to specify that the resource is a group')
 
     p_delete_options = p_delete.add_mutually_exclusive_group()
     p_delete_options.add_argument('--data',
                                   action='store_true',
-                                  help='Use in conjunction with --entity-type to only delete the rows of the entity '
+                                  help='use in conjunction with --entity-type to only delete the rows of the entity '
                                        'type')
     p_delete_options.add_argument('--attribute',
                                   metavar='NAME',
                                   type=str,
-                                  help='Use in conjunction with --entity-type to only delete an attribute of the '
+                                  help='use in conjunction with --entity-type to only delete an attribute of the '
                                        'entity type')
     p_delete_options.add_argument('--contents',
                                   action='store_true',
-                                  help='Use in conjunction with --package to only delete the contents of the package')
+                                  help='use in conjunction with --package to only delete the contents of the package')
 
     p_delete.add_argument('--force', '-f',
                           action='store_true',
-                          help='Forces the delete action without asking for confirmation')
+                          help='forces the delete action without asking for confirmation')
     p_delete.add_argument('resource',
                           type=str,
-                          help='The identifier of the resource to delete')
+                          help='the identifier of the resource to delete')
 
 
 # =======

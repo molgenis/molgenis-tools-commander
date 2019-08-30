@@ -18,10 +18,10 @@ def add_arguments(subparsers):
     p_history.add_argument('--number', '-n',
                            type=int,
                            default=10,
-                           help='Number of lines of history to show. Default: 10')
+                           help='number of lines of history to show (default: 10)')
     p_history.add_argument('--clear', '-c',
                            action='store_true',
-                           help='Clears the history.')
+                           help='clears the history')
 
 
 # =======
