@@ -106,6 +106,18 @@ def test_restore():
 
 
 @pytest.mark.local
+def test_restore_empty_archive():
+    with pytest.raises(SystemExit):
+        run_commander('restore --from-path {}'.format(get_files_folder().joinpath('empty.tar.gz')))
+
+
+@pytest.mark.local
+def test_restore_corrupt_archive():
+    with pytest.raises(SystemExit):
+        run_commander('restore --from-path {}'.format(get_files_folder().joinpath('corrupt.tar.gz')))
+
+
+@pytest.mark.local
 @patch('mcmd.io.io.confirm')
 def test_drop_filestore(are_you_sure):
     are_you_sure.return_value = True

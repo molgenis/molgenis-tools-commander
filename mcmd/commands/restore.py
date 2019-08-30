@@ -72,28 +72,35 @@ def _get_backup(args):
 
 
 def _restore_backup(backup):
-    restore_database = False
-    restore_filestore = False
-    restore_minio = False
-    with tarfile.open(backup) as archive:
-        if _archive_has_member(archive, 'database/dump.sql'):
-            database.raise_if_unconfigured()
-            restore_database = True
+    try:
+        with tarfile.open(backup) as archive:
+            restore_database = False
+            restore_filestore = False
+            restore_minio = False
 
-        if _archive_has_member(archive, 'filestore'):
-            _validate_restore_filestore()
-            restore_filestore = True
+            if _archive_has_member(archive, 'database/dump.sql'):
+                database.raise_if_unconfigured()
+                restore_database = True
 
-        if _archive_has_member(archive, 'minio'):
-            _validate_restore_minio()
-            restore_minio = True
+            if _archive_has_member(archive, 'filestore'):
+                _validate_restore_filestore()
+                restore_filestore = True
 
-        if restore_database:
-            _restore_database(archive)
-        if restore_filestore:
-            _restore_filestore(archive)
-        if restore_minio:
-            _restore_minio(archive)
+            if _archive_has_member(archive, 'minio'):
+                _validate_restore_minio()
+                restore_minio = True
+
+            if not restore_database and not restore_filestore and not restore_minio:
+                raise McmdError("This backup file doesn't contain any valid resources to restore")
+
+            if restore_database:
+                _restore_database(archive)
+            if restore_filestore:
+                _restore_filestore(archive)
+            if restore_minio:
+                _restore_minio(archive)
+    except tarfile.TarError as e:
+        raise McmdError('Error reading archive: {}'.format(e))
 
 
 def _validate_restore_filestore():
