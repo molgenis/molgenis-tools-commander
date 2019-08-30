@@ -15,7 +15,7 @@ setup(
             'mcmd = mcmd.__main__:main'
         ]
     },
-    install_requires=['requests==2.21.0', 'rainbow_logging_handler==2.2.2', 'PyInquirer==1.0.3', 'halo==0.0.22',
+    install_requires=['requests==2.21.0', 'rainbow_logging_handler==2.2.2', 'PyInquirer==1.0.3', 'halo==0.0.28',
                       'polling==0.3.0', 'PyGithub==1.43.3', 'colorama==0.3.9', 'ruamel.yaml==0.15.81'],
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'molgenis-py-client==1.0.0']
