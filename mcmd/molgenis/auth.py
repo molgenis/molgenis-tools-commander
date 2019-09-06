@@ -8,6 +8,7 @@ import json
 import requests
 from requests import HTTPError
 
+import mcmd.io.ask
 from mcmd.io import io
 from mcmd.molgenis import api
 from mcmd.config import config
@@ -80,5 +81,5 @@ def _login():
 
 
 def _ask_password():
-    return io.password(
+    return mcmd.io.ask.password(
         'Please enter the password for user {} on {}'.format(_username, config.url()))

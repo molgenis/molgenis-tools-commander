@@ -13,6 +13,7 @@ import pkg_resources
 from ruamel.yaml import YAML
 
 import mcmd.config.config as config
+import mcmd.io.ask
 import mcmd.io.io
 from mcmd.core.home import get_properties_file
 from mcmd.io.io import highlight
@@ -79,7 +80,7 @@ def _install(default_config):
 
 
 def _configure_git_root(config_):
-    git_root = mcmd.io.io.input_(
+    git_root = mcmd.io.ask.input_(
         'Enter the absolute path to your Molgenis git folder (e.g. /Users/me/git/molgenis/)')
     if len(git_root) > 0:
         config_['git']['root'] = git_root
@@ -92,20 +93,20 @@ def _configure_host(values):
 
 
 def _configure_url(values):
-    host = mcmd.io.io.input_('Enter the host name of your Molgenis (Default: http://localhost:8080/)')
+    host = mcmd.io.ask.input_('Enter the host name of your Molgenis (Default: http://localhost:8080/)')
     if len(host) > 0:
         values['host']['selected'] = host
         values['host']['auth'][0]['url'] = host
 
 
 def _configure_username(values):
-    username = mcmd.io.io.input_('Enter the username of the super user (Default: admin)')
+    username = mcmd.io.ask.input_('Enter the username of the super user (Default: admin)')
     if len(username) > 0:
         values['host']['auth'][0]['username'] = username
 
 
 def _configure_password(values):
-    password = mcmd.io.io.password('Enter the password of the super user (Leave blank to use command line authentication)')
+    password = mcmd.io.ask.password('Enter the password of the super user (Leave blank to use command line authentication)')
     if len(password) > 0:
         values['host']['auth'][0]['password'] = password
 

@@ -1,5 +1,6 @@
 from urllib.parse import urljoin
 
+import mcmd.io.ask
 import mcmd.molgenis.client as client
 from mcmd.molgenis import api
 from mcmd.core.command import command
@@ -78,21 +79,21 @@ def delete(args):
 
 
 def _delete_entity_type(args):
-    if args.force or (not args.force and io.confirm(
+    if args.force or (not args.force and mcmd.io.ask.confirm(
             'Are you sure you want to delete entity type {} including its data?'.format(args.resource))):
         io.start('Deleting entity type {}'.format(highlight(args.resource)))
         _delete_rows(ResourceType.ENTITY_TYPE.get_entity_id(), [args.resource])
 
 
 def _delete_entity_type_data(args):
-    if args.force or (not args.force and io.confirm(
+    if args.force or (not args.force and mcmd.io.ask.confirm(
             'Are you sure you want to delete all data in entity type {}?'.format(args.resource))):
         io.start('Deleting all data from entity {}'.format(highlight(args.resource)))
         client.delete(api.rest1(args.resource))
 
 
 def _delete_entity_type_attribute(args):
-    if args.force or (not args.force and io.confirm(
+    if args.force or (not args.force and mcmd.io.ask.confirm(
             'Are you sure you want to delete attribute {} of entity type {}?'.format(args.attribute, args.resource))):
         io.start('Deleting attribute {} of entity {}'.format(highlight(args.attribute), highlight(args.resource)))
         response = client.get(api.rest2('sys_md_Attribute'),
@@ -105,14 +106,14 @@ def _delete_entity_type_attribute(args):
 
 
 def _delete_package(args):
-    if args.force or (not args.force and io.confirm(
+    if args.force or (not args.force and mcmd.io.ask.confirm(
             'Are you sure you want to delete package {} and all of its contents?'.format(args.resource))):
         io.start('Deleting package {}'.format(highlight(args.resource)))
         _delete_rows(ResourceType.PACKAGE.get_entity_id(), [args.resource])
 
 
 def _delete_package_contents(args):
-    if args.force or (not args.force and io.confirm(
+    if args.force or (not args.force and mcmd.io.ask.confirm(
             'Are you sure you want to delete the contents of package {}?'.format(args.resource))):
         io.start('Deleting contents of package {}'.format(highlight(args.resource)))
         _delete_entity_types_in_package(args.resource)
@@ -142,7 +143,7 @@ def _delete_packages_in_package(package_id):
 
 
 def _delete_group(args):
-    if args.force or (not args.force and io.confirm(
+    if args.force or (not args.force and mcmd.io.ask.confirm(
             'Are you sure you want to delete group {}?'.format(args.resource))):
         io.start('Deleting group {}'.format(highlight(args.resource)))
         client.delete(urljoin(api.group(), args.resource))
