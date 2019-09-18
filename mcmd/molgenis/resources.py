@@ -3,7 +3,7 @@ from typing import List
 
 from mcmd.molgenis import api
 from mcmd.molgenis.client import get
-from mcmd.io.io import multi_choice
+from mcmd.io.ask import multi_choice
 from mcmd.io.logging import get_logger
 from mcmd.core.errors import McmdError
 

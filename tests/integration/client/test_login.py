@@ -17,7 +17,7 @@ def test_login_password(set_token, session):
 
 
 @pytest.mark.integration
-@patch('mcmd.io.io.password')
+@patch('mcmd.io.ask.password')
 @patch('mcmd.config.config._get_selected_host_auth')
 @patch('mcmd.config.config.set_token')
 def test_login_no_password(set_token_mock, host_mock, enter_password, session):
