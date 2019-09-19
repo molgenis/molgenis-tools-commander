@@ -238,7 +238,7 @@ def _get_import_action(file_name):
 
 def _poll_for_completion(url):
     polling.poll(lambda: get(url).json()['status'] != 'RUNNING',
-                 step=0.1,
+                 step=10,
                  poll_forever=True)
     import_run = get(url).json()
     return import_run['status'], import_run['message']
