@@ -30,8 +30,8 @@ def test_script_read(caplog):
 
 
 @pytest.mark.integration
-@patch('mcmd.io.io.input_')
-@patch('mcmd.io.io.checkbox')
+@patch('mcmd.io.ask.input_')
+@patch('mcmd.io.ask.checkbox')
 @patch('mcmd.core.history.read')
 def test_script_create(history, which_lines, what_filename):
     history.return_value = _history_lines

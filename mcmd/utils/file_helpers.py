@@ -2,6 +2,7 @@ from collections.__init__ import defaultdict
 from os import path
 from pathlib import Path
 
+import mcmd.io.ask
 from mcmd.io import io
 from mcmd.core.errors import McmdError
 
@@ -59,5 +60,5 @@ def _choose_file(paths, name):
     :return: the selected path
     """
     choices = [str(path) for path in paths]
-    answer = io.multi_choice('Multiple files found for %s. Pick one:' % name, choices)
+    answer = mcmd.io.ask.multi_choice('Multiple files found for %s. Pick one:' % name, choices)
     return Path(answer)
