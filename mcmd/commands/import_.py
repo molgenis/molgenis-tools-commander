@@ -237,8 +237,14 @@ def _get_import_action(file_name):
 
 
 def _poll_for_completion(url):
+    def step_function(step):
+        """Increases time between polls with one second each time, with a maximum of 10 seconds."""
+        step += 1
+        return min(step, 10)
+
     polling.poll(lambda: get(url).json()['status'] != 'RUNNING',
-                 step=10,
+                 step=1,
+                 step_function=step_function,
                  poll_forever=True)
     import_run = get(url).json()
     return import_run['status'], import_run['message']
