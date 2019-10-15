@@ -45,10 +45,23 @@ def info(message):
 
 
 def warn(message):
+    """Turns the current spinner in a warning message (with icon) and starts a new spinner"""
     if spinner:
         spinner.warn()
     log.warn('  ' + message)
 
+    if spinner:
+        spinner.start()
+
+
+def pause():
+    """Pause the spinner (with a warning icon), restart it with unpause()"""
+    if spinner:
+        spinner.warn()
+
+
+def unpause():
+    """Unpause a paused spinner"""
     if spinner:
         spinner.start()
 
