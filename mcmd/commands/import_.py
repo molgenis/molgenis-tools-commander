@@ -6,6 +6,7 @@ import polling
 import requests
 
 import mcmd.config.config as config
+import mcmd.io.ask
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.errors import McmdError
@@ -182,7 +183,7 @@ def _choose_attachment(attachments):
     attachment_map = _create_attachment_map(attachments)
     choices = list(attachment_map.keys())
 
-    answer = io.multi_choice('Multiple attachments found. Choose which one to import:', choices)
+    answer = mcmd.io.ask.multi_choice('Multiple attachments found. Choose which one to import:', choices)
     return attachment_map[answer]
 
 
@@ -192,7 +193,7 @@ def _download_attachment(attachment, issue_num):
     file_path = issue_folder.joinpath(attachment.name)
 
     if file_path.exists():
-        overwrite = io.confirm('File %s already exists. Re-download?' % file_path.name)
+        overwrite = mcmd.io.ask.confirm('File %s already exists. Re-download?' % file_path.name)
         if not overwrite:
             return file_path
 
@@ -237,7 +238,7 @@ def _get_import_action(file_name):
 
 def _poll_for_completion(url):
     polling.poll(lambda: get(url).json()['status'] != 'RUNNING',
-                 step=0.1,
+                 step=10,
                  poll_forever=True)
     import_run = get(url).json()
     return import_run['status'], import_run['message']

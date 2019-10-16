@@ -6,7 +6,7 @@ from mcmd.backend.database import Database
 from mcmd.backend.files import Filestore, MinIO
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
-from mcmd.io import io
+from mcmd.io import io, ask
 
 # =========
 # Arguments
@@ -64,7 +64,7 @@ def arguments(subparsers):
 def drop(args):
     _validate_args(args)
 
-    if not args.force and not io.confirm(
+    if not args.force and not ask.confirm(
             'Are you sure you want to drop these resources? This will completely remove them'):
         return
 

@@ -6,9 +6,9 @@ don't require a running MOLGENIS application
 import tarfile
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
-from mock import patch
 
 from mcmd.backend.database import Database
 from mcmd.backend.files import Filestore, MinIO
@@ -38,7 +38,7 @@ def setup_function():
 
 
 @pytest.mark.local
-@patch('mcmd.io.io.input_')
+@patch('mcmd.io.ask.input_')
 def test_backup_database(which_name):
     which_name.return_value = 'backup_db'
     run_commander('backup --database')
@@ -118,7 +118,7 @@ def test_restore_corrupt_archive():
 
 
 @pytest.mark.local
-@patch('mcmd.io.io.confirm')
+@patch('mcmd.io.ask.confirm')
 def test_drop_filestore(are_you_sure):
     are_you_sure.return_value = True
     run_commander('drop --filestore')
@@ -127,7 +127,7 @@ def test_drop_filestore(are_you_sure):
 
 
 @pytest.mark.local
-@patch('mcmd.io.io.confirm')
+@patch('mcmd.io.ask.confirm')
 def test_drop_cancel(are_you_sure):
     are_you_sure.return_value = False
     run_commander('drop --filestore')

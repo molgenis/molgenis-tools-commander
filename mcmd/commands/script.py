@@ -3,7 +3,7 @@ from mcmd.core import history
 from mcmd.core.command import command
 from mcmd.core.errors import McmdError
 from mcmd.core.home import get_scripts_folder
-from mcmd.io import io
+from mcmd.io import ask, io
 from mcmd.io.io import highlight
 from mcmd.io.logging import get_logger
 
@@ -99,8 +99,8 @@ def _create_script(args):
         return
 
     options = [line[1] for line in lines]
-    commands = io.checkbox('Pick the lines that will form the script:', options)
-    file_name = io.input_file_name(get_scripts_folder())
+    commands = ask.checkbox('Pick the lines that will form the script:', options)
+    file_name = ask.input_file_name(get_scripts_folder())
     try:
         with open(get_scripts_folder().joinpath(file_name), 'w') as script_file:
             for command in commands:

@@ -11,7 +11,7 @@ from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.errors import McmdError
 from mcmd.core.home import get_backups_folder
-from mcmd.io import io
+from mcmd.io import io, ask
 from mcmd.io.io import highlight
 from mcmd.utils.utils import timestamp
 
@@ -154,6 +154,6 @@ def _create_backup_name(args, location):
             raise McmdError('File {} already exists'.format(args.name + '.tar.gz'))
         return args.name
     elif args.timestamp:
-        return io.input_file_name(location, extension='.tar.gz', suffix='-' + timestamp())
+        return ask.input_file_name(location, extension='.tar.gz', suffix='-' + timestamp())
     else:
-        return io.input_file_name(location, extension='.tar.gz')
+        return ask.input_file_name(location, extension='.tar.gz')

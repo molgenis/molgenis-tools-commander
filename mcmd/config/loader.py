@@ -13,6 +13,7 @@ import pkg_resources
 from ruamel.yaml import YAML
 
 import mcmd.config.config as config
+import mcmd.io.ask
 import mcmd.io.io
 from mcmd.core.home import get_properties_file
 from mcmd.io.io import highlight
@@ -85,7 +86,7 @@ def _install(default_config):
 
 
 def _configure_git_root(config_):
-    git_root = mcmd.io.io.input_(
+    git_root = mcmd.io.ask.input_(
         'Enter the absolute path to your Molgenis git folder (e.g. /Users/me/git/molgenis/)')
     if len(git_root) > 0:
         config_['git']['root'] = git_root
@@ -98,20 +99,20 @@ def _configure_host(values):
 
 
 def _configure_url(values):
-    host = mcmd.io.io.input_('Enter the host name of your MOLGENIS (default: http://localhost:8080/)')
+    host = mcmd.io.ask.input_('Enter the host name of your MOLGENIS (default: http://localhost:8080/)')
     if len(host) > 0:
         values['host']['selected'] = host
         values['host']['auth'][0]['url'] = host
 
 
 def _configure_username(values):
-    username = mcmd.io.io.input_('Enter the username of the super user (default: admin)')
+    username = mcmd.io.ask.input_('Enter the username of the super user (default: admin)')
     if len(username) > 0:
         values['host']['auth'][0]['username'] = username
 
 
 def _configure_password(values):
-    password = mcmd.io.io.password(
+    password = mcmd.io.ask.password(
         'Enter the password of the super user (Leave blank to use command line authentication)')
     if len(password) > 0:
         values['host']['auth'][0]['password'] = password
@@ -124,28 +125,28 @@ def _configure_local(values):
 
 
 def _configure_database(values):
-    pg_user = mcmd.io.io.input_('Enter the name of the (super)user of the PostgreSQL database (default: postgres)')
+    pg_user = mcmd.io.ask.input_('Enter the name of the (super)user of the PostgreSQL database (default: postgres)')
     if len(pg_user) > 0:
         values['local']['database']['pg_user'] = pg_user
 
-    pg_password = mcmd.io.io.password(
+    pg_password = mcmd.io.ask.password(
         'Enter the password of the (super)user of the PostgreSQL database (default: postgres)')
     if len(pg_password) > 0:
         values['local']['database']['pg_password'] = pg_password
 
-    name = mcmd.io.io.input_('Enter the name of the MOLGENIS database (default: molgenis)')
+    name = mcmd.io.ask.input_('Enter the name of the MOLGENIS database (default: molgenis)')
     if len(name) > 0:
         values['local']['database']['name'] = name
 
 
 def _configure_molgenis_home(values):
-    molgenis_home = mcmd.io.io.input_('Enter the MOLGENIS home folder (e.g. /Users/me/.molgenis/molgenis/)')
+    molgenis_home = mcmd.io.ask.input_('Enter the MOLGENIS home folder (e.g. /Users/me/.molgenis/molgenis/)')
     if len(molgenis_home) > 0:
         values['local']['molgenis_home'] = molgenis_home
 
 
 def _configure_minio_data(values):
-    minio_data = mcmd.io.io.input_('Enter the location of the MinIO data folder')
+    minio_data = mcmd.io.ask.input_('Enter the location of the MinIO data folder')
     if len(minio_data) > 0:
         values['local']['minio_data'] = minio_data
 

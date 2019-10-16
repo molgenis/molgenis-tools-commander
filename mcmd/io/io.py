@@ -1,6 +1,3 @@
-from pathlib import Path
-
-from PyInquirer import prompt
 from colorama import Fore, Style
 from halo import Halo
 
@@ -78,105 +75,6 @@ def debug(message):
     log.debug('  ' + message)
 
 
-def multi_choice(message, choices):
-    if spinner:
-        spinner.stop_and_persist()
-
-    message = {
-        'type': 'rawlist',
-        'name': 'answer',
-        'message': message,
-        'choices': choices
-    }
-
-    return _handle_question(message)
-
-
-def checkbox(message, choices):
-    if spinner:
-        spinner.stop_and_persist()
-
-    checks = [{'name': choice, 'value': idx} for idx, choice in enumerate(choices)]
-
-    message = {
-        'type': 'checkbox',
-        'name': 'answer',
-        'message': message,
-        'choices': checks,
-        'validate': lambda answer: 'You must choose at least one option.' if len(answer) == 0 else True
-    }
-
-    answer_ids = _handle_question(message)
-    return [choices[idx] for idx in answer_ids]
-
-
-def input_(message, required=False):
-    if spinner:
-        spinner.stop_and_persist()
-
-    message = {
-        'type': 'input',
-        'name': 'answer',
-        'message': message,
-    }
-
-    if required:
-        message['validate'] = lambda answer: "This field can't be empty." if len(answer) == 0 else True
-
-    return _handle_question(message)
-
-
-def input_file_name(location: Path, extension: str = '', suffix: str = ''):
-    """
-    Asks the user to enter a file name.
-    Will check if the file name already exists and ask the user to overwrite or enter a new name.
-    :param location: the Path to which the file should be stored
-    :param extension: the file extension (e.g. tar.gz)
-    :param suffix: a suffix for the file name (for example a timestamp)
-    :return: a unique file name
-    """
-    file_name = ''
-    while not file_name:
-        name = input_('Please enter a name:', required=True)
-        name += suffix
-
-        if location.joinpath(name + extension).exists():
-            overwrite = confirm('{} already exists. Overwrite?'.format(location.joinpath(name + extension)))
-            if overwrite:
-                file_name = name
-        else:
-            file_name = name
-
-    return file_name
-
-
-def password(message):
-    if spinner:
-        spinner.warn()
-
-    message = {
-        'type': 'password',
-        'name': 'answer',
-        'message': message,
-    }
-
-    return _handle_question(message)
-
-
-def confirm(message):
-    if spinner:
-        spinner.stop_and_persist()
-
-    message = {
-        'type': 'confirm',
-        'default': False,
-        'name': 'answer',
-        'message': message
-    }
-
-    return _handle_question(message)
-
-
 def wait_for_enter():
     """Waits until the user presses enter. Non-blocking: the program can still be interrupted and closed."""
     kb = KBHit()
@@ -210,14 +108,3 @@ def bold(string):
 
 def dim(string):
     return Style.DIM + string + Style.RESET_ALL
-
-
-def _handle_question(question):
-    answer = prompt([question])
-    if not answer:
-        # empty result means that PyInquirer caught an InterruptException
-        exit(0)
-    else:
-        if spinner:
-            spinner.start()
-        return answer['answer']
