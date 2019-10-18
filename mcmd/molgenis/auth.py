@@ -9,10 +9,10 @@ import requests
 from requests import HTTPError
 
 import mcmd.io.ask
-from mcmd.io import io
-from mcmd.molgenis import api
 from mcmd.config import config
 from mcmd.core.errors import McmdError, MolgenisOfflineError
+from mcmd.io import io
+from mcmd.molgenis import api
 
 _username = None
 _password = None
@@ -81,5 +81,7 @@ def _login():
 
 
 def _ask_password():
-    return mcmd.io.ask.password(
-        'Please enter the password for user {} on {}'.format(_username, config.url()))
+    io.pause()
+    password = mcmd.io.ask.password('Please enter the password for user {} on {}'.format(_username, config.url()))
+    io.unpause()
+    return password
