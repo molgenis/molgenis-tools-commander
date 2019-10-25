@@ -2,9 +2,9 @@ import shlex
 
 from mcmd.args import parser as arg_parser
 from mcmd.commands._registry import arguments
+from mcmd.core import context
 from mcmd.core.command import command, CommandType
 from mcmd.core.errors import McmdError
-from mcmd.core.home import get_scripts_folder
 from mcmd.io import io
 from mcmd.io.io import bold, dim
 from mcmd.io.logging import get_logger
@@ -49,7 +49,7 @@ log = get_logger()
 
 @command
 def run(args):
-    script = get_scripts_folder().joinpath(args.script)
+    script = context().get_scripts_folder().joinpath(args.script)
     lines = _read_script(script)
     _run_script(not args.hide_comments, not args.ignore_errors, lines, args.from_line)
 

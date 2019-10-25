@@ -1,5 +1,7 @@
 import sys
 
+from mcmd.core.context_holder import HomeContext, set_context
+
 MIN_PYTHON = (3, 6)
 if sys.version_info < MIN_PYTHON:
     import platform
@@ -21,13 +23,14 @@ from mcmd.io.logging import set_level
 
 
 def main():
-    sys.exit(start(sys.argv))
+    sys.exit(start(sys.argv, HomeContext()))
 
 
-def start(argv):
+def start(argv, context):
     # setup friendly interrupt message
     signal.signal(signal.SIGINT, interrupt_handler)
 
+    set_context(context)
     load_config()
 
     args = parse_args(argv[1:])

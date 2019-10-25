@@ -9,6 +9,7 @@ from pathlib import Path
 from ruamel.yaml import YAML
 
 import mcmd.core.errors as errors
+from mcmd.core import context
 
 _config = None
 _properties_file: Path = None

@@ -4,10 +4,11 @@ from unittest.mock import patch, mock_open
 
 import pytest
 
-from mcmd.core.home import get_scripts_folder
+from mcmd.core import context
+from tests.integration.loader_mock import get_files_folder
 from tests.integration.utils import run_commander
 
-_expected_list_messages = [file for file in os.listdir(get_scripts_folder())]
+_expected_list_messages = [file for file in os.listdir(get_files_folder().joinpath('scripts'))]
 _expected_read_messages = ['add package scripttest', 'import testAutoId_unpackaged --in scripttest',
                            'add package otherpackage']
 _history_lines = [
@@ -40,7 +41,7 @@ def test_script_create(history, which_lines, what_filename):
 
     with patch("builtins.open", mock_open()) as mock_file:
         run_commander('script')
-        mock_file.assert_called_with(get_scripts_folder().joinpath('test'), 'w')
+        mock_file.assert_called_with(context().get_scripts_folder().joinpath('test'), 'w')
         mock_file().write.assert_has_calls([
             mock.call('add user henk\n'),
             mock.call('add group test\n')

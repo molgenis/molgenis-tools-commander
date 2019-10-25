@@ -8,9 +8,9 @@ import requests
 import mcmd.config.config as config
 import mcmd.io.ask
 from mcmd.commands._registry import arguments
+from mcmd.core import context
 from mcmd.core.command import command
 from mcmd.core.errors import McmdError
-from mcmd.core.home import get_issues_folder
 from mcmd.github import client as github
 from mcmd.io import io
 from mcmd.io.io import highlight
@@ -188,7 +188,7 @@ def _choose_attachment(attachments):
 
 
 def _download_attachment(attachment, issue_num):
-    issue_folder = get_issues_folder().joinpath(issue_num)
+    issue_folder = context().get_issues_folder().joinpath(issue_num)
     issue_folder.mkdir(parents=True, exist_ok=True)
     file_path = issue_folder.joinpath(attachment.name)
 

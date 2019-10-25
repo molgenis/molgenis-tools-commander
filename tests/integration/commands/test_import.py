@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from mcmd.core.home import get_issues_folder
+from mcmd.core import context
 from tests.integration.loader_mock import get_dataset_folder
 from tests.integration.utils import run_commander, run_commander_fail, random_name
 
@@ -102,7 +102,7 @@ def test_import_from_issue(which_file_question, session):
     session.get_by_id('sys_md_Package', 'test')
 
     # cleanup
-    get_issues_folder().joinpath(str(issue_num)).joinpath(file_name).unlink()
+    context().get_issues_folder().joinpath(str(issue_num)).joinpath(file_name).unlink()
     session.delete('sys_md_Package', 'test')
 
 
@@ -115,7 +115,7 @@ def test_import_from_issue_named(session):
     session.get_by_id('sys_md_Package', 'test')
 
     # cleanup
-    get_issues_folder().joinpath(str(issue_num)).joinpath(file_name).unlink()
+    context().get_issues_folder().joinpath(str(issue_num)).joinpath(file_name).unlink()
     session.delete('sys_md_Package', 'test')
 
 

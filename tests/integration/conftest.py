@@ -16,7 +16,6 @@ def pytest_configure(config):
 
     mock_config(url, username, password)
 
-
 @pytest.fixture(scope='session')
 def session(request):
     url = request.config.getoption('url')
