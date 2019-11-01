@@ -1,5 +1,5 @@
 """
-Alter settings
+Alter values
 """
 import json
 
@@ -34,6 +34,11 @@ def add_arguments(subparsers):
                        type=str,
                        help="The value to set the attribute to")
 
+    p_set.add_argument('--for-id', '-i',
+                       metavar='ENTITY ID',
+                       type=str,
+                       help="The id of the row you want to alter")
+
     p_set.set_defaults(func=set_,
                        write_to_history=True)
 
@@ -58,14 +63,24 @@ _SETTING_SYNONYMS = {'mail': 'sys_set_MailSettings',
 @command
 def set_(args):
     """
-    set sets the given setting of the given settings type to the given value
-    :param args: command line arguments containing: the settings type, the setting to set, and the value to set it to
+    set sets the specified row of the specified table (or setting of specified settings table) to the specified value
+    :param args: command line arguments containing: the settings type, the setting to set, and the value to set it to,
+    if not a setting also the --for-id (which row to alter)
     :return: None
     """
-    entity = _get_settings_entity(args.type)
-    io.start(
-        'Updating {} of {} settings to {}'.format(highlight(args.setting), highlight(args.type), highlight(args.value)))
-    row = _get_first_row_id(entity)
+    if args.for_id:
+        entity = args.type
+        row = args.for_id
+        io.start(
+            'Updating {} of {} for id {} to {}'.format(highlight(args.setting), highlight(args.type),
+                                                       highlight(args.for_id), highlight(args.value)))
+    else:
+        entity = _get_settings_entity(args.type)
+        io.start(
+            'Updating {} of {} settings to {}'.format(highlight(args.setting), highlight(args.type),
+                                                      highlight(args.value)))
+        row = _get_first_row_id(entity)
+
     url = api.rest1('{}/{}/{}'.format(entity, row, args.setting))
     put(url, json.dumps(args.value))
 
@@ -89,7 +104,8 @@ def _get_settings_entity(setting):
         if len(settings_entity) == 1:
             return settings_entity[0]
         else:
-            raise McmdError('Setting [{}] is not a valid settings entity'.format(setting))
+            raise McmdError('Setting [{}] is not a valid settings entity. If you meant to alter'.format(setting) +
+                            ' another table, please provide the --for-id option to specify the row to alter.')
 
 
 def _get_first_row_id(entity):
