@@ -243,7 +243,7 @@ def _poll_for_completion(url):
         return min(step, 10)
 
     polling.poll(lambda: get(url).json()['status'] != 'RUNNING',
-                 step=1,
+                 step=0,
                  step_function=step_function,
                  poll_forever=True)
     import_run = get(url).json()
