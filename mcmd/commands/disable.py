@@ -1,5 +1,6 @@
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
+from mcmd.io import ask
 from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
@@ -43,7 +44,7 @@ def add_arguments(subparsers):
 
 @command
 def disable_rls(args):
-    if not mcmd.io.ask.confirm('Are you sure you want to disable row level security on %s?' % args.entity):
+    if not ask.confirm('Are you sure you want to disable row level security on %s?' % args.entity):
         return
 
     io.start('Disabling row level security on entity type %s' % highlight(args.entity))
