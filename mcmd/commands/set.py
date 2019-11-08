@@ -24,9 +24,9 @@ def add_arguments(subparsers):
 
     p_set.add_argument('type',
                        type=str,
-                       help="Simple name of the settings entity (app, mail, opencpu, etc.) or the ID")
+                       help="Simple name of a settings entity (app, mail, opencpu, etc.) or the ID of any entity type")
 
-    p_set.add_argument('setting',
+    p_set.add_argument('attribute',
                        type=str,
                        help="The attribute to set")
 
@@ -34,9 +34,10 @@ def add_arguments(subparsers):
                        type=str,
                        help="The value to set the attribute to")
 
-    p_set.add_argument('--for-id', '-i',
+    p_set.add_argument('--for', '-i',
                        metavar='ENTITY ID',
                        type=str,
+                       dest='for_',
                        help="The id of the row you want to alter")
 
     p_set.set_defaults(func=set_,
@@ -65,23 +66,23 @@ def set_(args):
     """
     set sets the specified row of the specified table (or setting of specified settings table) to the specified value
     :param args: command line arguments containing: the settings type, the setting to set, and the value to set it to,
-    if not a setting also the --for-id (which row to alter)
+    if not a setting also the --for (which row to alter)
     :return: None
     """
-    if args.for_id:
+    if args.for_:
         entity = args.type
-        row = args.for_id
+        row = args.for_
         io.start(
-            'Updating {} of {} for id {} to {}'.format(highlight(args.setting), highlight(args.type),
-                                                       highlight(args.for_id), highlight(args.value)))
+            'Updating {} of {} for id {} to {}'.format(highlight(args.attribute), highlight(args.type),
+                                                       highlight(args.for_), highlight(args.value)))
     else:
         entity = _get_settings_entity(args.type)
         io.start(
-            'Updating {} of {} settings to {}'.format(highlight(args.setting), highlight(args.type),
+            'Updating {} of {} settings to {}'.format(highlight(args.attribute), highlight(args.type),
                                                       highlight(args.value)))
         row = _get_first_row_id(entity)
 
-    url = api.rest1('{}/{}/{}'.format(entity, row, args.setting))
+    url = api.rest1('{}/{}/{}'.format(entity, row, args.attribute))
     put(url, json.dumps(args.value))
 
 
