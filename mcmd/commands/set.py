@@ -24,7 +24,7 @@ def add_arguments(subparsers):
 
     p_set.add_argument('type',
                        type=str,
-                       help="Simple name of a settings entity (app, mail, opencpu, etc.) or the ID of any entity type")
+                       help="simple name of a settings entity (app, mail, opencpu, etc.) or the ID of any entity type")
 
     p_set.add_argument('attribute',
                        type=str,
