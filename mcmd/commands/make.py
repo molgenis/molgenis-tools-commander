@@ -22,15 +22,15 @@ Membership = collections.namedtuple('Membership', ['id', 'role_name', 'role_labe
 @arguments('make')
 def add_arguments(subparsers):
     p_make = subparsers.add_parser('make',
-                                   help='Make a user member of a role')
+                                   help='make a user member of a role')
     p_make.set_defaults(func=make,
                         write_to_history=True)
     p_make.add_argument('user',
                         type=str,
-                        help='The user to make a member')
+                        help='the user to make a member')
     p_make.add_argument('role',
                         type=str,
-                        help='The role to make the user a member of')
+                        help='the role to make the user a member of')
 
 
 # =======

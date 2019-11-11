@@ -19,20 +19,20 @@ from mcmd.molgenis.client import get, put
 @arguments('set')
 def add_arguments(subparsers):
     p_set = subparsers.add_parser('set',
-                                  help='Alter settings',
-                                  description="Run 'mcmd set -h' to view the help for this sub-command")
+                                  help='alter settings',
+                                  description="run 'mcmd set -h' to view the help for this sub-command")
 
     p_set.add_argument('type',
                        type=str,
-                       help="Simple name of a settings entity (app, mail, opencpu, etc.) or the ID of any entity type")
+                       help="simple name of a settings entity (app, mail, opencpu, etc.) or the ID of any entity type")
 
     p_set.add_argument('attribute',
                        type=str,
-                       help="The attribute to set")
+                       help="the attribute to set")
 
     p_set.add_argument('value',
                        type=str,
-                       help="The value to set the attribute to")
+                       help="the value to set the attribute to")
 
     p_set.add_argument('--for', '-i',
                        metavar='ENTITY ID',

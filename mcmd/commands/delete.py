@@ -2,11 +2,11 @@ from urllib.parse import urljoin
 
 import mcmd.io.ask
 import mcmd.molgenis.client as client
-from mcmd.molgenis import api
-from mcmd.core.command import command
 from mcmd.commands._registry import arguments
+from mcmd.core.command import command
 from mcmd.io import io
 from mcmd.io.io import highlight
+from mcmd.molgenis import api
 from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists, ResourceType
 
 
@@ -18,40 +18,40 @@ from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists
 @arguments('delete')
 def add_arguments(subparsers):
     p_delete = subparsers.add_parser('delete',
-                                     help='Delete resources')
+                                     help='delete resources')
     p_delete.set_defaults(func=delete,
                           write_to_history=True)
     p_delete_resource = p_delete.add_mutually_exclusive_group()
     p_delete_resource.add_argument('--entity-type', '-e',
                                    action='store_true',
-                                   help='Flag to specify that the resource is an entity type')
+                                   help='flag to specify that the resource is an entity type')
     p_delete_resource.add_argument('--package', '-p',
                                    action='store_true',
-                                   help='Flag to specify that the resource is a package')
+                                   help='flag to specify that the resource is a package')
     p_delete_resource.add_argument('--group', '-g',
                                    action='store_true',
-                                   help='Flag to specify that the resource is a group')
+                                   help='flag to specify that the resource is a group')
 
     p_delete_options = p_delete.add_mutually_exclusive_group()
     p_delete_options.add_argument('--data',
                                   action='store_true',
-                                  help='Use in conjunction with --entity-type to only delete the rows of the entity '
+                                  help='use in conjunction with --entity-type to only delete the rows of the entity '
                                        'type')
     p_delete_options.add_argument('--attribute',
                                   metavar='NAME',
                                   type=str,
-                                  help='Use in conjunction with --entity-type to only delete an attribute of the '
+                                  help='use in conjunction with --entity-type to only delete an attribute of the '
                                        'entity type')
     p_delete_options.add_argument('--contents',
                                   action='store_true',
-                                  help='Use in conjunction with --package to only delete the contents of the package')
+                                  help='use in conjunction with --package to only delete the contents of the package')
 
     p_delete.add_argument('--force', '-f',
                           action='store_true',
-                          help='Forces the delete action without asking for confirmation')
+                          help='forces the delete action without asking for confirmation')
     p_delete.add_argument('resource',
                           type=str,
-                          help='The identifier of the resource to delete')
+                          help='the identifier of the resource to delete')
 
 
 # =======

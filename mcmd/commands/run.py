@@ -1,13 +1,13 @@
 import shlex
 
-from mcmd.core import argparser as arg_parser
-from mcmd.core.command import command
+from mcmd.args import parser as arg_parser
 from mcmd.commands._registry import arguments
+from mcmd.core.command import command, CommandType
+from mcmd.core.errors import McmdError
 from mcmd.core.home import get_scripts_folder
 from mcmd.io import io
 from mcmd.io.io import bold, dim
 from mcmd.io.logging import get_logger
-from mcmd.core.errors import McmdError
 
 
 # =========
@@ -15,25 +15,25 @@ from mcmd.core.errors import McmdError
 # =========
 
 
-@arguments('run')
+@arguments('run', CommandType.META)
 def add_arguments(subparsers):
     p_run = subparsers.add_parser('run',
-                                  help='Run an mcmd script')
+                                  help='run a commander script')
     p_run.set_defaults(func=run,
                        write_to_history=False)
     p_run.add_argument('script',
                        type=str,
-                       help='The script to run')
+                       help='the script to run')
     p_run.add_argument('--ignore-errors', '-i',
                        action='store_true',
-                       help='Let the script continue when one or more commands throw an error')
+                       help='let the script continue when one or more commands throw an error')
     p_run.add_argument('--hide-comments', '-c',
                        action='store_true',
-                       help="Don't print comments and whitespace during script execution")
+                       help="don't print comments and whitespace during script execution")
     p_run.add_argument('--from-line', '-l',
                        type=int,
                        default=1,
-                       help="The line number to start the script at")
+                       help="the line number to start the script at")
 
 
 # =======

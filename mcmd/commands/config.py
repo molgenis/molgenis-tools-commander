@@ -1,39 +1,38 @@
 import mcmd.config.config as config
-import mcmd.io.ask
-from mcmd.core.command import command
 from mcmd.commands._registry import arguments
+from mcmd.core.command import command, CommandType
+from mcmd.core.errors import McmdError
 from mcmd.io import io
 from mcmd.io.io import highlight
-from mcmd.core.errors import McmdError
 
 
 # =========
 # Arguments
 # =========
 
-@arguments('config')
+@arguments('config', CommandType.META)
 def add_arguments(subparsers):
     p_config = subparsers.add_parser('config',
-                                     help='Change the configuration of Molgenis Commander')
-    p_config_subparsers = p_config.add_subparsers(dest="type")
+                                     help='change the configuration of MOLGENIS Commander')
+    p_config_subparsers = p_config.add_subparsers(dest='type', metavar='')
 
     p_config_set = p_config_subparsers.add_parser('set',
-                                                  help='Set values in the configuration file')
+                                                  help='set values in the configuration file')
 
-    p_config_set_subparsers = p_config_set.add_subparsers()
+    p_config_set_subparsers = p_config_set.add_subparsers(metavar='')
     p_config_set_host = p_config_set_subparsers.add_parser('host',
-                                                           help='Select a host')
+                                                           help='select a host')
     p_config_set_host.set_defaults(func=config_set_host,
                                    write_to_history=False)
     p_config_set_host.add_argument('url',
                                    nargs='?',
-                                   help='The URL of the host (Optional)')
+                                   help='the URL of the host (Optional)')
 
     p_config_add = p_config_subparsers.add_parser('add',
-                                                  help='Add values in the configuration file')
-    p_config_add_subparsers = p_config_add.add_subparsers()
+                                                  help='add values in the configuration file')
+    p_config_add_subparsers = p_config_add.add_subparsers(metavar='')
     p_config_add_host = p_config_add_subparsers.add_parser('host',
-                                                           help='Add a new host')
+                                                           help='add a new host')
     p_config_add_host.set_defaults(func=config_add_host,
                                    write_to_history=False)
 
