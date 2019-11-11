@@ -106,7 +106,7 @@ def _get_settings_entity(setting):
             return settings_entity[0]
         else:
             raise McmdError('Setting [{}] is not a valid settings entity. If you meant to alter'.format(setting) +
-                            ' another table, please provide the --for-id option to specify the row to alter.')
+                            ' another table, please provide the --for option to specify the row to alter.')
 
 
 def _get_first_row_id(entity):
