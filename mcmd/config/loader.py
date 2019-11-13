@@ -65,8 +65,8 @@ def _upgrade(default_config, user_config):
 
 def _install(default_config):
     mcmd.io.io.info("Looks like this is your first time running {}!\n  "
-                 "Let's take a moment to set things up. It's OK to leave some fields empty, you can always change "
-                 "them later.".format(highlight("Molgenis Commander")))
+                    "Let's take a moment to set things up. It's OK to leave some fields empty, you can always change "
+                    "them later.".format(highlight("Molgenis Commander")))
     mcmd.io.io.newline()
 
     for configurer in property_configurers().values():
@@ -106,7 +106,8 @@ def _configure_username(values):
 
 
 def _configure_password(values):
-    password = mcmd.io.ask.password('Enter the password of the super user (Leave blank to use command line authentication)')
+    password = mcmd.io.ask.password(
+        'Enter the password of the super user (Leave blank to use command line authentication)')
     if len(password) > 0:
         values['host']['auth'][0]['password'] = password
 

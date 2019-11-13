@@ -105,8 +105,8 @@ def _create_script(args):
     file_name = _input_script_name()
     try:
         with open(get_scripts_folder().joinpath(file_name), 'w') as script_file:
-            for command in commands:
-                script_file.write(command + '\n')
+            for cmd in commands:
+                script_file.write(cmd + '\n')
     except OSError as e:
         raise McmdError("Error writing to script: %s" % str(e))
 
