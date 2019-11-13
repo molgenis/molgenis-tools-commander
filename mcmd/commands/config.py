@@ -2,7 +2,7 @@ import mcmd.config.config as config
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command, CommandType
 from mcmd.core.errors import McmdError
-from mcmd.io import io
+from mcmd.io import io, ask
 from mcmd.io.io import highlight
 
 
@@ -48,26 +48,26 @@ def config_set_host(args):
     else:
         auths = config.get('host', 'auth')
         urls = [auth['url'] for auth in auths]
-        url = mcmd.io.ask.multi_choice('Please select a host:', urls)
+        url = ask.multi_choice('Please select a host:', urls)
 
     io.start("Switching to host {}".format(highlight(url)))
     config.set_host(url)
 
 
-@command
 # noinspection PyUnusedLocal
+@command
 def config_add_host(args):
     url = _add_host()
     _switch_to_new_host(url)
 
 
 def _add_host():
-    url = mcmd.io.ask.input_("URL", required=True)
+    url = ask.input_("URL", required=True)
     if config.host_exists(url):
         raise McmdError("A host with URL {} already exists.".format(url))
 
-    username = mcmd.io.ask.input_("Username (Default: admin)")
-    password = mcmd.io.ask.password("Password (Leave blank to use command line authentication)")
+    username = ask.input_("Username (Default: admin)")
+    password = ask.password("Password (Leave blank to use command line authentication)")
 
     username = 'admin' if len(username) == 0 else username
     password = None if len(password) == 0 else password
@@ -79,6 +79,6 @@ def _add_host():
 
 
 def _switch_to_new_host(url):
-    if mcmd.io.ask.confirm("Do you want to switch to the new host?"):
+    if ask.confirm("Do you want to switch to the new host?"):
         io.start("Switching to host {}".format(highlight(url)))
         config.set_host(url)

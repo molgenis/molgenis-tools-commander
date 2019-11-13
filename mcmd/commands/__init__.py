@@ -1,7 +1,7 @@
 """
 Every module in this package represents a command.
 
-This package intialization makes every command module available for a global import:
+This package initialization makes every command module available for a global import:
 'from mcmd.commands import *'.
 """
 

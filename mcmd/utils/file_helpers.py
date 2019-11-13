@@ -44,12 +44,12 @@ def select_path(file_map, file_name):
     if file_name in file_map:
         paths = file_map[file_name]
         if len(paths) > 1:
-            path = _choose_file(paths, file_name)
+            file_path = _choose_file(paths, file_name)
         else:
-            path = paths[0]
+            file_path = paths[0]
     else:
         raise McmdError('No file found for %s' % file_name)
-    return path
+    return file_path
 
 
 def _choose_file(paths, name):
@@ -59,6 +59,6 @@ def _choose_file(paths, name):
     :param name: the filename
     :return: the selected path
     """
-    choices = [str(path) for path in paths]
+    choices = [str(file_path) for file_path in paths]
     answer = mcmd.io.ask.multi_choice('Multiple files found for %s. Pick one:' % name, choices)
     return Path(answer)
