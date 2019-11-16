@@ -5,7 +5,7 @@ import pytest
 from requests import HTTPError
 
 from mcmd.__main__ import start
-from tests.integration.context import TestContext
+from tests.integration.test_context import TestContext
 
 _test_context = TestContext()
 

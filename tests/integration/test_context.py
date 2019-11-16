@@ -1,5 +1,6 @@
 import tempfile
 from pathlib import Path
+from typing import List
 
 from mcmd.core.context_holder import Context
 from tests.integration.loader_mock import get_files_folder
@@ -40,3 +41,9 @@ class TestContext(Context):
         if not self._TEMP_BACKUP_FOLDER:
             self._TEMP_BACKUP_FOLDER = Path(tempfile.mkdtemp())
         return self._TEMP_BACKUP_FOLDER
+
+    def get_dataset_folders(self) -> List[Path]:
+        return [get_files_folder().joinpath('datasets')]
+
+    def get_resource_folders(self) -> List[Path]:
+        return [get_files_folder().joinpath('resources')]

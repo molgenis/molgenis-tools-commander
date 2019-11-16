@@ -1,6 +1,7 @@
 import sys
 
-from mcmd.core.context_holder import HomeContext, set_context
+from mcmd.core.context_holder import set_context
+from mcmd.core.home_context import HomeContext
 
 MIN_PYTHON = (3, 6)
 if sys.version_info < MIN_PYTHON:
