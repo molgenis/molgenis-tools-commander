@@ -7,6 +7,9 @@ from requests import HTTPError
 from mcmd.__main__ import start
 from tests.integration.test_context import TestContext
 
+"""
+At the beginning of the tests, create one test context that will be shared among all tests
+"""
 _test_context = TestContext()
 
 
