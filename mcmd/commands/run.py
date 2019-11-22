@@ -2,7 +2,7 @@ import shlex
 
 from mcmd.args import parser as arg_parser
 from mcmd.commands._registry import arguments
-from mcmd.core import context
+from mcmd.core.context import context
 from mcmd.core.command import command, CommandType
 from mcmd.core.errors import McmdError
 from mcmd.io import io

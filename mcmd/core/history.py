@@ -1,6 +1,6 @@
 from collections import deque
 
-from mcmd.core import context
+from mcmd.core.context import context
 from mcmd.core.errors import McmdError
 
 _INDICATOR_SUCCESS = 'v'

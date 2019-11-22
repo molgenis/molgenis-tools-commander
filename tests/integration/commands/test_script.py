@@ -4,7 +4,7 @@ from unittest.mock import patch, mock_open
 
 import pytest
 
-from mcmd.core import context
+from mcmd.core.context import context
 from tests.integration.loader_mock import get_files_folder
 from tests.integration.utils import run_commander
 
@@ -32,10 +32,12 @@ def test_script_read(caplog):
 
 @pytest.mark.integration
 @patch('mcmd.io.ask.input_')
+@patch('mcmd.io.ask.confirm')
 @patch('mcmd.io.ask.checkbox')
 @patch('mcmd.core.history.read')
-def test_script_create(history, which_lines, what_filename):
+def test_script_create(history, are_you_sure, which_lines, what_filename):
     history.return_value = _history_lines
+    are_you_sure.return_value = True
     which_lines.return_value = ['add user henk', 'add group test']
     what_filename.return_value = 'test'
 

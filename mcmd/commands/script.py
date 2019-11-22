@@ -1,12 +1,12 @@
 import mcmd.io.ask
 from mcmd.commands._registry import arguments
+from mcmd.core.context import context
 from mcmd.core import history
 from mcmd.core.command import command, CommandType
 from mcmd.core.errors import McmdError
-from mcmd.core import context
 from mcmd.io import io
-from mcmd.io.io import highlight
 from mcmd.io.ask import confirm
+from mcmd.io.io import highlight
 from mcmd.io.logging import get_logger
 
 
@@ -104,7 +104,7 @@ def _create_script(args):
     commands = mcmd.io.ask.checkbox('Pick the lines that will form the script:', options)
     file_name = _input_script_name()
     try:
-        with context().get_scripts_folder().joinpath(file_name).open('w') as script_file:
+        with open(str(context().get_scripts_folder().joinpath(file_name)), 'w') as script_file:
             for cmd in commands:
                 script_file.write(cmd + '\n')
     except OSError as e:

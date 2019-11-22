@@ -35,15 +35,3 @@ class Context(ABC):
     @abstractmethod
     def get_properties_file(self) -> Path:
         pass
-
-
-_context = None
-
-
-def set_context(new_context: Context):
-    global _context
-    _context = new_context
-
-
-def get_context():
-    return _context

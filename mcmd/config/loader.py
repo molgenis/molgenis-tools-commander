@@ -15,7 +15,7 @@ from ruamel.yaml import YAML
 import mcmd.config.config as config
 import mcmd.io.ask
 import mcmd.io.io
-from mcmd.core import context
+from mcmd.core.context import context
 from mcmd.io.io import highlight
 
 _DEFAULT_PROPERTIES = pkg_resources.resource_stream('mcmd.config', 'defaults.yaml')

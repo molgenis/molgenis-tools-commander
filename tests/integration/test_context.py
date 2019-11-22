@@ -2,7 +2,7 @@ import tempfile
 from pathlib import Path
 from typing import List
 
-from mcmd.core.context_holder import Context
+from mcmd.core.context import Context
 from tests.integration.loader_mock import get_files_folder
 
 
@@ -13,7 +13,6 @@ class TestContext(Context):
         self._TEMP_HISTORY = None
         self._TEMP_ISSUES_FOLDER = None
         self._TEMP_BACKUP_FOLDER = None
-        # TODO create temp file with properties file so we can remove ugly construction in __init__.py
 
     def _raise_exception(self, msg):
         raise NotImplementedError(msg)

@@ -8,7 +8,7 @@ import requests
 import mcmd.config.config as config
 import mcmd.io.ask
 from mcmd.commands._registry import arguments
-from mcmd.core import context
+from mcmd.core.context import context
 from mcmd.core.command import command
 from mcmd.core.errors import McmdError
 from mcmd.github import client as github

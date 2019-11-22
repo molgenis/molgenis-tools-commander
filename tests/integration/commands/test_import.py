@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from mcmd.core import context
+from mcmd.core.context import context
 from tests.integration.loader_mock import get_dataset_folder
 from tests.integration.utils import run_commander, run_commander_fail, random_name
 
