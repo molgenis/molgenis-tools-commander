@@ -5,10 +5,6 @@ from typing import List
 
 class Context(ABC):
     @abstractmethod
-    def get_mcmd_home(self) -> Path:
-        pass
-
-    @abstractmethod
     def get_scripts_folder(self) -> Path:
         pass
 

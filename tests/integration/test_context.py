@@ -7,7 +7,8 @@ from tests.integration.loader_mock import get_files_folder
 
 
 class TestContext(Context):
-    """Test context: uses temporary files/folders for writing and the tests/files package for the test resources."""
+    """Test context: uses temporary files and folders for writing, and the project's tests/files/ package for
+    resources used in the tests."""
 
     def __init__(self):
         self._TEMP_HISTORY = None
@@ -32,9 +33,6 @@ class TestContext(Context):
 
     def get_properties_file(self):
         self._raise_exception("The properties file is not available from within tests")
-
-    def get_mcmd_home(self) -> Path:
-        return self._raise_exception("")
 
     def get_backups_folder(self) -> Path:
         if not self._TEMP_BACKUP_FOLDER:
