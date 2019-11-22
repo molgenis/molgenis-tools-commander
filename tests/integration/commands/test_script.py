@@ -32,18 +32,16 @@ def test_script_read(caplog):
 
 @pytest.mark.integration
 @patch('mcmd.io.ask.input_')
-@patch('mcmd.io.ask.confirm')
 @patch('mcmd.io.ask.checkbox')
 @patch('mcmd.core.history.read')
-def test_script_create(history, are_you_sure, which_lines, what_filename):
+def test_script_create(history, which_lines, what_filename):
     history.return_value = _history_lines
-    are_you_sure.return_value = True
     which_lines.return_value = ['add user henk', 'add group test']
     what_filename.return_value = 'test'
 
     with patch("builtins.open", mock_open()) as mock_file:
         run_commander('script')
-        mock_file.assert_called_with(context().get_scripts_folder().joinpath('test'), 'w')
+        mock_file.assert_called_with(str(context().get_scripts_folder().joinpath('test')), 'w')
         mock_file().write.assert_has_calls([
             mock.call('add user henk\n'),
             mock.call('add group test\n')
