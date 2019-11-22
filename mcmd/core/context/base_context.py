@@ -29,5 +29,9 @@ class Context(ABC):
         pass
 
     @abstractmethod
+    def get_git_folders(self) -> List[Path]:
+        pass
+
+    @abstractmethod
     def get_properties_file(self) -> Path:
         pass

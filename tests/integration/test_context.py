@@ -44,3 +44,6 @@ class TestContext(Context):
 
     def get_resource_folders(self) -> List[Path]:
         return [get_files_folder().joinpath('resources')]
+
+    def get_git_folders(self) -> List[Path]:
+        return [get_files_folder().joinpath('git')]

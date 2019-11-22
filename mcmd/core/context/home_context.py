@@ -40,6 +40,9 @@ class HomeContext(Context):
     def get_resource_folders(self) -> List[Path]:
         return [Path(folder) for folder in config.get('resources', 'resource_folders')]
 
+    def get_git_folders(self) -> List[Path]:
+        return config.git_paths()
+
     def get_properties_file(self) -> Path:
         return self._get_mcmd_home().joinpath(self._PROPERTIES_FILE)
 

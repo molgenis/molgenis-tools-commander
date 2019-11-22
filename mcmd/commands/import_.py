@@ -8,8 +8,8 @@ import requests
 import mcmd.config.config as config
 import mcmd.io.ask
 from mcmd.commands._registry import arguments
-from mcmd.core.context import context
 from mcmd.core.command import command
+from mcmd.core.context import context
 from mcmd.core.errors import McmdError
 from mcmd.github import client as github
 from mcmd.io import io
@@ -121,7 +121,7 @@ def _import_from_url(args):
 
 def _import_from_quick_folders(args):
     file_name = os_path.splitext(args.resource)[0]
-    file_map = scan_folders_for_files(config.git_paths() + context().get_dataset_folders())
+    file_map = scan_folders_for_files(context().get_git_folders() + context().get_dataset_folders())
     path = select_path(file_map, file_name)
     _do_import(path, args.to_package, args.entity_type_id)
 
