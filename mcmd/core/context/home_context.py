@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List
 
 from mcmd.config import config
-from mcmd.core.context import Context
+from mcmd.core.context.base_context import Context
 
 
 class HomeContext(Context):

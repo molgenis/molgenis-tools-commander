@@ -11,7 +11,4 @@ def set_context(new_context: Context):
 
 
 def get_context() -> Context:
-    if _context is None:
-        raise ValueError("context not set")
-    else:
-        return _context
+    return _context

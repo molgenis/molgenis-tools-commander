@@ -1,6 +1,6 @@
 import sys
 
-from mcmd.core.context import set_context
+from mcmd.core.context.base_context import Context
 from mcmd.core.context.home_context import HomeContext
 
 MIN_PYTHON = (3, 6)
@@ -27,21 +27,21 @@ def main():
     sys.exit(start(sys.argv, HomeContext()))
 
 
-def start(argv, context):
-    # setup friendly interrupt message
-    signal.signal(signal.SIGINT, interrupt_handler)
+def start(argv, context: Context):
+    with context:
+        # setup friendly interrupt message
+        signal.signal(signal.SIGINT, interrupt_handler)
 
-    set_context(context)
-    load_config()
+        load_config()
 
-    args = parse_args(argv[1:])
+        args = parse_args(argv[1:])
 
-    setattr(args, 'arg_string', ' '.join(argv[1:]))
-    set_log_level(args)
+        setattr(args, 'arg_string', ' '.join(argv[1:]))
+        set_log_level(args)
 
-    args.func(args)
+        args.func(args)
 
-    return 0
+        return 0
 
 
 def set_log_level(args):
