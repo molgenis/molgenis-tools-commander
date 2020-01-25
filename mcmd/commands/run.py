@@ -1,4 +1,5 @@
 import shlex
+from pathlib import Path
 from typing import List
 
 from mcmd.args import parser as arg_parser
@@ -24,7 +25,7 @@ def add_arguments(subparsers):
                        write_to_history=False)
     p_run.add_argument('script',
                        type=str,
-                       help='the script to run')
+                       help='a script from the scripts folder or a path to a script (when using --from-path)')
     p_run.add_argument('--ignore-errors', '-i',
                        action='store_true',
                        help='let the script continue when one or more commands throw an error')
@@ -35,6 +36,9 @@ def add_arguments(subparsers):
                        type=int,
                        default=1,
                        help="the line number to start the script at")
+    p_run.add_argument('--from-path', '-p',
+                       action='store_true',
+                       help="run a script from a path instead of the ~/.mcmd/scripts folder")
 
 
 # =======
@@ -50,9 +54,19 @@ log = get_logger()
 
 @command
 def run(args):
-    script = get_scripts_folder().joinpath(args.script)
+    script = _get_script(args)
     lines = _read_script(script)
     _run_script(not args.hide_comments, not args.ignore_errors, lines, args.from_line)
+
+
+def _get_script(args):
+    if args.from_path:
+        script = Path(args.script)
+    else:
+        script = get_scripts_folder().joinpath(args.script)
+    if not script.exists():
+        raise McmdError("The script {} doesn't exist".format(script))
+    return script
 
 
 def _run_script(log_comments: bool, exit_on_error: bool, lines: List[str], from_line: int):
