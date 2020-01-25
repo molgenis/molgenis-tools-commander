@@ -1,9 +1,10 @@
 import shlex
+from typing import List
 
 from mcmd.args import parser as arg_parser
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command, CommandType
-from mcmd.core.errors import McmdError
+from mcmd.core.errors import McmdError, ScriptError
 from mcmd.core.home import get_scripts_folder
 from mcmd.io import io
 from mcmd.io.io import bold, dim
@@ -54,21 +55,39 @@ def run(args):
     _run_script(not args.hide_comments, not args.ignore_errors, lines, args.from_line)
 
 
-def _run_script(log_comments, exit_on_error, lines, from_line):
+def _run_script(log_comments: bool, exit_on_error: bool, lines: List[str], from_line: int):
     if from_line < 2:
         from_line = 1
 
+    line_number = from_line
     for line in lines[from_line - 1:]:
-        if _is_comment(line) or _is_empty(line):
-            if log_comments:
-                _log_comments(line)
-        elif _is_script_function(line):
-            _do_script_function(line)
-        else:
-            _run_command(exit_on_error, line)
+        try:
+            _process_line(line, log_comments)
+        except McmdError as error:
+            _handle_error(error, exit_on_error, line_number)
+        line_number += 1
 
 
-def _log_comments(line):
+def _handle_error(error: McmdError, exit_on_error: bool, line_number: int):
+    if exit_on_error:
+        raise ScriptError.from_error(error, line_number)
+    else:
+        io.error(error.message)
+        if error.info:
+            io.info(error.info)
+
+
+def _process_line(line, log_comments):
+    if _is_comment(line) or _is_empty(line):
+        if log_comments:
+            _log_comments(line)
+    elif _is_script_function(line):
+        _do_script_function(line)
+    else:
+        _run_command(line)
+
+
+def _log_comments(line: str):
     line = line.strip('#').strip()
     if len(line) == 0:
         io.newline()
@@ -76,13 +95,13 @@ def _log_comments(line):
         log.info(line)
 
 
-def _do_script_function(line):
+def _do_script_function(line: str):
     line_parts = line.strip('$').split()
     function = line_parts[0]
     if function == 'wait':
         _wait(' '.join(line_parts[1:]).strip())
     else:
-        raise McmdError("Unknown function '{}', aborting script".format(function))
+        raise McmdError("Unknown function '{}' ".format(function))
 
 
 def _wait(message):
@@ -92,11 +111,11 @@ def _wait(message):
     io.succeed()
 
 
-def _run_command(exit_on_error, line):
+def _run_command(line: str):
     sub_args = arg_parser.parse_args(shlex.split(line))
     setattr(sub_args, 'arg_string', line)
     _fail_on_run_command(sub_args)
-    sub_args.func(sub_args, exit_on_error)
+    sub_args.func(sub_args, nested=True)
 
 
 def _fail_on_run_command(sub_args):
