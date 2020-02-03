@@ -20,5 +20,5 @@ def test_add_group(session):
     name = _random_group_name()
     run_commander('add group {}'.format(name))
 
-    result = session.get('sys_sec_Group', q=group_by_name_query(name.lower()))
+    result = session.get('sys_sec_Group', q=group_by_name_query(name))
     assert len(result) == 1

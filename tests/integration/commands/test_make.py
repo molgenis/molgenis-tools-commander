@@ -16,7 +16,8 @@ def _get_memberships_by_name_and_group(username, session):
 
 @pytest.mark.integration
 def test_make(session, user, group):
-    role_name = '{}_MANAGER'.format(group.upper())
+    role_name = '{}_MANAGER'.format(group)
+
     run_commander('make {} {}'.format(user, role_name))
 
     memberships = _get_memberships_by_name_and_group(user, session)
@@ -28,10 +29,10 @@ def test_make(session, user, group):
 @patch('mcmd.io.ask.confirm')
 def test_make_update_cancel(update_yes_no, session, user, group):
     update_yes_no.return_value = False
-    original_role_name = '{}_VIEWER'.format(group.upper())
+    original_role_name = '{}_VIEWER'.format(group)
     run_commander('make {} {}'.format(user, original_role_name))
 
-    new_role_name = '{}_MANAGER'.format(group.upper())
+    new_role_name = '{}_MANAGER'.format(group)
     run_commander('make {} {}'.format(user, new_role_name))
 
     memberships = _get_memberships_by_name_and_group(user, session)
@@ -43,10 +44,10 @@ def test_make_update_cancel(update_yes_no, session, user, group):
 @patch('mcmd.io.ask.confirm')
 def test_make_update(update_yes_no, session, user, group):
     update_yes_no.return_value = True
-    original_role_name = '{}_VIEWER'.format(group.upper())
+    original_role_name = '{}_VIEWER'.format(group)
     run_commander('make {} {}'.format(user, original_role_name))
 
-    new_role_name = '{}_MANAGER'.format(group.upper())
+    new_role_name = '{}_MANAGER'.format(group)
     run_commander('make {} {}'.format(user, new_role_name))
 
     memberships = _get_memberships_by_name_and_group(user, session)
@@ -56,7 +57,7 @@ def test_make_update(update_yes_no, session, user, group):
 
 @pytest.mark.integration
 def test_make_update_identical(session, user, group):
-    role_name = '{}_VIEWER'.format(group.upper())
+    role_name = '{}_VIEWER'.format(group)
     run_commander('make {} {}'.format(user, role_name))
     run_commander('make {} {}'.format(user, role_name))
 
