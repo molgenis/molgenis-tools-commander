@@ -87,7 +87,7 @@ def _update_membership(user: str, group_name: str, role: str):
     put(url, data=json.dumps({'roleName': role}))
 
 
-def _find_group(role_name: str) -> Optional[str]:
+def _find_group(role_name: str) -> str:
     io.debug('Fetching groups')
     response = get(api.rest2('sys_sec_Role'),
                    params={
@@ -103,7 +103,7 @@ def _find_group(role_name: str) -> Optional[str]:
     if 'group' not in role:
         raise McmdError('Role {} is not a group role'.format(role_name))
 
-    return response.json()['items'][0]['group']['name']
+    return role['group']['name']
 
 
 def _get_user_group_membership(user: str, group_name: str) -> Optional[Membership]:
