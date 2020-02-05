@@ -145,8 +145,9 @@ def add_user(args):
 
 @command
 def add_group(args):
-    io.start('Adding group %s' % highlight(args.name))
-    post(api.group(), data={'name': _to_group_name(args.name), 'label': args.name})
+    group_name = _to_group_name(args.name)
+    io.start('Adding group %s' % highlight(group_name))
+    post(api.group(), data={'name': group_name, 'label': args.name})
 
 
 @version('7.0.0')

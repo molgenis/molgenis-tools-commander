@@ -7,12 +7,12 @@ from urllib.parse import urljoin
 
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
-from mcmd.core.compatibility import version
 from mcmd.core.errors import McmdError
 from mcmd.io import io, ask
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get, put
+from mcmd.molgenis.principals import to_role_name
 
 Membership = collections.namedtuple('Membership', ['id', 'role_name', 'role_label', 'group_name'])
 
@@ -55,7 +55,7 @@ def add_arguments(subparsers):
 
 @command
 def make(args):
-    role_name = _to_role_name(args.role)
+    role_name = to_role_name(args.role)
     group_name = _find_group(role_name)
     membership = _get_user_group_membership(args.user, group_name)
     if membership:
@@ -140,15 +140,3 @@ def _get_memberships_for_user(user_name: str) -> List[Membership]:
                    group_name=m['role']['group']['name'])
         for m in memberships
     ]
-
-
-@version('7.0.0')
-def _to_role_name(role_input: str):
-    """Before 8.3.0 all role names are upper case."""
-    return role_input.upper()
-
-
-@version('8.3.0')
-def _to_role_name(role_input: str):
-    """Since 8.3.0 role names are case sensitive."""
-    return role_input

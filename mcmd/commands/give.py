@@ -3,6 +3,8 @@ Give a principal (a user or a group) some permission on a resource (a package, e
 by the user, the give command will try to figure out the principal- and resource types itself. If a resource or
 principal doesn't exist, the program will terminate.
 """
+import textwrap
+from argparse import RawDescriptionHelpFormatter
 from urllib.parse import urljoin
 
 from mcmd.commands._registry import arguments
@@ -12,7 +14,7 @@ from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post_form
-from mcmd.molgenis.principals import ensure_principal_exists, detect_principal_type, PrincipalType
+from mcmd.molgenis.principals import ensure_principal_exists, detect_principal_type, PrincipalType, to_role_name
 from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists, ResourceType
 
 
@@ -24,7 +26,25 @@ from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists
 @arguments('give')
 def add_arguments(subparsers):
     p_give = subparsers.add_parser('give',
-                                   help='give permissions on resources to roles or users')
+                                   help='give permissions on resources to roles or users',
+                                   formatter_class=RawDescriptionHelpFormatter,
+                                   description=textwrap.dedent(
+                                       """
+                                       Give permissions on resources to roles or users. If you don't specify the 
+                                       resource type (for example with --package or --plugin) or the receiver type 
+                                       (--role or --user), the Commander will try to detect it on its own. 
+
+                                       Note: since MOLGENIS 8.3 role names are case sensitive and need to be typed 
+                                       exactly as-is. (Before 8.3 all role names will be upper cased automatically). 
+
+                                       Example usage:
+                                         mcmd give john read dataset
+                                         mcmd give --user john read --entity-type dataset
+                                         
+                                         mcmd give group_EDITOR write dataexplorer
+                                         mcmd give --role group_EDITOR write --plugin dataexplorer
+                                       """
+                                   ))
     p_give.set_defaults(func=give,
                         write_to_history=True)
     p_give_resource = p_give.add_mutually_exclusive_group()
@@ -77,11 +97,6 @@ def give(args):
     # The PermissionManagerController always gives 200 OK so we need to validate everything ourselves
     resource_type = _get_resource_type(args)
     principal_type = _get_principal_type(args)
-    io.start('Giving %s %s permission to %s on %s %s' % (principal_type.value,
-                                                         highlight(args.receiver),
-                                                         highlight(args.permission),
-                                                         resource_type.get_label().lower(),
-                                                         highlight(args.resource)))
 
     _grant(principal_type, args.receiver, resource_type, args.resource, args.permission)
 
@@ -92,9 +107,16 @@ def _grant(principal_type, principal_name, resource_type, identifier, permission
     if principal_type == PrincipalType.USER:
         data['username'] = principal_name
     elif principal_type == PrincipalType.ROLE:
-        data['rolename'] = principal_name.upper()
+        principal_name = to_role_name(principal_name)
+        data['rolename'] = principal_name
     else:
         raise McmdError('Unknown principal type: %s' % principal_type)
+
+    io.start('Giving %s %s permission to %s on %s %s' % (principal_type.value,
+                                                         highlight(principal_name),
+                                                         highlight(permission),
+                                                         resource_type.get_label().lower(),
+                                                         highlight(identifier)))
 
     url = urljoin(api.permissions(), '{}/{}'.format(resource_type.get_resource_name(), principal_type.value))
     post_form(url, data)
