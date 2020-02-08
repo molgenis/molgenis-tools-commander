@@ -1,6 +1,9 @@
 import mimetypes
+import textwrap
+from argparse import RawDescriptionHelpFormatter
 from os import path as os_path
 from pathlib import Path
+from typing import List
 
 import mcmd.config.config as config
 from mcmd.commands._registry import arguments
@@ -11,6 +14,7 @@ from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get, post_files
+from mcmd.molgenis.principals import to_role_name
 from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
 
 # Store a reference to the parser so that we can show an error message for the custom validation rule
@@ -62,6 +66,35 @@ def add_arguments(subparsers):
     p_add_user.add_argument('--change-password', '-c',
                             action='store_true',
                             help="set change password to true for user")
+
+    p_add_role = p_add_subparsers.add_parser('role',
+                                             help='add a role',
+                                             formatter_class=RawDescriptionHelpFormatter,
+                                             description=textwrap.dedent(
+                                                 """
+                                                 Add a (group) role. 
+    
+                                                 Note: since MOLGENIS 8.3 role names are case sensitive and need to 
+                                                 be typed exactly as-is. (Before 8.3 all role names will be upper 
+                                                 cased automatically). 
+    
+                                                 Example usage:
+                                                   mcmd add role COUNTER
+                                                   mcmd add role gcc_COUNTER --to-group gcc --includes COUNTER                                      
+                                                 """
+                                             ))
+    p_add_role.set_defaults(func=add_role,
+                            write_to_history=True)
+    p_add_role.add_argument('rolename',
+                            help="the role's name")
+    p_add_role.add_argument('--to-group', '-g',
+                            dest='group',
+                            metavar='GROUP NAME',
+                            help='the group to add the role to')
+    p_add_role.add_argument('--includes', '-i',
+                            metavar='ROLE NAMES',
+                            nargs='+',
+                            help='the role(s) that this role includes (if more than one, separated by a whitespace)')
 
     p_add_package = p_add_subparsers.add_parser('package',
                                                 help='add a package')
@@ -141,6 +174,57 @@ def add_user(args):
                'active': active,
                'superuser': superuser
                })
+
+
+@command
+def add_role(args):
+    role_name = to_role_name(args.rolename)
+    io.start('Adding role {}'.format(highlight(role_name)))
+
+    role = {'name': role_name,
+            'label': role_name}
+
+    if args.includes:
+        role_names = [to_role_name(name) for name in args.includes]
+        role['includes'] = _get_role_ids(role_names)
+
+    if args.group:
+        group_name = _to_group_name(args.group)
+        role['group'] = _get_group_id(group_name)
+
+    data = {'entities': [role]}
+    post(api.rest2('sys_sec_Role'), data=data)
+
+
+def _get_group_id(group_name) -> str:
+    groups = get(api.rest2('sys_sec_Group'),
+                 params={
+                     'attrs': 'id',
+                     'q': 'name=={}'.format(group_name)
+                 }).json()['items']
+    if len(groups) == 0:
+        raise McmdError('No group found with name {}'.format(groups))
+    else:
+        return groups[0]['id']
+
+
+def _get_role_ids(role_names) -> List[str]:
+    roles = get(api.rest2('sys_sec_Role'),
+                params={
+                    'attrs': 'id,name',
+                    'q': 'name=in=({})'.format(','.join(role_names))
+                }).json()['items']
+
+    name_to_id = {role['name']: role['id'] for role in roles}
+    not_found = list()
+    for role_name in role_names:
+        if role_name not in name_to_id:
+            not_found.append(role_name)
+
+    if len(not_found) > 0:
+        raise McmdError("Couldn't find role(s) {}".format(' and '.join(not_found)))
+    else:
+        return list(name_to_id.values())
 
 
 @command
