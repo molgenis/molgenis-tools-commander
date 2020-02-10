@@ -1,4 +1,14 @@
-import collections
+"""
+Makes a user a member of a role.
+
+Differentiates between 'normal' roles and 'group' roles:
+- Normal roles are roles that do not belong to a group. A user can be a member of more than one of these roles.
+- Group roles are roles that belong to a group. A user can be a member of just one of a group's roles.
+
+This command won't do anything if a user is already member of the specified role. In the case a user is already member
+of another role within the same group, this command will ask for confirmation before updating it.
+"""
+
 import json
 import textwrap
 from argparse import RawDescriptionHelpFormatter
@@ -13,8 +23,9 @@ from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get, put
 from mcmd.molgenis.principals import to_role_name
-
-Membership = collections.namedtuple('Membership', ['id', 'role_name', 'role_label', 'group_name'])
+from mcmd.molgenis.rest_api_v2_mapper import map_to_role, map_to_user, map_to_role_membership
+from mcmd.molgenis.system import User, Group, Role, RoleMembership
+from mcmd.utils.time import timestamp
 
 
 # =========
@@ -56,87 +67,125 @@ def add_arguments(subparsers):
 @command
 def make(args):
     role_name = to_role_name(args.role)
-    group_name = _find_group(role_name)
-    membership = _get_user_group_membership(args.user, group_name)
+    role = _get_role(role_name)
+    user = _get_user(args.user)
+    if role.group:
+        _make_member_of_group_role(user, role)
+    else:
+        _make_member_of_role(role, user)
+
+
+def _make_member_of_group_role(user: User, role: Role):
+    group = role.group
+    membership = _get_group_membership(user, group)
     if membership:
-        if membership.role_name == role_name:
-            io.info('User {} is already {} of group {}'.format(highlight(args.user),
-                                                               highlight(membership.role_label),
-                                                               highlight(group_name)))
+        if membership.role.name == role.name:
+            io.info('User {} is already {} of group {}'.format(highlight(user.username),
+                                                               highlight(role.label),
+                                                               highlight(group.name)))
         else:
             update = ask.confirm(
-                'User {} is {} of group {}. Do you want to update his/her role to {}?'.format(args.user,
-                                                                                              membership.role_label,
-                                                                                              group_name,
-                                                                                              role_name))
+                'User {} is {} of group {}. Do you want to update his/her role to {}?'.format(user.username,
+                                                                                              membership.role.label,
+                                                                                              group.name,
+                                                                                              role.label))
             if update:
-                _update_membership(args.user, group_name, role_name)
+                _update_group_role_membership(user, group, role)
     else:
-        _add_membership(args.user, group_name, role_name)
+        _add_group_role_membership(user, group, role)
 
 
-def _add_membership(user: str, group_name: str, role: str):
-    io.start('Making user {} a member of role {}'.format(highlight(user), highlight(role)))
-    url = api.member(group_name)
-    post(url, data={'username': user, 'roleName': role})
+def _make_member_of_role(role, user):
+    if _is_member(user, role):
+        io.info('User {} is already a member of role {}'.format(highlight(user.username), highlight(role.name)))
+    else:
+        _add_role_membership(user, role)
 
 
-def _update_membership(user: str, group_name: str, role: str):
-    io.start('Making user {} a member of role {}'.format(highlight(user), highlight(role)))
-    url = urljoin(api.member(group_name), user)
-    put(url, data=json.dumps({'roleName': role}))
+def _add_group_role_membership(user: User, group: Group, role: Role):
+    io.start('Making user {} a member of role {}'.format(highlight(user.username), highlight(role.name)))
+    url = api.member(group.name)
+    post(url, data={'username': user.username, 'roleName': role.name})
 
 
-def _find_group(role_name: str) -> str:
-    io.debug('Fetching groups')
-    response = get(api.rest2('sys_sec_Role'),
-                   params={
-                       'attrs': 'group(name)',
-                       'q': 'name=={}'.format(role_name)
-                   })
-
-    if len(response.json()['items']) == 0:
-        raise McmdError('Role {} not found'.format(role_name))
-
-    role = response.json()['items'][0]
-
-    if 'group' not in role:
-        raise McmdError('Role {} is not a group role'.format(role_name))
-
-    return role['group']['name']
+def _update_group_role_membership(user: User, group: Group, role: Role):
+    io.start('Making user {} a member of role {}'.format(highlight(user.username), highlight(role.name)))
+    url = urljoin(api.member(group.name), user.username)
+    put(url, data=json.dumps({'roleName': role.name}))
 
 
-def _get_user_group_membership(user: str, group_name: str) -> Optional[Membership]:
-    io.debug('Checking if user is already member of this group')
+def _add_role_membership(user: User, role: Role):
+    """
+    Adds a membership manually because the identities API can't add memberships to non-group roles.
+    """
+    io.start('Making user {} a member of role {}'.format(highlight(user.username), highlight(role.name)))
+    membership = {'user': user.id,
+                  'role': role.id,
+                  'from': timestamp()}
+    data = {'entities': [membership]}
+    post(api.rest2('sys_sec_RoleMembership'), data=data)
 
-    for membership in _get_memberships_for_user(user):
-        if membership.group_name == group_name:
-            return membership
 
-    return None
-
-
-def _get_memberships_for_user(user_name: str) -> List[Membership]:
-    users = get(api.rest2('sys_sec_User'),
-                params={
-                    'attrs': 'id',
-                    'q': 'username=={}'.format(user_name)
-                }).json()['items']
-    if len(users) == 0:
-        raise McmdError('Unknown user {}'.format(user_name))
-
-    user_id = users[0]['id']
+def _get_group_membership(user: User, group: Group) -> Optional[RoleMembership]:
+    group_roles = _get_group_roles(group)
+    group_role_ids = [role.id for role in group_roles]
 
     memberships = get(api.rest2('sys_sec_RoleMembership'),
                       params={
-                          'attrs': 'id,user(username),role(name,label,group(name))',
-                          'q': 'user=={}'.format(user_id)
+                          'attrs': 'id,user(id,username),role(id,name,label,group(id,name))',
+                          'q': 'user=={};role=in=({})'.format(user.id, ','.join(group_role_ids))
                       }).json()['items']
 
-    return [
-        Membership(id=m['id'],
-                   role_name=m['role']['name'],
-                   role_label=m['role']['label'],
-                   group_name=m['role']['group']['name'])
-        for m in memberships
-    ]
+    if len(memberships) == 0:
+        return None
+    else:
+        return map_to_role_membership(memberships[0])
+
+
+def _get_group_roles(group: Group) -> List[Role]:
+    roles = get(api.rest2('sys_sec_Role'),
+                params={
+                    'attrs': 'id,name,label,group(id,name)',
+                    'q': 'group=={}'.format(group.id)
+                }).json()['items']
+
+    if len(roles) == 0:
+        raise McmdError('No roles found for group {}'.format(group.name))
+
+    return [map_to_role(role) for role in roles]
+
+
+def _is_member(user: User, role: Role) -> bool:
+    memberships = get(api.rest2('sys_sec_RoleMembership'),
+                      params={
+                          'attrs': 'id',
+                          'q': 'user=={};role=={}'.format(user.id, role.id)
+                      }).json()['items']
+
+    return len(memberships) > 0
+
+
+def _get_user(user_name: str) -> User:
+    users = get(api.rest2('sys_sec_User'),
+                params={
+                    'attrs': 'id,username',
+                    'q': 'username=={}'.format(user_name)
+                }).json()['items']
+
+    if len(users) == 0:
+        raise McmdError('Unknown user {}'.format(user_name))
+    else:
+        return map_to_user(users[0])
+
+
+def _get_role(role_name: str) -> Role:
+    roles = get(api.rest2('sys_sec_Role'),
+                params={
+                    'attrs': 'id,name,label,group(id,name)',
+                    'q': 'name=={}'.format(role_name)
+                }).json()['items']
+
+    if len(roles) == 0:
+        raise McmdError('No role found with name {}'.format(role_name))
+    else:
+        return map_to_role(roles[0])
