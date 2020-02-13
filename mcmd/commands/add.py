@@ -4,6 +4,7 @@ from os import path as os_path
 from mcmd.commands._registry import arguments
 from mcmd.core.context import context
 from mcmd.core.command import command
+from mcmd.core.compatibility import version
 from mcmd.core.errors import McmdError
 from mcmd.io import io
 from mcmd.io.io import highlight
@@ -143,8 +144,21 @@ def add_user(args):
 
 @command
 def add_group(args):
-    io.start('Adding group %s' % highlight(args.name))
-    post(api.group(), data={'name': args.name.lower(), 'label': args.name})
+    group_name = _to_group_name(args.name)
+    io.start('Adding group %s' % highlight(group_name))
+    post(api.group(), data={'name': group_name, 'label': args.name})
+
+
+@version('7.0.0')
+def _to_group_name(group_input: str):
+    """Before 8.3.0 all group names are lower case."""
+    return group_input.lower()
+
+
+@version('8.3.0')
+def _to_group_name(group_input: str):
+    """Since 8.3.0 group names are case sensitive."""
+    return group_input
 
 
 @command

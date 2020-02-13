@@ -30,7 +30,7 @@ def run_commander_fail(arg_string):
 
 
 def random_name():
-    return ''.join(random.choices(string.ascii_uppercase, k=6))
+    return ''.join(random.choices(string.ascii_letters, k=6))
 
 
 def setup_entity():
