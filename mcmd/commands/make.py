@@ -133,7 +133,8 @@ def _get_group_membership(user: User, group: Group) -> Optional[RoleMembership]:
     memberships = get(api.rest2('sys_sec_RoleMembership'),
                       params={
                           'attrs': 'id,user(id,username),role(id,name,label,group(id,name))',
-                          'q': 'user=={};role=in=({})'.format(user.id, ','.join(group_role_ids))
+                          'q': 'user=={};role=in=({});(to=='',to=ge={})'.format(user.id, ','.join(group_role_ids),
+                                                                                timestamp())
                       }).json()['items']
 
     if len(memberships) == 0:
@@ -159,7 +160,7 @@ def _is_member(user: User, role: Role) -> bool:
     memberships = get(api.rest2('sys_sec_RoleMembership'),
                       params={
                           'attrs': 'id',
-                          'q': 'user=={};role=={}'.format(user.id, role.id)
+                          'q': "user=={};role=={};(to=='',to=ge={})".format(user.id, role.id, timestamp())
                       }).json()['items']
 
     return len(memberships) > 0
