@@ -5,18 +5,28 @@ import pytest
 from requests import HTTPError
 
 from mcmd.__main__ import start
+from tests.integration.test_context import TestContext
+
+"""
+At the beginning of the tests, create one test context that will be shared among all tests
+"""
+_test_context = TestContext()
+
+
+def get_test_context() -> TestContext:
+    return _test_context
 
 
 def run_commander(arg_string):
     """Runs the commander and asserts that the exit code was 0."""
-    exit_code = start(['mcmd'] + arg_string.split(' '))
+    exit_code = start(['mcmd'] + arg_string.split(' '), get_test_context())
     assert exit_code == 0
 
 
 def run_commander_fail(arg_string):
     """Runs the commander without failing the test if the command fails"""
     with pytest.raises(SystemExit):
-        start(['mcmd'] + arg_string.split(' '))
+        start(['mcmd'] + arg_string.split(' '), get_test_context())
 
 
 def random_name():

@@ -5,9 +5,8 @@ interactions during the integration tests, the modules need to be replaced with 
 
 import sys
 
-from tests.integration import home_mock, loader_mock
+from tests.integration import loader_mock
 
-sys.modules['mcmd.core.home'] = home_mock
 sys.modules['mcmd.config.loader'] = loader_mock
 
 # noinspection PyProtectedMember
