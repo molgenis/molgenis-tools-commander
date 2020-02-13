@@ -1,12 +1,12 @@
 import mcmd.io.ask
 from mcmd.commands._registry import arguments
+from mcmd.core.context import context
 from mcmd.core import history
 from mcmd.core.command import command, CommandType
 from mcmd.core.errors import McmdError
-from mcmd.core.home import get_scripts_folder
 from mcmd.io import io
-from mcmd.io.io import highlight
 from mcmd.io.ask import confirm
+from mcmd.io.io import highlight
 from mcmd.io.logging import get_logger
 
 
@@ -68,7 +68,7 @@ def script(args):
 
 
 def _remove_script(script_name):
-    path = get_scripts_folder().joinpath(script_name)
+    path = context().get_scripts_folder().joinpath(script_name)
     _check_script_exists(path)
     try:
         io.start('Removing script %s' % highlight(script_name))
@@ -78,7 +78,7 @@ def _remove_script(script_name):
 
 
 def _read_script(script_name):
-    path = get_scripts_folder().joinpath(script_name)
+    path = context().get_scripts_folder().joinpath(script_name)
     _check_script_exists(path)
     try:
         with path.open() as f:
@@ -89,7 +89,7 @@ def _read_script(script_name):
 
 
 def _list_scripts():
-    for path in get_scripts_folder().iterdir():
+    for path in context().get_scripts_folder().iterdir():
         if not path.name.startswith('.'):
             log.info(path.name)
 
@@ -104,7 +104,7 @@ def _create_script(args):
     commands = mcmd.io.ask.checkbox('Pick the lines that will form the script:', options)
     file_name = _input_script_name()
     try:
-        with open(get_scripts_folder().joinpath(file_name), 'w') as script_file:
+        with open(str(context().get_scripts_folder().joinpath(file_name)), 'w') as script_file:
             for cmd in commands:
                 script_file.write(cmd + '\n')
     except OSError as e:
@@ -120,7 +120,7 @@ def _input_script_name():
     file_name = ''
     while not file_name:
         name = mcmd.io.ask.input_('Supply the name of the script:')
-        if get_scripts_folder().joinpath(name).exists():
+        if context().get_scripts_folder().joinpath(name).exists():
             overwrite = confirm('%s already exists. Overwrite?' % name)
             if overwrite:
                 file_name = name

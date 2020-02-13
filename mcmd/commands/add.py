@@ -5,8 +5,8 @@ from os import path as os_path
 from pathlib import Path
 from typing import List
 
-import mcmd.config.config as config
 from mcmd.commands._registry import arguments
+from mcmd.core.context import context
 from mcmd.core.command import command
 from mcmd.core.compatibility import version
 from mcmd.core.errors import McmdError
@@ -365,13 +365,9 @@ def _prepare_files_for_upload(paths, names, valid_content_types):
     return files
 
 
-def _get_resource_folders():
-    return [Path(folder) for folder in config.get('resources', 'resource_folders')]
-
-
 def _get_path_from_quick_folders(file_name):
     file_name = os_path.splitext(file_name)[0]
-    file_map = scan_folders_for_files(_get_resource_folders())
+    file_map = scan_folders_for_files(context().get_resource_folders())
     path = select_path(file_map, file_name)
     return str(path)
 

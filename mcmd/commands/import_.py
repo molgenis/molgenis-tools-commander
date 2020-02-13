@@ -9,8 +9,8 @@ import mcmd.config.config as config
 import mcmd.io.ask
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
+from mcmd.core.context import context
 from mcmd.core.errors import McmdError
-from mcmd.core.home import get_issues_folder
 from mcmd.github import client as github
 from mcmd.io import io
 from mcmd.io.io import highlight
@@ -121,7 +121,7 @@ def _import_from_url(args):
 
 def _import_from_quick_folders(args):
     file_name = os_path.splitext(args.resource)[0]
-    file_map = scan_folders_for_files(config.git_paths() + _get_dataset_folders())
+    file_map = scan_folders_for_files(context().get_git_folders() + context().get_dataset_folders())
     path = select_path(file_map, file_name)
     _do_import(path, args.to_package, args.entity_type_id)
 
@@ -188,7 +188,7 @@ def _choose_attachment(attachments):
 
 
 def _download_attachment(attachment, issue_num):
-    issue_folder = get_issues_folder().joinpath(issue_num)
+    issue_folder = context().get_issues_folder().joinpath(issue_num)
     issue_folder.mkdir(parents=True, exist_ok=True)
     file_path = issue_folder.joinpath(attachment.name)
 
@@ -248,7 +248,3 @@ def _poll_for_completion(url):
                  poll_forever=True)
     import_run = get(url).json()
     return import_run['status'], import_run['message']
-
-
-def _get_dataset_folders():
-    return [Path(folder) for folder in config.get('resources', 'dataset_folders')]

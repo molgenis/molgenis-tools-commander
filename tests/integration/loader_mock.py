@@ -6,9 +6,8 @@ from mcmd.config import config
 
 _TEST_CONFIG = """
 git:
-  root: {git_root}
-  paths:
-  - {git_folder}
+  root: 
+  paths: []
 resources:
   dataset_folders: 
   - {dataset_folder}
@@ -56,9 +55,6 @@ def get_host():
 
 
 def mock_config(url, username, password):
-    git_root = get_files_folder().joinpath('git_root')
-    git_folder = 'git_folder'
-
     global _url, _username, _password
     _url = url
     _username = username
@@ -69,6 +65,4 @@ def mock_config(url, username, password):
                                        username=username,
                                        password=password,
                                        dataset_folder=get_dataset_folder(),
-                                       resource_folder=get_resource_folder(),
-                                       git_root=git_root,
-                                       git_folder=git_folder)
+                                       resource_folder=get_resource_folder())
