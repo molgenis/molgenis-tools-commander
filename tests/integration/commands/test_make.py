@@ -14,11 +14,17 @@ def _get_user_id(username, session):
 
 
 def _get_role_id(rolename, session):
-    return session.get('sys_sec_Role', q=[{
-        'field': 'name',
-        'operator': 'EQUALS',
-        'value': rolename
-    }])[0]['id']
+    return _get_role_by_name(rolename, session)['id']
+
+
+def _get_role_by_name(rolename, session):
+    return session.get('sys_sec_Role',
+                       q=[{
+                           'field': 'name',
+                           'operator': 'EQUALS',
+                           'value': rolename
+                       }],
+                       expand=['includes'])[0]
 
 
 def _get_memberships_by_username(username, session):
@@ -54,6 +60,17 @@ def test_make_group_member(session, user, group):
     role_name = '{}_MANAGER'.format(group)
 
     run_commander('make {} {}'.format(user, role_name))
+
+    memberships = _get_memberships_by_username(user, session)
+    assert len(memberships) == 1
+    assert memberships[0]['role']['name'] == role_name
+
+
+@pytest.mark.integration
+def test_make_group_member_explicit(session, user, group):
+    role_name = '{}_MANAGER'.format(group)
+
+    run_commander('make --user {} {}'.format(user, role_name))
 
     memberships = _get_memberships_by_username(user, session)
     assert len(memberships) == 1
@@ -125,3 +142,25 @@ def test_make_role_member_update_identical(session, user):
     memberships = _get_memberships_by_user_and_role(user, role_name, session)
     assert len(memberships) == 1
     assert memberships[0]['role']['name'] == role_name
+
+
+@pytest.mark.integration
+def test_include_group_role(session, group):
+    role_name = random_name()
+    group_role_name = '{}_VIEWER'.format(group)
+    run_commander('add role {}'.format(role_name))
+    run_commander('make {} {}'.format(role_name, group_role_name))
+
+    role = _get_role_by_name(role_name, session)
+    assert role['includes']['items'][0]['name'] == group_role_name
+
+
+@pytest.mark.integration
+def test_include_group_role_explicit(session, group):
+    role_name = random_name()
+    group_role_name = '{}_VIEWER'.format(group)
+    run_commander('add role {}'.format(role_name))
+    run_commander('make --role {} {}'.format(role_name, group_role_name))
+
+    role = _get_role_by_name(role_name, session)
+    assert role['includes']['items'][0]['name'] == group_role_name
