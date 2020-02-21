@@ -4,9 +4,9 @@ from typing import List
 
 from mcmd.args import parser as arg_parser
 from mcmd.commands._registry import arguments
+from mcmd.core.context import context
 from mcmd.core.command import command, CommandType
 from mcmd.core.errors import McmdError, ScriptError
-from mcmd.core.home import get_scripts_folder
 from mcmd.io import io
 from mcmd.io.io import bold, dim
 from mcmd.io.logging import get_logger
@@ -63,7 +63,7 @@ def _get_script(args):
     if args.from_path:
         script = Path(args.script)
     else:
-        script = get_scripts_folder().joinpath(args.script)
+        script = context().get_scripts_folder().joinpath(args.script)
     if not script.exists():
         raise McmdError("The script {} doesn't exist".format(script))
     return script

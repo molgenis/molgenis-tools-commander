@@ -10,15 +10,15 @@ an extensive toolkit for developers working on MOLGENIS.
 
 Easily add groups and users and configure their roles:
 
-![](docs/add.gif)
+[![asciicast](https://asciinema.org/a/297760.svg)](https://asciinema.org/a/297760)
 
 Import datasets with a single command:
 
-![](docs/import.gif)
+[![asciicast](https://asciinema.org/a/297766.svg)](https://asciinema.org/a/297766)
 
 Tie it all together by creating a script:
 
-![](docs/script.gif)
+[![asciicast](https://asciinema.org/a/297763.svg)](https://asciinema.org/a/297763)
 
 For a full list of features, go:
 
