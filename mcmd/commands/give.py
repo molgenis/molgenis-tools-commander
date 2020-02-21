@@ -14,7 +14,8 @@ from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post_form
-from mcmd.molgenis.principals import ensure_principal_exists, detect_principal_type, PrincipalType, to_role_name
+from mcmd.molgenis.principals import PrincipalType, to_role_name, \
+    get_principal_type_from_args
 from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists, ResourceType
 
 
@@ -37,7 +38,7 @@ def add_arguments(subparsers):
                                        Note: since MOLGENIS 8.3 role names are case sensitive and need to be typed 
                                        exactly as-is. (Before 8.3 all role names will be upper cased automatically). 
 
-                                       Example usage:
+                                       example usage:
                                          mcmd give john read dataset
                                          mcmd give --user john read --entity-type dataset
                                          
@@ -96,7 +97,7 @@ def give(args):
 
     # The PermissionManagerController always gives 200 OK so we need to validate everything ourselves
     resource_type = _get_resource_type(args)
-    principal_type = _get_principal_type(args)
+    principal_type = get_principal_type_from_args(args, principal_name=args.receiver)
 
     _grant(principal_type, args.receiver, resource_type, args.resource, args.permission)
 
@@ -120,18 +121,6 @@ def _grant(principal_type, principal_name, resource_type, identifier, permission
 
     url = urljoin(api.permissions(), '{}/{}'.format(resource_type.get_resource_name(), principal_type.value))
     post_form(url, data)
-
-
-def _get_principal_type(args):
-    principal_name = args.receiver
-    if args.user:
-        ensure_principal_exists(principal_name, PrincipalType.USER)
-        return PrincipalType.USER
-    elif args.role:
-        ensure_principal_exists(principal_name, PrincipalType.ROLE)
-        return PrincipalType.ROLE
-    else:
-        return detect_principal_type(principal_name)
 
 
 def _get_resource_type(args):

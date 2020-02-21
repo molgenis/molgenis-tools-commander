@@ -48,6 +48,21 @@ def role_exists(role_input):
     return int(response.json()['total']) > 0
 
 
+def get_principal_type_from_args(args, principal_name: str) -> PrincipalType:
+    """
+    Looks for the presence of a '--user' or '--role' argument, confirms the principal exists and returns the type. If
+    no argument is specified, the type will be detected automatically.
+    """
+    if args.user:
+        ensure_principal_exists(principal_name, PrincipalType.USER)
+        return PrincipalType.USER
+    elif args.role:
+        ensure_principal_exists(principal_name, PrincipalType.ROLE)
+        return PrincipalType.ROLE
+    else:
+        return detect_principal_type(principal_name)
+
+
 def detect_principal_type(principal_name):
     results = dict()
     for principal_type in PrincipalType:

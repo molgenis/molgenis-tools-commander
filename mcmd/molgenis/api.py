@@ -51,6 +51,12 @@ def member(group_name):
 
 
 @endpoint
+@version('8.1.0')
+def role(group_name, role_name):
+    return 'api/identities/group/{}/role/{}/'.format(group_name, role_name)
+
+
+@endpoint
 def import_():
     return 'plugin/importwizard/importFile/'
 
