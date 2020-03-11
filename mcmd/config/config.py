@@ -5,13 +5,15 @@ Provides access to the configuration.
 import operator
 from functools import reduce
 from pathlib import Path
+from typing import Optional
 
 from ruamel.yaml import YAML
 
 import mcmd.core.errors as errors
+from mcmd.core.context import context
 
 _config = None
-_properties_file: Path = None
+_properties_file: Optional[Path] = None
 
 
 def set_config(config, properties_file):
@@ -78,11 +80,20 @@ def git_paths():
 
 
 def has_option(*args):
+    """Checks that a property exists."""
     try:
         reduce(operator.getitem, list(args), _config)
         return True
     except KeyError:
         return False
+
+
+def raise_if_empty(*args):
+    """Raises an error when a property hasn't been set."""
+    if get(*args) is None:
+        raise errors.McmdError(
+            'Property {} not set. Set it in the configuration file: {}'.format('/'.join(args),
+                                                                               context().get_properties_file()))
 
 
 def set_host(url_):

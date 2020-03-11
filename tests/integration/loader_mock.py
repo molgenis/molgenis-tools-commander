@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from ruamel.yaml import YAML
 
@@ -21,11 +22,18 @@ host:
     password: {password}
 settings:
   import_action: add_update_existing
+local:
+  database:
+    pg_user: {pg_user}
+    pg_password: {pg_password}
+    name: {db_name}
+  molgenis_home: {molgenis_home}
+  minio_data: {minio_data}
 """
 
-_url: str = None
-_username: str = None
-_password: str = None
+_url: Optional[str] = None
+_username: Optional[str] = None
+_password: Optional[str] = None
 
 
 def load_config():
@@ -54,15 +62,20 @@ def get_host():
     }
 
 
-def mock_config(url, username, password):
+def mock_config(options):
     global _url, _username, _password
-    _url = url
-    _username = username
-    _password = password
+    _url = options.get('url')
+    _username = options.get('username')
+    _password = options.get('password')
 
     global _TEST_CONFIG
-    _TEST_CONFIG = _TEST_CONFIG.format(url=url,
-                                       username=username,
-                                       password=password,
+    _TEST_CONFIG = _TEST_CONFIG.format(url=options.get('url'),
+                                       username=options.get('username'),
+                                       password=options.get('password'),
                                        dataset_folder=get_dataset_folder(),
-                                       resource_folder=get_resource_folder())
+                                       resource_folder=get_resource_folder(),
+                                       pg_user=options.get('pg_user'),
+                                       pg_password=options.get('pg_password'),
+                                       db_name=options.get('db_name'),
+                                       molgenis_home=options.get('molgenis_home'),
+                                       minio_data=options.get('minio_data'))

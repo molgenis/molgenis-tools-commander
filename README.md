@@ -142,6 +142,12 @@ By default the localhost is chosen (username: admin, password: admin), but it's 
 python setup.py test --addopts "-m integration --ignore=tests/unit/ --url=<your_url> --username=<admins username> --password=<admins password>" 
 ```
 
+There are also 'local' integration tests, that test the interaction with the database and the file system. These tests 
+don't require a running MOLGENIS application, but do require a locally installed MOLGENIS. They can be run as follows:
+```
+python setup.py test --addopts "-m local --ignore=tests/unit/ --pg_user=<postgres_username> --pg_password=<postgres_password> --db_name=molgenis --molgenis_home=<molgenis_home> --minio_data=<minio_data_folder>"
+```
+
 #### Running tests in PyCharm
 To run the tests in PyCharm, first set the default test runner to 'pytest'. 
 

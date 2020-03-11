@@ -2,7 +2,6 @@ import mimetypes
 import textwrap
 from argparse import RawDescriptionHelpFormatter
 from os import path as os_path
-from pathlib import Path
 from typing import List
 
 from mcmd.commands._registry import arguments
