@@ -9,8 +9,8 @@ from mcmd.backend.database import Database
 from mcmd.backend.files import Filestore, MinIO
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
+from mcmd.core.context import context
 from mcmd.core.errors import McmdError
-from mcmd.core.home import get_backups_folder
 from mcmd.io import io, ask
 from mcmd.io.io import highlight
 from mcmd.utils.utils import timestamp
@@ -99,7 +99,7 @@ def _validate_args(args):
 
 
 def _determine_file_name(args):
-    location = Path(args.to_path) if args.to_path else get_backups_folder()
+    location = Path(args.to_path) if args.to_path else context().get_backups_folder()
     backup_name = _create_backup_name(args, location)
     return str(location.joinpath(backup_name)) + '.tar.gz'
 

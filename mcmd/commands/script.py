@@ -1,8 +1,8 @@
 from mcmd.commands._registry import arguments
 from mcmd.core import history
-from mcmd.core.command import command
+from mcmd.core.command import command, CommandType
+from mcmd.core.context import context
 from mcmd.core.errors import McmdError
-from mcmd.core.home import get_scripts_folder
 from mcmd.io import ask, io
 from mcmd.io.io import highlight
 from mcmd.io.logging import get_logger
@@ -12,34 +12,34 @@ from mcmd.io.logging import get_logger
 # Arguments
 # =========
 
-@arguments('script')
+@arguments('script', CommandType.META)
 def add_arguments(subparsers):
     p_script = subparsers.add_parser('script',
-                                     help="Do actions involving scripts.")
+                                     help="do actions involving scripts")
     p_script.set_defaults(func=script,
                           write_to_history=False)
     p_script_action = p_script.add_mutually_exclusive_group()
     p_script_action.add_argument('--create',
                                  action='store_true',
-                                 help='Create a script from the history. (This is the default action.)')
+                                 help='create a script from the history (this is the default action)')
     p_script_action.add_argument('--list', '-l',
                                  action='store_true',
-                                 help='List the stored scripts.')
+                                 help='list the stored scripts')
     p_script_action.add_argument('--delete', '-D',
                                  metavar='SCRIPT NAME',
                                  type=str,
-                                 help='Remove a script.')
+                                 help='remove a script')
     p_script_action.add_argument('--read', '-r',
                                  metavar='SCRIPT NAME',
                                  type=str,
-                                 help='Read the contents of a script.')
+                                 help='read the contents of a script')
     p_script.add_argument('--number', '-n',
                           type=int,
                           default=10,
-                          help='Number of lines of history to choose from. Default: 10')
+                          help='number of lines of history to choose from (default: 10)')
     p_script.add_argument('--show-fails', '-f',
                           action='store_true',
-                          help='Also show the failed commands from history. Disabled by default.')
+                          help='also show the failed commands from history (disabled by default)')
 
 
 # =======
@@ -66,7 +66,7 @@ def script(args):
 
 
 def _remove_script(script_name):
-    path = get_scripts_folder().joinpath(script_name)
+    path = context().get_scripts_folder().joinpath(script_name)
     _check_script_exists(path)
     try:
         io.start('Removing script %s' % highlight(script_name))
@@ -76,7 +76,7 @@ def _remove_script(script_name):
 
 
 def _read_script(script_name):
-    path = get_scripts_folder().joinpath(script_name)
+    path = context().get_scripts_folder().joinpath(script_name)
     _check_script_exists(path)
     try:
         with path.open() as f:
@@ -87,7 +87,7 @@ def _read_script(script_name):
 
 
 def _list_scripts():
-    for path in get_scripts_folder().iterdir():
+    for path in context().get_scripts_folder().iterdir():
         if not path.name.startswith('.'):
             log.info(path.name)
 
@@ -100,11 +100,11 @@ def _create_script(args):
 
     options = [line[1] for line in lines]
     commands = ask.checkbox('Pick the lines that will form the script:', options)
-    file_name = ask.input_file_name(get_scripts_folder())
+    file_name = ask.input_file_name(context().get_scripts_folder())
     try:
-        with open(get_scripts_folder().joinpath(file_name), 'w') as script_file:
-            for command in commands:
-                script_file.write(command + '\n')
+        with open(str(context().get_scripts_folder().joinpath(file_name)), 'w') as script_file:
+            for cmd in commands:
+                script_file.write(cmd + '\n')
     except OSError as e:
         raise McmdError("Error writing to script: %s" % str(e))
 

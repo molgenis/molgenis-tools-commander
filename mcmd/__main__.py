@@ -1,5 +1,8 @@
 import sys
 
+from mcmd.core.context.base_context import Context
+from mcmd.core.context.home_context import HomeContext
+
 MIN_PYTHON = (3, 6)
 if sys.version_info < MIN_PYTHON:
     import platform
@@ -13,7 +16,7 @@ if sys.version_info < MIN_PYTHON:
 import logging
 import signal
 
-from mcmd.core.argparser import parse_args
+from mcmd.args.parser import parse_args
 from mcmd.config.loader import load_config
 from mcmd.io import io
 from mcmd.io.io import set_debug
@@ -21,23 +24,24 @@ from mcmd.io.logging import set_level
 
 
 def main():
-    sys.exit(start(sys.argv))
+    sys.exit(start(sys.argv, HomeContext()))
 
 
-def start(argv):
-    # setup friendly interrupt message
-    signal.signal(signal.SIGINT, interrupt_handler)
+def start(argv, context: Context):
+    with context:
+        # setup friendly interrupt message
+        signal.signal(signal.SIGINT, interrupt_handler)
 
-    load_config()
+        load_config()
 
-    args = parse_args(argv[1:])
+        args = parse_args(argv[1:])
 
-    setattr(args, 'arg_string', ' '.join(argv[1:]))
-    set_log_level(args)
+        setattr(args, 'arg_string', ' '.join(argv[1:]))
+        set_log_level(args)
 
-    args.func(args)
+        args.func(args)
 
-    return 0
+        return 0
 
 
 def set_log_level(args):

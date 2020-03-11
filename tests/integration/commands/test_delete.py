@@ -64,14 +64,14 @@ def test_delete_package_contents(session, entity_type):
 
 @pytest.mark.integration
 def test_delete_group(session, group):
-    run_commander('delete --force --group {}'.format(group.lower()))
+    run_commander('delete --force --group {}'.format(group))
 
-    groups = session.get('sys_sec_Group', q=group_by_name_query(group.lower()))
+    groups = session.get('sys_sec_Group', q=group_by_name_query(group))
     assert len(groups) == 0
 
 
 @pytest.mark.integration
-def test_delete_guess_resource(session, package):
-    run_commander('delete --force {}'.format(package))
+def test_delete_guess_resource(session, entity_type):
+    run_commander('delete --force {}'.format(entity_type))
 
-    assert not package_exists(session, package)
+    assert not package_exists(session, entity_type)

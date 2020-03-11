@@ -1,11 +1,23 @@
 import pytest
 
-from tests.integration.utils import run_commander, entity_type_exists, package_exists
+from tests.integration.utils import run_commander, entity_type_exists, package_exists, get_test_context
 
 
 @pytest.mark.integration
 def test_run(session):
     run_commander('run test_script')
+
+    try:
+        assert entity_type_exists(session, 'scripttest_testAutoId')
+        assert package_exists(session, 'otherpackage')
+    finally:
+        session.delete('sys_md_Package', 'scripttest')
+        session.delete('sys_md_Package', 'otherpackage')
+
+
+@pytest.mark.integration
+def test_run_from_path(session):
+    run_commander('run --from-path {}'.format(get_test_context().get_scripts_folder().joinpath('test_script')))
 
     try:
         assert entity_type_exists(session, 'scripttest_testAutoId')

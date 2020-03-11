@@ -15,7 +15,7 @@ from ruamel.yaml import YAML
 import mcmd.config.config as config
 import mcmd.io.ask
 import mcmd.io.io
-from mcmd.core.home import get_properties_file
+from mcmd.core.context import context
 from mcmd.io.io import highlight
 
 _DEFAULT_PROPERTIES = pkg_resources.resource_stream('mcmd.config', 'defaults.yaml')
@@ -36,7 +36,7 @@ def load_config():
     if _is_install_required():
         _install(default_config)
 
-    user_config = yaml.load(get_properties_file())
+    user_config = yaml.load(context().get_properties_file())
 
     if _is_upgrade_required(user_config):
         _upgrade(default_config, user_config)
@@ -45,7 +45,7 @@ def load_config():
     _merge(default_config, user_config)
 
     # pass result to the config module and save to disk
-    config.set_config(default_config, get_properties_file())
+    config.set_config(default_config, context().get_properties_file())
 
 
 def _upgrade(default_config, user_config):
@@ -61,11 +61,12 @@ def _upgrade(default_config, user_config):
     _merge(default_config, user_config)
 
     # pass result to the config module and save to disk
-    config.set_config(default_config, get_properties_file())
+    config.set_config(default_config, context().get_properties_file())
 
     mcmd.io.io.newline()
     mcmd.io.io.info(
-        'The configuration file has been updated succesfully ({})'.format(highlight(str(get_properties_file()))))
+        'The configuration file has been updated succesfully ({})'.format(
+            highlight(str(context().get_properties_file()))))
     exit(0)
 
 
@@ -78,10 +79,11 @@ def _install(default_config):
     for configurer in property_configurers().values():
         configurer(default_config)
 
-    config.set_config(default_config, get_properties_file())
+    config.set_config(default_config, context().get_properties_file())
 
     mcmd.io.io.newline()
-    mcmd.io.io.info('The configuration file has been created at {}'.format(highlight(str(get_properties_file()))))
+    mcmd.io.io.info(
+        'The configuration file has been created at {}'.format(highlight(str(context().get_properties_file()))))
     exit(0)
 
 
@@ -152,7 +154,7 @@ def _configure_minio_data(values):
 
 
 def _is_install_required():
-    return not get_properties_file().exists() or get_properties_file().stat().st_size == 0
+    return not context().get_properties_file().exists() or context().get_properties_file().stat().st_size == 0
 
 
 def _is_upgrade_required(user_config):

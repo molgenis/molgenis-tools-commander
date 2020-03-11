@@ -20,6 +20,13 @@ def test_set_entity_name(session):
 
 
 @pytest.mark.integration
-def test_set_not_setting():
+def test_set_not_setting_fail():
     with pytest.raises(SystemExit):
         run_commander('set sys_Language code nl')
+
+
+@pytest.mark.integration
+def test_set_not_setting(session):
+    run_commander('set sys_Language active true --for fr')
+    lang = session.get_by_id('sys_Language', 'fr')
+    assert lang['active']

@@ -9,8 +9,8 @@ import mcmd.config.config as config
 import mcmd.io.ask
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
+from mcmd.core.context import context
 from mcmd.core.errors import McmdError
-from mcmd.core.home import get_issues_folder
 from mcmd.github import client as github
 from mcmd.io import io
 from mcmd.io.io import highlight
@@ -30,35 +30,35 @@ _p_import = None
 def add_arguments(subparsers):
     global _p_import
     _p_import = subparsers.add_parser('import',
-                                      help='Import a file')
+                                      help='import a dataset')
     _p_import.set_defaults(func=import_,
                            write_to_history=True)
     _p_import.add_argument('resource',
                            nargs='?',
-                           help='The resource to import. Depending on the other options this can be a path, file name, '
-                                'or URL.')
+                           help='the resource to import - depending on the other options this can be a path, '
+                                'file name, or URL')
     p_import_source = _p_import.add_mutually_exclusive_group()
     p_import_source.add_argument('--from-path', '-p',
                                  action='store_true',
-                                 help='Import a file the old school way: by path.')
+                                 help='import a file the old school way: by path')
     p_import_source.add_argument('--from-issue', '-i',
                                  metavar='NUMBER',
-                                 help="Import a file attachment from a GitHub issue. It's possible (but not required) "
-                                      "to specify the file name of the attachment.")
+                                 help="import a file attachment from a GitHub issue - optionally supply the file name "
+                                      "of the attachment")
     p_import_source.add_argument('--from-url', '-u',
                                  action='store_true',
-                                 help='Import a file from a URL. Uses the importByUrl endpoint of the MOLGENIS '
-                                      'importer, without downloading the file first.')
+                                 help='import a file from a URL - uses the importByUrl endpoint of the MOLGENIS '
+                                      'importer, without downloading the file first')
     _p_import.add_argument('--in',
                            dest='to_package',
                            type=str,
                            metavar='PACKAGE_ID',
-                           help='The package to import to.')
+                           help='the package to import to')
     _p_import.add_argument('--as',
                            dest='entity_type_id',
                            type=str,
                            metavar='ENTITY_TYPE_ID',
-                           help='The id of the entity type (only used when importing VCF files)')
+                           help='the id of the entity type (only used when importing VCF files)')
     return _p_import
 
 
@@ -121,7 +121,7 @@ def _import_from_url(args):
 
 def _import_from_quick_folders(args):
     file_name = os_path.splitext(args.resource)[0]
-    file_map = scan_folders_for_files(config.git_paths() + _get_dataset_folders())
+    file_map = scan_folders_for_files(context().get_git_folders() + context().get_dataset_folders())
     path = select_path(file_map, file_name)
     _do_import(path, args.to_package, args.entity_type_id)
 
@@ -188,7 +188,7 @@ def _choose_attachment(attachments):
 
 
 def _download_attachment(attachment, issue_num):
-    issue_folder = get_issues_folder().joinpath(issue_num)
+    issue_folder = context().get_issues_folder().joinpath(issue_num)
     issue_folder.mkdir(parents=True, exist_ok=True)
     file_path = issue_folder.joinpath(attachment.name)
 
@@ -237,12 +237,14 @@ def _get_import_action(file_name):
 
 
 def _poll_for_completion(url):
+    def step_function(step):
+        """Increases time between polls with one second each time, with a maximum of 10 seconds."""
+        step += 1
+        return min(step, 10)
+
     polling.poll(lambda: get(url).json()['status'] != 'RUNNING',
-                 step=10,
+                 step=0,
+                 step_function=step_function,
                  poll_forever=True)
     import_run = get(url).json()
     return import_run['status'], import_run['message']
-
-
-def _get_dataset_folders():
-    return [Path(folder) for folder in config.get('resources', 'dataset_folders')]

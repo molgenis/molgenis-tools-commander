@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from ruamel.yaml import YAML
 
@@ -6,9 +7,8 @@ from mcmd.config import config
 
 _TEST_CONFIG = """
 git:
-  root: {git_root}
-  paths:
-  - {git_folder}
+  root: 
+  paths: []
 resources:
   dataset_folders: 
   - {dataset_folder}
@@ -31,9 +31,9 @@ local:
   minio_data: {minio_data}
 """
 
-_url: str = None
-_username: str = None
-_password: str = None
+_url: Optional[str] = None
+_username: Optional[str] = None
+_password: Optional[str] = None
 
 
 def load_config():
@@ -63,9 +63,6 @@ def get_host():
 
 
 def mock_config(options):
-    git_root = get_files_folder().joinpath('git_root')
-    git_folder = 'git_folder'
-
     global _url, _username, _password
     _url = options.get('url')
     _username = options.get('username')
@@ -77,8 +74,6 @@ def mock_config(options):
                                        password=options.get('password'),
                                        dataset_folder=get_dataset_folder(),
                                        resource_folder=get_resource_folder(),
-                                       git_root=git_root,
-                                       git_folder=git_folder,
                                        pg_user=options.get('pg_user'),
                                        pg_password=options.get('pg_password'),
                                        db_name=options.get('db_name'),

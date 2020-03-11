@@ -1,10 +1,7 @@
 from collections import deque
-from os import path
 
-from mcmd.core.home import get_history_file
+from mcmd.core.context import context
 from mcmd.core.errors import McmdError
-
-_USER_HISTORY = get_history_file()
 
 _INDICATOR_SUCCESS = 'v'
 _INDICATOR_FAILURE = 'x'
@@ -12,7 +9,7 @@ _INDICATOR_FAILURE = 'x'
 
 def write(arg_string, success):
     try:
-        history = open(_USER_HISTORY, 'a')
+        history = open(str(context().get_history_file()), 'a')
 
         indicator = _INDICATOR_SUCCESS
         if not success:
@@ -26,11 +23,11 @@ def write(arg_string, success):
 def read(num_lines, include_fails):
     lines = deque()
 
-    if not path.isfile(get_history_file()):
+    if not context().get_history_file().is_file():
         return lines
 
     try:
-        with open(_USER_HISTORY, 'r') as history:
+        with open(str(context().get_history_file()), 'r') as history:
             for line in history:
                 line = line.rstrip('\n')
 
@@ -50,6 +47,6 @@ def read(num_lines, include_fails):
 
 def clear():
     try:
-        open(_USER_HISTORY, 'w').close()
+        open(str(context().get_history_file()), 'w').close()
     except OSError as e:
         raise McmdError("Error clearing history: %s" % str(e))

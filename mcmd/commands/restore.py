@@ -11,8 +11,8 @@ from mcmd.backend.database import Database
 from mcmd.backend.files import Filestore, MinIO
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
+from mcmd.core.context import context
 from mcmd.core.errors import McmdError
-from mcmd.core.home import get_backups_folder
 from mcmd.io import io
 
 
@@ -65,7 +65,7 @@ def _get_backup(args):
     if args.from_path:
         backup = Path(args.name)
     else:
-        backup = get_backups_folder().joinpath(args.name + '.tar.gz')
+        backup = context().get_backups_folder().joinpath(args.name + '.tar.gz')
     if not backup.exists():
         raise McmdError("{} doesn't exist".format(backup))
     return backup
