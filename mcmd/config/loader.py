@@ -8,14 +8,16 @@ the property file directly.
 """
 
 from collections import OrderedDict
+from pathlib import Path
 
 import pkg_resources
-from ruamel.yaml import YAML
+from ruamel.yaml import YAML, YAMLError
 
 import mcmd.config.config as config
 import mcmd.io.ask
 import mcmd.io.io
 from mcmd.core.context import context
+from mcmd.io import io
 from mcmd.io.io import highlight
 
 _DEFAULT_PROPERTIES = pkg_resources.resource_stream('mcmd.config', 'defaults.yaml')
@@ -30,12 +32,13 @@ def property_configurers():
 
 def load_config():
     yaml = YAML()
-    default_config = yaml.load(_DEFAULT_PROPERTIES)
+
+    default_config = _try_load_yaml(yaml, _DEFAULT_PROPERTIES)
 
     if _is_install_required():
         _install(default_config)
 
-    user_config = yaml.load(context().get_properties_file())
+    user_config = _try_load_yaml(yaml, context().get_properties_file())
 
     if _is_upgrade_required(user_config):
         _upgrade(default_config, user_config)
@@ -45,6 +48,14 @@ def load_config():
 
     # pass result to the config module and save to disk
     config.set_config(default_config, context().get_properties_file())
+
+
+def _try_load_yaml(yaml: YAML, path: Path):
+    try:
+        return yaml.load(path)
+    except YAMLError as e:
+        io.error("There's an error in the configuration file: {}".format(e))
+        exit(1)
 
 
 def _upgrade(default_config, user_config):
