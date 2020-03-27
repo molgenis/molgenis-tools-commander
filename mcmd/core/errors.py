@@ -26,15 +26,9 @@ class ScriptError(McmdError):
 
 class ConfigError(McmdError):
     def __init__(self, message):
-        self.message = "There's an error in the configuration file: {}".format(message)
-
-    def __str__(self):
-        return repr(self.message)
+        super().__init__(message="There's an error in the configuration file: {}".format(message))
 
 
 class MolgenisOfflineError(McmdError):
     def __init__(self):
-        self.message = "Can't connect to {}".format(config.url())
-
-    def __str__(self):
-        return repr(self.message)
+        super().__init__(message="Can't connect to {}".format(config.url()))
