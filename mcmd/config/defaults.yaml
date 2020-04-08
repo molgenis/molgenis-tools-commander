@@ -8,9 +8,9 @@ resources:
   dataset_folders: []
   resource_folders: []
 host:
-  selected: http://localhost:8080/
+  selected: http://localhost/
   auth:
-    - url: http://localhost:8080/
+    - url: http://localhost/
       username: admin
 settings:
   import_action: add_update_existing
