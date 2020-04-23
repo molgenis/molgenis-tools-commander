@@ -95,7 +95,7 @@ def _configure_host(values):
 
 
 def _configure_url(values):
-    host = mcmd.io.ask.input_('Enter the host name of your Molgenis (Default: http://localhost:8080/)')
+    host = mcmd.io.ask.input_('Enter the host name of your Molgenis (Default: http://localhost/)')
     if len(host) > 0:
         values['host']['selected'] = host
         values['host']['auth'][0]['url'] = host

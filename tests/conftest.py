@@ -6,7 +6,7 @@ Pytest command line options that make it possible to set the server to use when 
 def pytest_addoption(parser):
     parser.addoption('--url',
                      action='store',
-                     default='http://localhost:8080/')
+                     default='http://localhost/')
     parser.addoption('--username',
                      action='store',
                      default='admin')
