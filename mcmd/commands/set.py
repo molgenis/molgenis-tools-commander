@@ -2,6 +2,7 @@
 Alter values
 """
 import json
+from pathlib import Path
 
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
@@ -10,6 +11,7 @@ from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import get, put
+from mcmd.utils.file_helpers import read_file
 
 
 # =========
@@ -29,6 +31,10 @@ def add_arguments(subparsers):
     p_set.add_argument('attribute',
                        type=str,
                        help="the attribute to set")
+
+    p_set.add_argument('--from-file', '-f',
+                       action='store_true',
+                       help="read value from file, pass the file name as value")
 
     p_set.add_argument('value',
                        type=str,
@@ -67,23 +73,31 @@ def set_(args):
     set sets the specified row of the specified table (or setting of specified settings table) to the specified value
     :param args: command line arguments containing: the settings type, the setting to set, and the value to set it to,
     if not a setting also the --for (which row to alter)
+    if --from-file is passed the value is assumed to be a file containing the value data to be set
     :return: None
     """
+    value = args.value
+    value_desc = highlight(value)
+
+    if args.from_file:
+        value = ''.join(read_file(args.value))
+        value_desc = 'value from {} file'.format(highlight(args.value))
+
     if args.for_:
         entity = args.type
         row = args.for_
         io.start(
             'Updating {} of {} for id {} to {}'.format(highlight(args.attribute), highlight(args.type),
-                                                       highlight(args.for_), highlight(args.value)))
+                                                       highlight(args.for_), value_desc))
     else:
         entity = _get_settings_entity(args.type)
         io.start(
             'Updating {} of {} settings to {}'.format(highlight(args.attribute), highlight(args.type),
-                                                      highlight(args.value)))
+                                                      value_desc))
         row = _get_first_row_id(entity)
 
     url = api.rest1('{}/{}/{}'.format(entity, row, args.attribute))
-    put(url, json.dumps(args.value))
+    put(url, json.dumps(value))
 
 
 def _get_settings():

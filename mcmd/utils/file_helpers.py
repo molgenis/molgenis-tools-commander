@@ -51,6 +51,18 @@ def select_path(file_map, file_name):
         raise McmdError('No file found for %s' % file_name)
     return file_path
 
+def read_file(file):
+    """
+    read_file reads the file data into string list
+    :param file: file to read from
+    :return: lines in file
+    """
+    try:
+        with open(file) as file:
+            lines = [line.rstrip('\n') for line in file]
+    except OSError as e:
+        raise McmdError('Error reading file: {}'.format(str(e)))
+    return lines
 
 def _choose_file(paths, name):
     """
