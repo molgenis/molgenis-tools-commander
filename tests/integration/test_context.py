@@ -6,7 +6,7 @@ from mcmd.core.context import Context
 from tests.integration.loader_mock import get_files_folder
 
 
-class TestContext(Context):
+class IntegrationTestContext(Context):
     """Test context: uses temporary files and folders for writing, and the project's tests/files/ package for
     resources used in the tests."""
 
