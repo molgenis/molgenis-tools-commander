@@ -5,15 +5,15 @@ import pytest
 from requests import HTTPError
 
 from mcmd.__main__ import start
-from tests.integration.test_context import TestContext
+from tests.integration.test_context import IntegrationTestContext
 
 """
 At the beginning of the tests, create one test context that will be shared among all tests
 """
-_test_context = TestContext()
+_test_context = IntegrationTestContext()
 
 
-def get_test_context() -> TestContext:
+def get_test_context() -> IntegrationTestContext:
     return _test_context
 
 
