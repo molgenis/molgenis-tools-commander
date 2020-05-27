@@ -33,7 +33,8 @@ def test_import_ontology(session):
     assert len(result) == 1
 
     # cleanup
-    session.delete('sys_ont_Ontology', result[0]['id'])
+    # TODO re-enable when molgenis #7862 is fixed (https://github.com/molgenis/molgenis/issues/7862)
+    # session.delete('sys_ont_Ontology', result[0]['id'])
 
 
 @pytest.mark.integration
