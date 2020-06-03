@@ -47,8 +47,9 @@ def test_add_role_includes_multiple(session):
 
     result = session.get('sys_sec_Role', expand=['includes'], q=role_by_name_query(name))
     assert len(result) == 1
-    assert result[0]['includes']['items'][0]['name'] == 'VIEWER'
-    assert result[0]['includes']['items'][1]['name'] == 'MANAGER'
+
+    includes = {item['name'] for item in result[0]['includes']['items']}
+    assert includes == {'VIEWER', 'MANAGER'}
 
 
 @pytest.mark.integration
