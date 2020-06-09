@@ -3,8 +3,9 @@ import argparse
 import pkg_resources
 
 from mcmd.args._formatter import GroupedHelpFormatter, list_subcommands_in_help
-# noinspection PyUnresolvedReferences
+from mcmd.args._raising_parser import RaisingArgumentParser
 # Import all commands:
+# noinspection PyUnresolvedReferences
 from mcmd.commands import *
 from mcmd.commands import get_argument_adders
 from mcmd.core.command import CommandType
@@ -12,10 +13,10 @@ from mcmd.core.command import CommandType
 
 # noinspection PyProtectedMember
 def create_parser():
-    parser = argparse.ArgumentParser(prog='mcmd',
-                                     usage=argparse.SUPPRESS,
-                                     formatter_class=GroupedHelpFormatter,
-                                     description=_description())
+    parser = RaisingArgumentParser(prog='mcmd',
+                                   usage=argparse.SUPPRESS,
+                                   formatter_class=GroupedHelpFormatter,
+                                   description=_description())
     subparsers = parser.add_subparsers(dest="command",
                                        metavar=""  # metavar is empty to hide the {add, delete, disable...} string
                                        )
