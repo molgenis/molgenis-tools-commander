@@ -26,8 +26,13 @@ def input_(message, required=False):
         return _ask(question)
 
 
-def password(message):
-    return _ask(questionary.password(message))
+def password(message, required=False):
+    question = questionary.password(message)
+
+    if required:
+        return _ask(question, _validate_empty_input)
+    else:
+        return _ask(question)
 
 
 def confirm(message):
