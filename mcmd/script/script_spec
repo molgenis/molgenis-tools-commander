@@ -1,0 +1,93 @@
+# These comments will show up in the output (unless the --hide-comments
+# flag is used)
+// These comments will never show up in the output
+
+# You can declare values
+$value name = "henk"
+$value superuser = true
+
+# These values can be overridden with parameters
+# mcmd run my_script --with-parameters name="bofke" su=false
+
+# You can declare undefined values which must be overridden with parameters
+# If you don't override them, an error is thrown (before anything is executed)
+$value email
+
+# You can't redeclare an already existing value
+$value name = "error: value already declared, values are not variables"
+
+# You can ask users to declare values at runtime
+$input text username
+$input bool is_active
+$input pass password
+
+# You can add a message to the input prompt
+$input text address : "Please specify your address"
+
+# Input values can also be overridden in the script's parameters. In that case
+# the input prompt will be skipped
+# mcmd run my_script -p phone="114"
+
+# When running a script with --from-line, values that are declared before that
+# point will still be available. Inputs prompts will also be presented again if
+# needed.
+
+# Each line in the script will be parsed as a Jinja2 template using the
+# declared values.
+add user {{name}} --set-password {{password}} {% if superuser %}--is-superuser{% endif %}
+
+# This will even work in comments: {{name}}
+
+# Or in value declarations
+$value name_copy = "{{name}}"
+
+# You can make multi-lined statements using \ at the end of a line
+add user {{username}} \
+         --set-password {{password}} \
+         {{#if superuser}}--is-superuser{{/if}} \
+         --with-email {{email}} \
+         --is-active false
+
+$input text very_long_value_name = "this is the default value of the input" \
+            : "This is the message on the next line"
+
+###
+### FUTURE SPEC: not implemented yet and subject to change
+###
+
+# You can add a default value to the input prompt (applied when pressing enter)
+$input text host = "http://localhost"
+
+# And you can combine that with a message
+$input text phone = "112" : "Please enter your phone number"
+
+# You can load JSON from a file in your resource folders with the '<' operator
+$json users < users.json
+
+# You could also use an absolute path to select a file with the '<<' operator
+$json users << /my/path/to/users.json
+
+# Or get it straight from the web with the '@' operator
+$json users @ https://my.molgenis.org/data/users.json
+
+# It's also possible to inline the JSON with a JSON block
+$json users
+    {[
+        {
+            "name": "henk"
+            "email": "henk@molgenis.org"
+        },
+        {
+            "name": "bofke"
+            "email": "bofke@molgenis.org"
+        }
+    ]}
+$/json
+
+# You can define larger (multi-line) templates in a template block. Each line of the output will be handled as a command
+$template
+    {% for user in users %}
+        add user {{user.name}} --with-email {{user.email}}
+        give --user {{user.name}} view --plugin dataexplorer
+    {% endfor %}
+$/template
