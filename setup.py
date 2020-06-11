@@ -19,5 +19,5 @@ setup(
                       'polling==0.3.0', 'PyGithub==1.43.3', 'colorama==0.3.9', 'ruamel.yaml==0.15.81',
                       'questionary==1.3.0', 'parsy==1.3.0', 'Jinja2==2.11.2'],
     setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'molgenis-py-client==1.0.0']
+    tests_require=['pytest', 'testfixtures', 'molgenis-py-client==1.0.0']
 )
