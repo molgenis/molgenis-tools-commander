@@ -77,6 +77,17 @@ class Value(Statement, Templatable, Assignment):
             return self._value.variables
         else:
             return set()
+    
+    def __eq__ (self, other):
+        if isinstance (other, Value):
+            if self._name != other._name: return False
+            if self._value != other._value: return False
+            if self._type != other._type: return False
+            if self._value.variables != other._value.variables: return False
+            return True
+        else:
+            return False
+
 
 
 class Input(Statement, Templatable, Assignment):
@@ -115,6 +126,16 @@ class Input(Statement, Templatable, Assignment):
         if self._message is not None:
             variables |= self._message.variables
         self._variables = variables
+    
+    def __eq__ (self, other): 
+        if isinstance (other, Input):
+            if self._name != other._name: return False
+            if self._type != other._type: return False
+            if self._message != other._message: return False
+            if self._variables != other._variables: return False
+            return True
+        else:
+            return False
 
 
 class Wait(Statement, Templatable):
@@ -135,6 +156,15 @@ class Wait(Statement, Templatable):
     def variables(self) -> set:
         return self._message.variables
 
+    def __eq__ (self, other):
+        if isinstance (other, Wait):
+            if self._message != other._message: return False
+            if self._message.variables != other._message.variables: return False
+            return True
+        else:
+            return False
+
+
 
 class VisibleComment(Statement, Templatable):
     """
@@ -153,6 +183,14 @@ class VisibleComment(Statement, Templatable):
     @property
     def variables(self) -> set:
         return self._text.variables
+    
+    def __eq__ (self, other):
+        if isinstance (other, VisibleComment):
+            if self._text != other._text: return False
+            if self._text.variables != other._text.variables: return False 
+            return True
+        else: 
+            return False
 
 
 class Command(Statement, Templatable):
@@ -170,6 +208,14 @@ class Command(Statement, Templatable):
     @property
     def variables(self) -> set:
         return self._command.variables
+    
+    def __eq__ (self, other):
+        if isinstance (other, Command):
+            if self._command != other._command: return False
+            if self._command.variables != other._command.variables: return False
+            return True
+        else:
+            return False
 
 
 class InvisibleComment(Statement):
@@ -186,9 +232,22 @@ class InvisibleComment(Statement):
     def comment(self) -> str:
         return self._comment
 
+    def __eq__ (self, other):
+        if isinstance (other, InvisibleComment):
+            if self._comment != other._comment: return False
+            return True
+        else:
+            return False
 
 class Empty(Statement):
     """
     An empty line.
     """
     pass
+
+    def __eq__ (self, other):
+        if isinstance (other, Empty): 
+            return True
+        else:
+            return False
+

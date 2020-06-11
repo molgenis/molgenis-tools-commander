@@ -38,3 +38,14 @@ class ParsedLine:
 
     def add_dependency(self, line: 'ParsedLine'):
         self._dependencies.add(line)
+
+    def __eq__ (self, other): 
+        if isinstance (other, ParsedLine):
+            if self.raw != other.raw: return False
+            if self.number != other.number: return False
+            if self.statement != other.statement: return False
+            if self.dependencies != other.dependencies: return False
+            return True
+        else:
+            return False
+

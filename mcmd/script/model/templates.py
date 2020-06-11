@@ -25,3 +25,11 @@ class Template:
 
     def render(self, values: dict) -> str:
         return self._template.render(values)
+
+    def __eq__ (self, other):
+        if isinstance (other, Template): 
+            if self._variables != other._variables: return False
+            if self._string != other._string: return False
+            return True
+        else:
+            return False
