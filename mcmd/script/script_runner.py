@@ -86,9 +86,6 @@ def __set_value(assignment: Value, state: _ScriptExecutionState):
         return
 
     if assignment.type == ValueType.TEMPLATE:
-        print(assignment.name)
-        print(assignment.value)
-        print(state.values)
         state.values[assignment.name] = assignment.value.render(state.values)
     else:
         state.values[assignment.name] = assignment.value

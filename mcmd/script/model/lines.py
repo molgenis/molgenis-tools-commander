@@ -41,11 +41,17 @@ class ParsedLine:
 
     def __eq__ (self, other): 
         if isinstance (other, ParsedLine):
-            if self.raw != other.raw: return False
-            if self.number != other.number: return False
-            if self.statement != other.statement: return False
-            if self.dependencies != other.dependencies: return False
+            if self._raw != other._raw: return False
+            if self._number != other._number: return False
+            if self._statement != other._statement: return False
+            if self._dependencies != other._dependencies: return False
             return True
         else:
             return False
+
+    def __key(self):
+        return (self._raw, self._number)
+
+    def __hash__(self):
+        return hash(self.__key())
 

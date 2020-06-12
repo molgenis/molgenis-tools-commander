@@ -34,6 +34,13 @@ class Templatable:
     def variables(self) -> set:
         pass
 
+    def __key(self):
+        return (self.variables)
+    
+    def __hash__ (self):
+        hash(self.__key())
+
+
 
 class Value(Statement, Templatable, Assignment):
     """
@@ -88,7 +95,12 @@ class Value(Statement, Templatable, Assignment):
         else:
             return False
 
+    def __key(self):
+        return (self._name, self._value, self._type)
 
+    def __hash__(self):
+        return hash(self.__key())
+    
 
 class Input(Statement, Templatable, Assignment):
     """
@@ -136,6 +148,12 @@ class Input(Statement, Templatable, Assignment):
             return True
         else:
             return False
+    
+    def __key(self):
+        return (self._name, self._type, self._message)
+
+    def __hash__(self):
+        return (self.__key())
 
 
 class Wait(Statement, Templatable):
@@ -164,6 +182,11 @@ class Wait(Statement, Templatable):
         else:
             return False
 
+    def __key(self):
+        return (self._message)
+
+    def __hash__(self):
+        return (self.__key())
 
 
 class VisibleComment(Statement, Templatable):
@@ -192,6 +215,12 @@ class VisibleComment(Statement, Templatable):
         else: 
             return False
 
+    def __key(self):
+        return (self._text)
+
+    def __hash__(self):
+        return (self.__key())
+
 
 class Command(Statement, Templatable):
     """
@@ -216,6 +245,13 @@ class Command(Statement, Templatable):
             return True
         else:
             return False
+    
+    def __key(self):
+        return (self._command)
+
+    def __hash__(self):
+        return (self.__key())
+    
 
 
 class InvisibleComment(Statement):
@@ -238,6 +274,12 @@ class InvisibleComment(Statement):
             return True
         else:
             return False
+
+    def __key(self):
+        return (self._comment)
+
+    def __hash__(self):
+        return (self.__key())
 
 class Empty(Statement):
     """

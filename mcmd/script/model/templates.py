@@ -33,3 +33,9 @@ class Template:
             return True
         else:
             return False
+    
+    def __key(self):
+        return (self._string)
+
+    def __hash__(self):
+        return hash(self.__key())
