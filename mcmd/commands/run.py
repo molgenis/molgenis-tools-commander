@@ -17,7 +17,9 @@ from mcmd.script.parser.errors import InvalidScriptError, ScriptValidationError
 @arguments('run', CommandType.META)
 def add_arguments(subparsers):
     p_run = subparsers.add_parser('run',
-                                  help='run a commander script')
+                                  help='run a commander script',
+                                  description="The script syntax is described on the wiki page: "
+                                              "https://github.com/molgenis/molgenis-tools-commander/wiki/Scripts")
     p_run.set_defaults(func=run,
                        write_to_history=False)
     p_run.add_argument('script',
@@ -32,7 +34,8 @@ def add_arguments(subparsers):
     p_run.add_argument('--from-line', '-l',
                        type=int,
                        default=1,
-                       help="the line number to start the script at")
+                       help="the line number to start the script at (will still run earlier lines that contain "
+                            "value declarations needed for execution)")
     p_run.add_argument('--from-path', '-p',
                        action='store_true',
                        help="run a script from a path instead of the ~/.mcmd/scripts folder")
