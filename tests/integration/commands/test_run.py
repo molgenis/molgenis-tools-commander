@@ -88,8 +88,6 @@ def test_run_comments(session, caplog):
 
     expected_messages = [
         "Let's change the app title",
-        '',
-        '',
         'Finished'
     ]
 

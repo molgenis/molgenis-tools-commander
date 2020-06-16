@@ -1,8 +1,6 @@
 import sys
 
-from mcmd.core.context.base_context import Context
-from mcmd.core.context.home_context import HomeContext
-
+# !!! DON'T PLACE IMPORT STATEMENTS BEFORE THE VERSION CHECK !!!
 MIN_PYTHON = (3, 6)
 if sys.version_info < MIN_PYTHON:
     import platform
@@ -16,6 +14,9 @@ if sys.version_info < MIN_PYTHON:
 import logging
 import signal
 
+from mcmd.core.context.base_context import Context
+from mcmd.args.errors import ArgumentSyntaxError
+from mcmd.core.context.home_context import HomeContext
 from mcmd.args.parser import parse_args
 from mcmd.config.loader import load_config
 from mcmd.io import io
@@ -34,7 +35,7 @@ def start(argv, context: Context):
 
         load_config()
 
-        args = parse_args(argv[1:])
+        args = _parse_args(argv)
 
         setattr(args, 'arg_string', ' '.join(argv[1:]))
         set_log_level(args)
@@ -42,6 +43,15 @@ def start(argv, context: Context):
         args.func(args)
 
         return 0
+
+
+def _parse_args(argv):
+    try:
+        return parse_args(argv[1:])
+    except ArgumentSyntaxError as e:
+        sys.stderr.write(e.usage)
+        sys.stderr.write(str(e))
+        exit(1)
 
 
 def set_log_level(args):
