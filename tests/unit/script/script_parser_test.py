@@ -2,15 +2,14 @@ import unittest
 
 import pytest
 
-import mcmd.script.parser.script_parser
-
-from mcmd.script.parser import script_parser
-from mcmd.script.parser.errors import InvalidScriptError
-from mcmd.script.parser._parse_state import _ParseState
 from mcmd.script.model.lines import ParsedLine, Line
 from mcmd.script.model.statements import VisibleComment, InvisibleComment, Value, Command, Input, Empty, Wait
 from mcmd.script.model.templates import Template
-from mcmd.script.model.types_ import InputType, ValueType
+from mcmd.script.model.types_ import InputType
+from mcmd.script.parser import script_parser
+# noinspection PyProtectedMember
+from mcmd.script.parser._parse_state import _ParseState
+from mcmd.script.parser.errors import InvalidScriptError
 
 
 @pytest.mark.unit
@@ -31,22 +30,18 @@ class ScriptParserTest(unittest.TestCase):
         ]
 
         expected_lines = [
-            ParsedLine("# add user henk", 1, VisibleComment(
-                Template("add user henk"))),
-            ParsedLine("// adding user henk", 2, InvisibleComment(
-                "adding user henk")),
-            ParsedLine("$value name='henk'", 3,
-                       Value("name", Template("henk"))),
-            ParsedLine("add user {{name}} --is-superuser --is-active",
-                       4, Command(Template('add user {{name}} --is-superuser --is-active'))),
+            ParsedLine("# add user henk", 1, VisibleComment(Template("add user henk"))),
+            ParsedLine("// adding user henk", 2, InvisibleComment("adding user henk")),
+            ParsedLine("$value name='henk'", 3, Value("name", Template("henk"))),
+            ParsedLine("add user {{name}} --is-superuser --is-active", 4,
+                       Command(Template('add user {{name}} --is-superuser --is-active'))),
             ParsedLine("$input text value: 'default value'", 5,
                        Input("value", InputType.TEXT, Template('default value'))),
-            ParsedLine("$wait Wait and relax", 6,
-                       Wait(Template("Wait and relax"))),
+            ParsedLine("$wait Wait and relax", 6, Wait(Template("Wait and relax"))),
             ParsedLine("", 7, Empty())
         ]
 
-        mcmd.script.parser.script_parser._parse_lines(state)
+        script_parser._parse_lines(state)
 
         assert state.lines == expected_lines
 
@@ -73,36 +68,53 @@ class ScriptParserTest(unittest.TestCase):
                         ]
 
         with self.assertRaises(InvalidScriptError) as context:
-            mcmd.script.parser.script_parser.parse(script_lines)
+            script_parser.parse(script_lines)
 
         for num, exception in enumerate(context.exception.errors, start=1):
             if num == 0:
                 assert str(
-                    exception.message) == "Line 2: $input text test2 = true\n                          ^\n  - Expected ':' at 0:18"
+                    exception.message) == "Line 2: $input text test2 = true\n" \
+                                          "                          ^\n" \
+                                          "  - Expected ':' at 0:18"
             if num == 1:
                 assert str(
-                    exception.message) == "Line 1: $input bool test =\n                         ^\n  - Expected ':' at 0:17"
+                    exception.message) == "Line 1: $input bool test =\n" \
+                                          "                         ^\n" \
+                                          "  - Expected ':' at 0:17"
             if num == 2:
                 assert str(
-                    exception.message) == "Line 2: $input text test2 = true\n                          ^\n  - Expected ':' at 0:18"
+                    exception.message) == "Line 2: $input text test2 = true\n" \
+                                          "                          ^\n" \
+                                          "  - Expected ':' at 0:18"
             if num == 3:
                 assert str(
-                    exception.message) == "Line 6: $input text name = '{{name}}'\n                         ^\n  - Expected ':' at 0:17"
+                    exception.message) == "Line 6: $input text name = '{{name}}'\n" \
+                                          "                         ^\n" \
+                                          "  - Expected ':' at 0:17"
             if num == 4:
                 assert str(
-                    exception.message) == "Line 11: $valu x = 'hoi'\n          ^\n  - Expected one of 'input', 'value', 'wait' at 0:1"
+                    exception.message) == "Line 11: $valu x = 'hoi'\n" \
+                                          "          ^\n" \
+                                          "  - Expected one of 'input', 'value', 'wait' at 0:1"
             if num == 5:
                 assert str(
-                    exception.message) == "Line 13: $input enum type : 'input something!'\n                ^\n  - Expected one of 'bool', 'pass', 'text' at 0:7"
+                    exception.message) == "Line 13: $input enum type : 'input something!'\n" \
+                                          "                ^\n" \
+                                          "  - Expected one of 'bool', 'pass', 'text' at 0:7"
             if num == 6:
                 assert str(
-                    exception.message) == "Line 17: # {{name}\n  - Unexpected '}'"
+                    exception.message) == "Line 17: # {{name}\n" \
+                                          "  - Unexpected '}'"
             if num == 7:
                 assert str(
-                    exception.message) == "Line 19: $input bool question = 'string'\n                              ^\n  - Expected ':' at 0:21"
+                    exception.message) == "Line 19: $input bool question = 'string'\n" \
+                                          "                              ^\n" \
+                                          "  - Expected ':' at 0:21"
             if num == 8:
                 assert str(
-                    exception.message) == "Line 4: # {{name}}\n  - Value 'name' referenced before assignment: 'name' is assigned at line 7"
+                    exception.message) == "Line 4: # {{name}}\n" \
+                                          "  - Value 'name' referenced before assignment: 'name' is assigned at line 7"
             if num == 9:
                 assert str(
-                    exception.message) == "Line 9: # {{blaat}}\n  - Unknown value 'blaat'"
+                    exception.message) == "Line 9: # {{blaat}}\n" \
+                                          "  - Unknown value 'blaat'"

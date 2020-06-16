@@ -2,17 +2,11 @@ import unittest
 from unittest.mock import patch
 
 import pytest
-
 from testfixtures import log_capture
 
-import mcmd.script.script_runner
-import mcmd.script.parser.script_parser
+from mcmd.script import script_runner
 from mcmd.script.options import ScriptOptions
-from mcmd.script.model.lines import ParsedLine
-from mcmd.script.model.script import Script
-from mcmd.script.model.statements import VisibleComment, InvisibleComment, Value, Command, Input, Empty, Wait
-from mcmd.script.model.templates import Template
-from mcmd.script.model.types_ import InputType, ValueType
+from mcmd.script.parser import script_parser
 
 
 @pytest.mark.unit
@@ -44,12 +38,17 @@ class ScriptRunnerTest(unittest.TestCase):
                         "// no output"
                         ]
 
-        script = mcmd.script.parser.script_parser.parse(script_lines)
+        script = script_parser.parse(script_lines)
 
-        options = ScriptOptions(
-            arguments={"arg1": "arg1", "arg2": "arg2", "in1": "in1"}, dry_run=True, start_at=0, exit_on_error=True, log_comments=True)
+        options = ScriptOptions(arguments={"arg1": "arg1",
+                                           "arg2": "arg2",
+                                           "in1": "in1"},
+                                dry_run=True,
+                                start_at=0,
+                                exit_on_error=True,
+                                log_comments=True)
 
-        mcmd.script.script_runner.run(script, options)
+        script_runner.run(script, options)
 
         capture.check(
             ('console', 'INFO', 'arg1 arg2 don\'t override'),
@@ -62,26 +61,28 @@ class ScriptRunnerTest(unittest.TestCase):
     @staticmethod
     @log_capture()
     @patch('mcmd.io.ask.input_')
-    def test_use_jinja_vars(input_surname, capture):
+    def test_line_dependencies(input_surname, capture):
         input_surname.return_value = 'achternaam'
         script_lines = ["$value name = 'henk'",
-                        "$input text surname: 'achternaam'",
+                        "$input text surname : 'achternaam'",
                         "",
                         "# don't execute this line",
                         "",
-                        "$input text fullname: '{{name}} {{surname}}'",
+                        "$value fullname = '{{name}} {{surname}}'",
                         "",
                         "# {{fullname}}"
                         ]
 
-        script = mcmd.script.parser.script_parser.parse(script_lines)
+        script = script_parser.parse(script_lines)
 
-        options = ScriptOptions(
-            arguments={}, dry_run=True, start_at=7, exit_on_error=True, log_comments=True)
+        options = ScriptOptions(arguments=dict(),
+                                dry_run=True,
+                                start_at=7,  # start at a later point in the script
+                                exit_on_error=True,
+                                log_comments=True)
 
-        mcmd.script.script_runner.run(script, options)
+        script_runner.run(script, options)
 
         capture.check(
-            # TODO: should be 'henk achternaam', it does not pickup the value
-            ('console', 'INFO', 'achternaam')
+            ('console', 'INFO', 'henk achternaam')
         )
