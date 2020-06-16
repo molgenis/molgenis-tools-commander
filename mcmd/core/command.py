@@ -1,5 +1,7 @@
+import sys
 from enum import Enum
 
+from mcmd.args.errors import ArgumentSyntaxError
 from mcmd.config import config
 from mcmd.core import history
 from mcmd.core.errors import McmdError, ScriptError
@@ -32,6 +34,14 @@ def command(func):
         try:
             _set_authentication(args)
             func(args)
+        except ArgumentSyntaxError as error:
+            # Some commands have additional argument checks that are evaluated at runtime
+            success = False
+            if nested:
+                # let the encapsulating command deal with the error
+                raise error
+            else:
+                _handle_syntax_error(error)
         except McmdError as error:
             success = False
             if nested:
@@ -66,4 +76,10 @@ def _handle_error(error):
     if isinstance(error, ScriptError):
         io.info('Script failed at line {}'.format(io.highlight(str(error.line))))
 
+    exit(1)
+
+
+def _handle_syntax_error(error):
+    sys.stderr.write(error.usage)
+    sys.stderr.write(str(error))
     exit(1)

@@ -98,7 +98,6 @@ def __ask_input(input_: Input, state: _ScriptExecutionState):
 
     message = input_.message.render(state.values) if input_.message else input_.name
 
-    value = None
     if input_.type == InputType.TEXT:
         value = ask.input_(message, required=True)
     elif input_.type == InputType.BOOL:

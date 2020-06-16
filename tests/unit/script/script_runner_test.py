@@ -99,7 +99,7 @@ class ScriptRunnerTest(unittest.TestCase):
 
         options = ScriptOptions(arguments=dict(),
                                 dry_run=True,
-                                start_at=1,  # start at a later point in the script
+                                start_at=1,
                                 exit_on_error=True,
                                 log_comments=False)
 
