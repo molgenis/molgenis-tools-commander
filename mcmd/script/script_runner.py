@@ -75,10 +75,11 @@ def _process_line(line: ParsedLine, state: _ScriptExecutionState):
 
 
 def _log_comment(comment: VisibleComment, state: _ScriptExecutionState):
-    if len(comment.text.string) == 0:
-        io.newline()
-    else:
-        log.info(comment.text.render(state.values))
+    if state.options.log_comments:
+        if len(comment.text.string) == 0:
+            io.newline()
+        else:
+            log.info(comment.text.render(state.values))
 
 
 def __set_value(assignment: Value, state: _ScriptExecutionState):

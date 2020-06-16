@@ -86,3 +86,25 @@ class ScriptRunnerTest(unittest.TestCase):
         capture.check(
             ('console', 'INFO', 'henk achternaam')
         )
+
+    @staticmethod
+    @log_capture()
+    def test_not_log_comments(capture):
+        script_lines = ["# don't log this",
+                        "// and this",
+                        "add user test"
+                        ]
+
+        script = script_parser.parse(script_lines)
+
+        options = ScriptOptions(arguments=dict(),
+                                dry_run=True,
+                                start_at=1,  # start at a later point in the script
+                                exit_on_error=True,
+                                log_comments=False)
+
+        script_runner.run(script, options)
+
+        capture.check(
+            ('console', 'INFO', 'add user test')
+        )
