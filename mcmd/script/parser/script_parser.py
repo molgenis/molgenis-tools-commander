@@ -1,6 +1,6 @@
 from typing import List
 
-from mcmd.script.model.lines import ParsedLine
+from mcmd.script.model.lines import ScriptLine
 from mcmd.script.model.script import Script
 from mcmd.script.parser import dependency_resolver, line_parser, line_combiner
 from mcmd.script.parser._parse_state import _ParseState
@@ -39,4 +39,4 @@ def _parse_lines(state: _ParseState):
         except ScriptSyntaxError as e:
             state.errors.append(e)
         else:
-            state.lines.append(ParsedLine(raw_string=line.string, number=line.number, statement=statement))
+            state.lines.append(ScriptLine(raw_string=line.string, number=line.number, statement=statement))

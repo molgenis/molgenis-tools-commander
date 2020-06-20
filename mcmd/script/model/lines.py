@@ -1,14 +1,17 @@
-from typing import NamedTuple, Set
+from typing import Set
+
+import attr
 
 from mcmd.script.model.statements import Statement
 
 
-class Line(NamedTuple):
-    number: int
-    string: str
+@attr.s(frozen=True)
+class Line:
+    number: int = attr.ib()
+    string: str = attr.ib()
 
 
-class ParsedLine:
+class ScriptLine:
     """
     A parsed line contains the line number, original line string and the parsed Statement. A parsed line may have
     dependencies on other lines (through Templates). These are exposed through the dependencies property.
@@ -33,14 +36,14 @@ class ParsedLine:
         return self._statement
 
     @property
-    def dependencies(self) -> Set['ParsedLine']:
+    def dependencies(self) -> Set['ScriptLine']:
         return self._dependencies
 
-    def add_dependency(self, line: 'ParsedLine'):
+    def add_dependency(self, line: 'ScriptLine'):
         self._dependencies.add(line)
 
-    def __eq__ (self, other): 
-        if isinstance (other, ParsedLine):
+    def __eq__(self, other):
+        if isinstance(other, ScriptLine):
             if self._raw != other._raw: return False
             if self._number != other._number: return False
             if self._statement != other._statement: return False
@@ -54,4 +57,3 @@ class ParsedLine:
 
     def __hash__(self):
         return hash(self.__key())
-

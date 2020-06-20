@@ -1,17 +1,17 @@
 from typing import List, Set
 
-from mcmd.script.model.lines import ParsedLine
+from mcmd.script.model.lines import ScriptLine
 
 
 class Script:
-    def __init__(self, lines: List[ParsedLine]):
+    def __init__(self, lines: List[ScriptLine]):
         self._lines = tuple(lines)
 
     @property
     def lines(self):
         return self._lines
 
-    def get_lines_with_dependencies(self, from_line_number: int) -> List[ParsedLine]:
+    def get_lines_with_dependencies(self, from_line_number: int) -> List[ScriptLine]:
         """
         Gets all the lines in the script from a certain line_number and up. If the lines depend on lines before
         line_number, then those lines will be included as well. This is done recursively, so all dependencies are
@@ -29,7 +29,7 @@ class Script:
             total_lines = (lines_subset | dependencies)
             return sorted(total_lines, key=lambda l: l.number)
 
-    def _get_deep_dependencies(self, line: ParsedLine) -> Set[ParsedLine]:
+    def _get_deep_dependencies(self, line: ScriptLine) -> Set[ScriptLine]:
         dependencies = set()
         dependencies.add(line)
         for dependency in line.dependencies:

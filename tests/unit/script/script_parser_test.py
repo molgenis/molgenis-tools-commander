@@ -2,7 +2,7 @@ import unittest
 
 import pytest
 
-from mcmd.script.model.lines import ParsedLine, Line
+from mcmd.script.model.lines import ScriptLine, Line
 from mcmd.script.model.statements import VisibleComment, InvisibleComment, Value, Command, Input, Empty, Wait
 from mcmd.script.model.templates import Template
 from mcmd.script.model.types_ import InputType
@@ -30,15 +30,15 @@ class ScriptParserTest(unittest.TestCase):
         ]
 
         expected_lines = [
-            ParsedLine("# add user henk", 1, VisibleComment(Template("add user henk"))),
-            ParsedLine("// adding user henk", 2, InvisibleComment("adding user henk")),
-            ParsedLine("$value name='henk'", 3, Value.from_untyped_value("name", Template("henk"))),
-            ParsedLine("add user {{name}} --is-superuser --is-active", 4,
+            ScriptLine("# add user henk", 1, VisibleComment(Template("add user henk"))),
+            ScriptLine("// adding user henk", 2, InvisibleComment("adding user henk")),
+            ScriptLine("$value name='henk'", 3, Value.from_untyped_value("name", Template("henk"))),
+            ScriptLine("add user {{name}} --is-superuser --is-active", 4,
                        Command(Template('add user {{name}} --is-superuser --is-active'))),
-            ParsedLine("$input text value: 'default value'", 5,
+            ScriptLine("$input text value: 'default value'", 5,
                        Input("value", InputType.TEXT, Template('default value'))),
-            ParsedLine("$wait Wait and relax", 6, Wait(Template("Wait and relax"))),
-            ParsedLine("", 7, Empty())
+            ScriptLine("$wait Wait and relax", 6, Wait(Template("Wait and relax"))),
+            ScriptLine("", 7, Empty())
         ]
 
         script_parser._parse_lines(state)

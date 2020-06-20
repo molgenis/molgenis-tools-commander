@@ -8,7 +8,7 @@ from mcmd.core.errors import McmdError, ScriptError
 from mcmd.io import io, ask
 from mcmd.io.io import bold, dim
 from mcmd.io.logging import get_logger
-from mcmd.script.model.lines import ParsedLine
+from mcmd.script.model.lines import ScriptLine
 from mcmd.script.model.script import Script
 from mcmd.script.model.statements import Value, Input, Wait, VisibleComment, Command, InvisibleComment, \
     Empty
@@ -36,7 +36,7 @@ def run(script: Script, options: ScriptOptions):
     _process_lines(lines, state)
 
 
-def _validate_required_args(lines: List[ParsedLine], args: dict):
+def _validate_required_args(lines: List[ScriptLine], args: dict):
     missing_args = list()
     for line in lines:
         statement = line.statement
@@ -47,7 +47,7 @@ def _validate_required_args(lines: List[ParsedLine], args: dict):
         raise McmdError('Missing required argument(s): {}'.format(', '.join(missing_args)))
 
 
-def _process_lines(lines: List[ParsedLine], state: _ScriptExecutionState):
+def _process_lines(lines: List[ScriptLine], state: _ScriptExecutionState):
     for line in lines:
         try:
             _process_line(line, state)
@@ -55,7 +55,7 @@ def _process_lines(lines: List[ParsedLine], state: _ScriptExecutionState):
             _handle_error(error, line_number=line.number, state=state)
 
 
-def _process_line(line: ParsedLine, state: _ScriptExecutionState):
+def _process_line(line: ScriptLine, state: _ScriptExecutionState):
     statement = line.statement
 
     if isinstance(statement, Value):

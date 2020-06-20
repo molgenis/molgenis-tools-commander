@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from mcmd.script.model.lines import Line, ParsedLine
+from mcmd.script.model.lines import Line, ScriptLine
 
 
 class ScriptValidationError(ABC, Exception):
@@ -55,7 +55,7 @@ class ReassignmentError(ScriptValidationError):
     Raised when a value has already been assigned in an earlier line.
     """
 
-    def __init__(self, name: str, source: ParsedLine, other: ParsedLine):
+    def __init__(self, name: str, source: ScriptLine, other: ScriptLine):
         super().__init__(line_number=source.number)
         self._name = name
         self._source = source
@@ -75,7 +75,7 @@ class ForwardReferenceError(ScriptValidationError):
     Raised when a Template references a value that is assigned at a later line.
     """
 
-    def __init__(self, name: str, source: ParsedLine, referred: ParsedLine):
+    def __init__(self, name: str, source: ScriptLine, referred: ScriptLine):
         super().__init__(line_number=source.number)
         self._name = name
         self._source = source
@@ -97,7 +97,7 @@ class UnknownReferenceError(ScriptValidationError):
     Raised when a Template references a value that is not assigned in the script.
     """
 
-    def __init__(self, source: ParsedLine, reference: str):
+    def __init__(self, source: ScriptLine, reference: str):
         super().__init__(line_number=source.number)
         self._source = source
         self._reference = reference
@@ -117,7 +117,7 @@ class RecursiveReferenceError(ScriptValidationError):
     $value name = "{{name}}"
     """
 
-    def __init__(self, source: ParsedLine, reference: str):
+    def __init__(self, source: ScriptLine, reference: str):
         super().__init__(line_number=source.number)
         self._source = source
         self._reference = reference
