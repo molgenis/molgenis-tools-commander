@@ -23,12 +23,11 @@ def resolve(state: _ParseState):
     for line in state.lines:
         statement = line.statement
         if isinstance(statement, Templatable):
-            _add_dependencies(declarations_by_name, line, statement.variables, state)
+            _set_dependencies(declarations_by_name, line, statement.variables, state)
 
 
-def _add_dependencies(declarations_by_name: dict, line: ScriptLine, variables: set, state: _ParseState):
+def _set_dependencies(declarations_by_name: dict, line: ScriptLine, variables: set, state: _ParseState):
     for var in variables:
-
         if var not in declarations_by_name:
             state.errors.append(UnknownReferenceError(line, var))
         else:
@@ -39,4 +38,7 @@ def _add_dependencies(declarations_by_name: dict, line: ScriptLine, variables: s
             elif dependency.number >= line.number:
                 state.errors.append(ForwardReferenceError(var, line, dependency))
             else:
-                line.add_dependency(declarations_by_name[var])
+                if line not in state.dependencies:
+                    state.dependencies[line] = {declarations_by_name[var]}
+                else:
+                    state.dependencies[line].add(declarations_by_name[var])

@@ -146,7 +146,7 @@ class InvisibleComment(Statement):
     comment: str = attr.ib()
 
 
-@attr.s
+@attr.s(frozen=True)
 class Empty(Statement):
     """
     An empty line.

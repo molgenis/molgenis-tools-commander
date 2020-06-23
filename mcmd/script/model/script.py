@@ -1,15 +1,14 @@
-from typing import List, Set
+from typing import List, Set, Dict
+
+import attr
 
 from mcmd.script.model.lines import ScriptLine
 
 
+@attr.s(frozen=True)
 class Script:
-    def __init__(self, lines: List[ScriptLine]):
-        self._lines = tuple(lines)
-
-    @property
-    def lines(self):
-        return self._lines
+    lines: List[ScriptLine] = attr.ib()
+    _dependencies: Dict[ScriptLine, Set[ScriptLine]] = attr.ib()
 
     def get_lines_with_dependencies(self, from_line_number: int) -> List[ScriptLine]:
         """
@@ -22,6 +21,7 @@ class Script:
         else:
             lines_subset = {line for line in self.lines if line.number >= from_line_number}
 
+            print(self._dependencies)
             dependencies = set()
             for line in lines_subset:
                 dependencies |= self._get_deep_dependencies(line)
@@ -32,6 +32,6 @@ class Script:
     def _get_deep_dependencies(self, line: ScriptLine) -> Set[ScriptLine]:
         dependencies = set()
         dependencies.add(line)
-        for dependency in line.dependencies:
+        for dependency in self._dependencies.get(line, set()):
             dependencies |= self._get_deep_dependencies(dependency)
         return dependencies
