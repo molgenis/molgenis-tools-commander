@@ -1,19 +1,20 @@
 from typing import FrozenSet
 
 import attr
+import jinja2
 from jinja2 import Environment, meta
 
 _env = Environment(autoescape=False)
 
 
-@attr.s(frozen=True)
+@attr.s(frozen=True, auto_attribs=True)
 class Template:
     """
     A container for a Jinja2 template. Exposes the variables found in the template through the variables property.
     """
 
-    string: str = attr.ib()
-    _template = attr.ib(init=False, eq=False)
+    string: str
+    _template: jinja2.Template = attr.ib(init=False, eq=False)
     variables: FrozenSet[str] = attr.ib(init=False)
 
     @_template.default

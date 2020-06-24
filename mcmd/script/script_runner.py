@@ -1,6 +1,8 @@
 import shlex
 import sys
-from typing import NamedTuple, List
+from typing import List
+
+import attr
 
 from mcmd.args import parser as arg_parser
 from mcmd.args.errors import ArgumentSyntaxError
@@ -18,10 +20,11 @@ from mcmd.script.options import ScriptOptions
 log = get_logger()
 
 
-class _ScriptExecutionState(NamedTuple):
+@attr.s(auto_attribs=True)
+class _ScriptExecutionState:
     script: Script
     options: ScriptOptions
-    values: dict
+    values: dict = attr.Factory(dict)
 
 
 def run(script: Script, options: ScriptOptions):

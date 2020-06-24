@@ -5,10 +5,10 @@ import attr
 from mcmd.script.model.lines import ScriptLine
 
 
-@attr.s(frozen=True)
+@attr.s(frozen=True, auto_attribs=True)
 class Script:
-    lines: List[ScriptLine] = attr.ib()
-    _dependencies: Dict[ScriptLine, Set[ScriptLine]] = attr.ib()
+    lines: List[ScriptLine]
+    _dependencies: Dict[ScriptLine, Set[ScriptLine]]
 
     def get_lines_with_dependencies(self, from_line_number: int) -> List[ScriptLine]:
         """

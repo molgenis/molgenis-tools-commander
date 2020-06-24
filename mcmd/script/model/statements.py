@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional
+from typing import Optional, Any
 
 import attr
 
@@ -13,7 +13,7 @@ class Statement:
     pass
 
 
-@attr.s(frozen=True)
+@attr.s(frozen=True, auto_attribs=True)
 class Assignment:
     """
     A statement that assigns a value. Should expose the value's name through the name property.
@@ -22,7 +22,7 @@ class Assignment:
     $input bool is_assigned
     """
 
-    name: str = attr.ib()
+    name: str
 
 
 @attr.s(frozen=True)
@@ -38,7 +38,7 @@ class Templatable:
         pass
 
 
-@attr.s(frozen=True)
+@attr.s(frozen=True, auto_attribs=True)
 class Value(Statement, Templatable, Assignment):
     """
     A value assignment. Supports text (in the form of a Template), booleans and None values.
@@ -48,8 +48,8 @@ class Value(Statement, Templatable, Assignment):
     $value empty
     """
 
-    type: ValueType = attr.ib()
-    value = attr.ib()
+    type: ValueType
+    value: Any
 
     @classmethod
     def from_untyped_value(cls, name: str, value):
@@ -71,7 +71,7 @@ class Value(Statement, Templatable, Assignment):
             return set()
 
 
-@attr.s(frozen=True)
+@attr.s(frozen=True, auto_attribs=True)
 class Input(Statement, Templatable, Assignment):
     """
     An input assignment. Doesn't have a value because the inputs are requested from the user at runtime. Supports
@@ -81,8 +81,8 @@ class Input(Statement, Templatable, Assignment):
     $input text type : "text"
     """
 
-    type: InputType = attr.ib()
-    message: Optional[Template] = attr.ib(default=None)
+    type: InputType
+    message: Optional[Template] = None
 
     @property
     def variables(self) -> frozenset:
@@ -92,7 +92,7 @@ class Input(Statement, Templatable, Assignment):
             return frozenset()
 
 
-@attr.s(frozen=True)
+@attr.s(frozen=True, auto_attribs=True)
 class Wait(Statement, Templatable):
     """
     A wait statement. Shows a message until the user presses enter.
@@ -100,14 +100,14 @@ class Wait(Statement, Templatable):
     $wait : "Get a snack"
     """
 
-    message: Template = attr.ib()
+    message: Template
 
     @property
     def variables(self) -> frozenset:
         return self.message.variables
 
 
-@attr.s(frozen=True)
+@attr.s(frozen=True, auto_attribs=True)
 class VisibleComment(Statement, Templatable):
     """
     Comments that will be printed to the output.
@@ -115,27 +115,27 @@ class VisibleComment(Statement, Templatable):
     # Creating user {{name}}
     """
 
-    text: Template = attr.ib()
+    text: Template
 
     @property
     def variables(self) -> frozenset:
         return self.text.variables
 
 
-@attr.s(frozen=True)
+@attr.s(frozen=True, auto_attribs=True)
 class Command(Statement, Templatable):
     """
     A MOLGENIS Commander command.
     """
 
-    command: Template = attr.ib()
+    command: Template
 
     @property
     def variables(self) -> frozenset:
         return self.command.variables
 
 
-@attr.s(frozen=True)
+@attr.s(frozen=True, auto_attribs=True)
 class InvisibleComment(Statement):
     """
     Comments that won't be processed in any way.
@@ -143,7 +143,7 @@ class InvisibleComment(Statement):
     // this is a comment
     """
 
-    comment: str = attr.ib()
+    comment: str
 
 
 @attr.s(frozen=True)

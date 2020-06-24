@@ -26,7 +26,7 @@ def resolve(state: _ParseState):
             _set_dependencies(declarations_by_name, line, statement.variables, state)
 
 
-def _set_dependencies(declarations_by_name: dict, line: ScriptLine, variables: set, state: _ParseState):
+def _set_dependencies(declarations_by_name: dict, line: ScriptLine, variables: frozenset, state: _ParseState):
     for var in variables:
         if var not in declarations_by_name:
             state.errors.append(UnknownReferenceError(line, var))
