@@ -34,7 +34,7 @@ class Templatable:
 
     @property
     @abstractmethod
-    def variables(self) -> set:
+    def variables(self) -> frozenset:
         pass
 
 
@@ -85,11 +85,11 @@ class Input(Statement, Templatable, Assignment):
     message: Optional[Template] = attr.ib(default=None)
 
     @property
-    def variables(self) -> set:
+    def variables(self) -> frozenset:
         if self.message is not None:
             return self.message.variables
         else:
-            return set()
+            return frozenset()
 
 
 @attr.s(frozen=True)
@@ -103,7 +103,7 @@ class Wait(Statement, Templatable):
     message: Template = attr.ib()
 
     @property
-    def variables(self) -> set:
+    def variables(self) -> frozenset:
         return self.message.variables
 
 
@@ -118,7 +118,7 @@ class VisibleComment(Statement, Templatable):
     text: Template = attr.ib()
 
     @property
-    def variables(self) -> set:
+    def variables(self) -> frozenset:
         return self.text.variables
 
 
@@ -131,7 +131,7 @@ class Command(Statement, Templatable):
     command: Template = attr.ib()
 
     @property
-    def variables(self) -> set:
+    def variables(self) -> frozenset:
         return self.command.variables
 
 

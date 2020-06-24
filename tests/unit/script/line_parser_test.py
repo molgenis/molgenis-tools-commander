@@ -3,11 +3,11 @@ import unittest
 import pytest
 from parsy import ParseError
 
-# noinspection PyProtectedMember
-from mcmd.script.parser.line_parser import _parse_line
 from mcmd.script.model.statements import Value, Input, Wait, VisibleComment, Command, InvisibleComment, \
     Empty
 from mcmd.script.model.types_ import InputType
+# noinspection PyProtectedMember
+from mcmd.script.parser.line_parser import _parse_line
 
 
 @pytest.mark.unit
