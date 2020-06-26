@@ -10,7 +10,7 @@ class Line:
 
 
 @attr.s(frozen=True, auto_attribs=True)
-class ScriptLine:
+class ParsedLine:
     """
     A parsed line contains the line number, original line string and the parsed Statement. A parsed line may have
     dependencies on other lines (through Templates). These are exposed through the dependencies property.

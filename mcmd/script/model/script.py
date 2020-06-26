@@ -2,15 +2,15 @@ from typing import List, Set, Dict
 
 import attr
 
-from mcmd.script.model.lines import ScriptLine
+from mcmd.script.model.lines import ParsedLine
 
 
 @attr.s(frozen=True, auto_attribs=True)
 class Script:
-    lines: List[ScriptLine]
-    _dependencies: Dict[ScriptLine, Set[ScriptLine]]
+    lines: List[ParsedLine]
+    _dependencies: Dict[ParsedLine, Set[ParsedLine]]
 
-    def get_lines_with_dependencies(self, from_line_number: int) -> List[ScriptLine]:
+    def get_lines_with_dependencies(self, from_line_number: int) -> List[ParsedLine]:
         """
         Gets all the lines in the script from a certain line_number and up. If the lines depend on lines before
         line_number, then those lines will be included as well. This is done recursively, so all dependencies are
@@ -29,7 +29,7 @@ class Script:
             total_lines = (lines_subset | dependencies)
             return sorted(total_lines, key=lambda l: l.number)
 
-    def _get_deep_dependencies(self, line: ScriptLine) -> Set[ScriptLine]:
+    def _get_deep_dependencies(self, line: ParsedLine) -> Set[ParsedLine]:
         dependencies = set()
         dependencies.add(line)
         for dependency in self._dependencies.get(line, set()):

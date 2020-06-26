@@ -1,4 +1,4 @@
-from mcmd.script.model.lines import ScriptLine
+from mcmd.script.model.lines import ParsedLine
 from mcmd.script.model.statements import Templatable, Assignment
 from mcmd.script.parser._parse_state import _ParseState
 from mcmd.script.parser.errors import ReassignmentError, ForwardReferenceError, UnknownReferenceError, \
@@ -26,7 +26,7 @@ def resolve(state: _ParseState):
             _set_dependencies(declarations_by_name, line, statement.variables, state)
 
 
-def _set_dependencies(declarations_by_name: dict, line: ScriptLine, variables: frozenset, state: _ParseState):
+def _set_dependencies(declarations_by_name: dict, line: ParsedLine, variables: frozenset, state: _ParseState):
     for var in variables:
         if var not in declarations_by_name:
             state.errors.append(UnknownReferenceError(line, var))
