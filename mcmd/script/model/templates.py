@@ -18,11 +18,11 @@ class Template:
     variables: FrozenSet[str] = attr.ib(init=False)
 
     @_template.default
-    def __set_template(self):
+    def __set_template(self):  # NOSONAR method is not unused
         return _env.from_string(self.string)
 
     @variables.default
-    def __set_variables(self) -> frozenset:
+    def __set_variables(self) -> frozenset:  # NOSONAR method is not unused
         parsed_content = _env.parse(self.string)
         return frozenset(meta.find_undeclared_variables(parsed_content))
 
