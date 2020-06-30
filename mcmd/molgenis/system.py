@@ -1,27 +1,33 @@
 """
 Contains bare-bones definitions of System Entity Types of MOLGENIS.
 """
-from typing import NamedTuple, Optional
+from typing import Optional
+
+import attr
 
 
-class User(NamedTuple):
+@attr.s(frozen=True, auto_attribs=True)
+class User:
     id: str
     username: str
 
 
-class Group(NamedTuple):
+@attr.s(frozen=True, auto_attribs=True)
+class Group:
     id: str
     name: str
 
 
-class Role(NamedTuple):
+@attr.s(frozen=True, auto_attribs=True)
+class Role:
     id: str
     name: str
     label: str
-    group: Optional[Group]
+    group: Optional[Group] = None
 
 
-class RoleMembership(NamedTuple):
+@attr.s(frozen=True, auto_attribs=True)
+class RoleMembership:
     id: str
     user: User
     role: Role

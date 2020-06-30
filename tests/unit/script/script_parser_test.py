@@ -32,7 +32,7 @@ class ScriptParserTest(unittest.TestCase):
         expected_lines = [
             ParsedLine("# add user henk", 1, VisibleComment(Template("add user henk"))),
             ParsedLine("// adding user henk", 2, InvisibleComment("adding user henk")),
-            ParsedLine("$value name='henk'", 3, Value("name", Template("henk"))),
+            ParsedLine("$value name='henk'", 3, Value.from_untyped_value("name", Template("henk"))),
             ParsedLine("add user {{name}} --is-superuser --is-active", 4,
                        Command(Template('add user {{name}} --is-superuser --is-active'))),
             ParsedLine("$input text value: 'default value'", 5,

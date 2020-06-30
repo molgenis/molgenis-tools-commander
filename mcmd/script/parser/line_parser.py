@@ -34,7 +34,7 @@ def _value_declaration():
     yield whitespace
     name = yield _value_name
     value = yield _assignment.optional()
-    return Value(name=name, value=value)
+    return Value.from_untyped_value(name=name, value=value)
 
 
 # $input type name [: "message"]
@@ -49,7 +49,7 @@ def _input_declaration():
     message = yield _message.optional()
 
     return Input(name=name,
-                 type_=type_,
+                 type=type_,
                  message=message)
 
 
