@@ -1,4 +1,5 @@
 # Settings intended for MOLGENIS developers that have the git project installed.
+# Found at GitHub: https://github.com/molgenis/molgenis
 git:
   # The root folder of the MOLGENIS git project. Leave this field empty if you
   # don't have the git project installed.
