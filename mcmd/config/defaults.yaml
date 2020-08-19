@@ -1,16 +1,33 @@
+# Settings intended for MOLGENIS developers that have the git project installed.
 git:
+  # The root folder of the MOLGENIS git project. Leave this field empty if you
+  # don't have the git project installed.
   root:
+  # Relative paths to folders within the git project that contain datasets.
+  # These folders will be queried when using the import command.
   paths:
     - molgenis-platform-integration-tests/src/test/resources/xls
     - molgenis-platform-integration-tests/src/test/resources/csv
     - molgenis-platform-integration-tests/src/test/resources/obo
+# All datasets and resources in folders that are specified in this section
+# can be imported or uploaded without specifying the absolute path to the file.
 resources:
+  # List of folders that contain datasets that MOLGENIS supports (EMX, VCF, OWL, etc.)
   dataset_folders: []
+  # List of folders that contain other resources (files, .css, images, etc.)
   resource_folders: []
+# Settings that change how the commander interacts with MOLGENIS.
+settings:
+  # The default import action to use when importing a dataset.
+  # Choose from: [add, add_update_existing, update, add_ignore_existing]
+  import_action: add_update_existing
+# Server configuration.
 host:
+  # The server to interact with. Use `mcmd config set host` to change this field.
+  # Use `mcmd ping` to see which server is selected.
   selected: http://localhost/
+  # List of servers the commander can interact with. Use `mcmd config add host`
+  # to add a server to the list.
   auth:
     - url: http://localhost/
       username: admin
-settings:
-  import_action: add_update_existing
