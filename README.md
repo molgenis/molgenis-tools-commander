@@ -6,6 +6,9 @@ MOLGENIS Commander makes managing your [MOLGENIS application](https://molgenis.g
 like importing datasets and managing groups and users. Besides catering to the data oriented user it also aims to provide 
 an extensive toolkit for developers working on MOLGENIS.
 
+Want to get started right away? Read [Getting started](https://github.com/molgenis/molgenis-tools-commander/wiki/Getting-started) 
+on the wiki!
+
 ### Teaser
 
 Easily add groups and users and configure their roles:
