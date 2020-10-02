@@ -30,41 +30,7 @@ mcmd --help
 ```
 
 ### How to install
-
-Make sure you have Python 3.6 or higher installed and in a terminal, run:
-
-```
-pip install molgenis-commander
-```
-
-If you also have Python 2.x installed on your machine (common for machines running MacOS), make sure to install the commander with the Python 3 version of `pip`:
-
-```
-pip3 install molgenis-commander
-```
-
-#### Upgrading
-
-To upgrade to the newest version, run:
-
-```
-pip install --upgrade molgenis-commander
-```
-
-Or if you have both Python 2 and 3 installed, run:
-
-```
-pip3 install --upgrade molgenis-commander
-```
-
-#### Troubleshooting
-> I've installed the commander with `pip` but when I run `mcmd` I get an error referencing Python 2.x
-
-You've installed the commander with an old version of `pip`. Make sure your Python version is up to date (3.6 or higher) and that you've installed with the correct version of `pip`. (Make sure to uninstall your old version first with `pip uninstall molgenis-commander`).
-
-> I've installed the commander on Debian/Ubuntu but `mcmd` can't be found
-
-`pip` installs commands in `~/.local/bin`. Make sure that this folder is added to the path variable.
+You can install the Commander using `pip`. For more information and troubleshooting tips, see the [Installation guide](https://github.com/molgenis/molgenis-tools-commander/wiki/Installation-guide)
 
 
 ### Scripts
