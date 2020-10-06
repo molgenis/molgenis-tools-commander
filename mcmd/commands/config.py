@@ -58,7 +58,7 @@ def config_set_host(args):
 @command
 def config_set_import_action(args):
     options = ['add', 'add_update_existing', 'update']
-    action = ask.multi_choice('Pick the lines that will form the script:', options)
+    action = ask.multi_choice('Choose the default import action:', options)
     io.start("Setting import action to {}".format(highlight(action)))
     config.set_import_action(action)
 
