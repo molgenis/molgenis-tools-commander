@@ -20,7 +20,7 @@ resources:
 # Settings that change how the commander interacts with MOLGENIS.
 settings:
   # The default import action to use when importing a dataset.
-  # Choose from: [add, add_update_existing, update, add_ignore_existing]
+  # Choose from: [add, add_update_existing, update]
   import_action: add_update_existing
 # Server configuration.
 host:

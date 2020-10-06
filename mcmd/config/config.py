@@ -85,6 +85,10 @@ def has_option(*args):
         return False
 
 
+def set_import_action(action):
+    _config['settings']['import_action'] = action
+    _persist()
+
 def set_host(url_):
     hosts = get('host', 'auth')
     if url_ in [host_['url'] for host_ in hosts]:
