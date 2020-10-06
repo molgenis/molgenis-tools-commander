@@ -27,7 +27,7 @@ def add_arguments(subparsers):
     p_config_set_host.add_argument('url',
                                    nargs='?',
                                    help='the URL of the host (Optional)')
-    p_config_set_import_action = p_config_set_subparsers.add_parser('import-action', help='set import action')
+    p_config_set_import_action = p_config_set_subparsers.add_parser('import-action', help='set the default import action')
     p_config_set_import_action.set_defaults(func=config_set_import_action, write_to_history=False)
 
     p_config_add = p_config_subparsers.add_parser('add',
