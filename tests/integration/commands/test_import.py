@@ -24,6 +24,14 @@ def test_import_emx(session):
     # cleanup
     session.delete('sys_md_Package', 'it')
 
+@pytest.mark.integration
+def test_import_emx_with_import_action(session):
+    run_commander('import it_emx_test --with-action add')
+    # Test should fail when same file is imported with import action add
+    run_commander_fail('import it_emx_test --with-action add')
+
+    # cleanup
+    session.delete('sys_md_Package', 'it')
 
 @pytest.mark.integration
 def test_import_ontology(session):
