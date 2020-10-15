@@ -59,7 +59,7 @@ def add_arguments(subparsers):
                            type=str,
                            metavar='ENTITY_TYPE_ID',
                            help='the id of the entity type (only used when importing VCF files)')
-    _p_import.add_argument('--with-action',
+    _p_import.add_argument('--with-action', '-a',
                            dest='import_action',
                            type=str,
                            metavar='ACTION_TYPE',
@@ -109,9 +109,10 @@ def _import_from_url(args):
     file_name = file_url.split("/")[-1]
     io.start('Importing from URL %s' % highlight(file_url))
 
-    action = _get_import_action(file_name)
     if args.import_action:
         action = args.import_action
+    else:
+        action = _get_import_action(file_name)
 
     params = {'action': action,
               'metadataAction': 'upsert'}
@@ -221,9 +222,10 @@ def _download_attachment(attachment, issue_num):
 def _do_import(file_path, package, entity_type_id, import_action):
     io.start('Importing %s' % (highlight(file_path.name)))
 
-    action = _get_import_action(file_path.name)
     if import_action:
         action = import_action
+    else:
+        action = _get_import_action(file_path.name)
 
     params = {'action': action,
               'metadataAction': 'upsert'}
