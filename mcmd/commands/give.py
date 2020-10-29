@@ -9,6 +9,7 @@ from urllib.parse import urljoin
 
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
+from mcmd.core.compatibility import version
 from mcmd.core.errors import McmdError
 from mcmd.io import io
 from mcmd.io.io import highlight
@@ -17,11 +18,10 @@ from mcmd.molgenis.client import post_form, get, post, patch, delete
 from mcmd.molgenis.principals import PrincipalType, to_role_name, \
     get_principal_type_from_args
 from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists, ResourceType
-
-
 # =========
 # Arguments
 # =========
+from mcmd.molgenis.version import get_version
 
 
 @arguments('give')
@@ -100,6 +100,8 @@ _PERMISSION_SYNONYMS = {'view': 'read',
 
 @command
 def give(args):
+    _validate_args(args)
+
     # Convert synonyms to correct permission type
     if args.permission in _PERMISSION_SYNONYMS:
         args.permission = _PERMISSION_SYNONYMS[args.permission]
@@ -119,6 +121,20 @@ def give(args):
                resource_type=resource_type,
                entity_type_id=args.resource,
                permission=args.permission)
+
+
+@version('7.0.0')
+def _validate_args(args):
+    if args.entity:
+        raise McmdError(
+            "Giving row level permissions is only possible in MOLGENIS 8.1.1 and up (you are using {})".format(
+                get_version()))
+
+
+# noinspection PyUnusedLocal
+@version('8.1.1')
+def _validate_args(args):
+    pass
 
 
 def _grant(principal_type, principal_name, resource_type, entity_type_id, permission):
