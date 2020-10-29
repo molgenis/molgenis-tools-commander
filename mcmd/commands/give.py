@@ -181,7 +181,8 @@ def _grant_rls(principal_type: PrincipalType, principal_name: str, entity_type_i
 
     url = urljoin(api.permissions(), 'entity-{}/{}'.format(entity_type_id, entity_id))
     if permission == 'none':
-        delete(url, data=body)
+        if len(existing_permissions) != 0:
+            delete(url, data=body)
     else:
         body['permission'] = permission.upper()
         permissions = {'permissions': [body]}
