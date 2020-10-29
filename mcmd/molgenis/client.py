@@ -25,6 +25,17 @@ def post(url, data=None, params=None):
 
 
 @request
+def patch(url, data=None, params=None):
+    kwargs = {'headers': _get_default_headers()}
+    if data:
+        kwargs['data'] = json.dumps(data)
+    if params:
+        kwargs['params'] = params
+
+    return requests.patch(url, **kwargs)
+
+
+@request
 def post_file(url, file_path, params):
     return requests.post(url,
                          headers={'x-molgenis-token': auth.get_token()},
@@ -49,9 +60,12 @@ def post_form(url, data):
 
 
 @request
-def delete(url):
-    return requests.delete(url,
-                           headers=_get_default_headers())
+def delete(url, data=None):
+    kwargs = {'headers': _get_default_headers()}
+    if data:
+        kwargs['data'] = json.dumps(data)
+
+    return requests.delete(url, **kwargs)
 
 
 @request

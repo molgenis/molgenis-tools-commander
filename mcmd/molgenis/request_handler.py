@@ -6,8 +6,8 @@ Error responses can come back in varying forms which this decorator tries to uni
 
 import requests
 
-from mcmd.molgenis import auth
 from mcmd.core.errors import McmdError, MolgenisOfflineError
+from mcmd.molgenis import auth
 
 
 def request(func):
@@ -40,7 +40,10 @@ def _handle_json_error(response_json):
             raise McmdError(error['message'])
     elif 'errorMessage' in response_json:
         raise McmdError(response_json['errorMessage'])
+    elif 'detail' in response_json:
+        raise McmdError(response_json['detail'])
 
 
 def _is_json(response):
-    return response.headers.get('Content-Type') and 'application/json' in response.headers.get('Content-Type')
+    return response.headers.get('Content-Type') and 'application/json' in response.headers.get(
+        'Content-Type') or 'application/problem+json' in response.headers.get('Content-Type')
