@@ -24,6 +24,8 @@ def request(func):
         except requests.HTTPError as e:
             if _is_json(response):
                 _handle_json_error(response.json())
+            elif _is_problem(response):
+                _handle_problem(response.json())
             else:
                 raise McmdError(str(e))
         except requests.exceptions.ConnectionError:
@@ -40,10 +42,15 @@ def _handle_json_error(response_json):
             raise McmdError(error['message'])
     elif 'errorMessage' in response_json:
         raise McmdError(response_json['errorMessage'])
-    elif 'detail' in response_json:
-        raise McmdError(response_json['detail'])
+
+
+def _handle_problem(response_json):
+    raise McmdError(response_json['detail'])
 
 
 def _is_json(response):
-    return response.headers.get('Content-Type') and 'application/json' in response.headers.get(
-        'Content-Type') or 'application/problem+json' in response.headers.get('Content-Type')
+    return response.headers.get('Content-Type') and 'application/json' in response.headers.get('Content-Type')
+
+
+def _is_problem(response):
+    return response.headers.get('Content-Type') and 'application/problem+json' in response.headers.get('Content-Type')
