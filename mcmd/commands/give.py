@@ -1,10 +1,11 @@
 """
-Give a principal (a user or a group) some permission on a resource (a package, entity type or plugin). Unless specified
-by the user, the give command will try to figure out the principal- and resource types itself. If a resource or
-principal doesn't exist, the program will terminate.
+Give a principal (a user or a group) some permission on a resource (a package, entity type, plugin or row). Unless
+specified by the user, the give command will try to figure out the principal- and resource types itself. If a resource
+or principal doesn't exist, the program will terminate.
 """
 import textwrap
 from argparse import RawDescriptionHelpFormatter
+from enum import Enum
 from urllib.parse import urljoin
 
 from mcmd.commands._registry import arguments
@@ -18,11 +19,12 @@ from mcmd.molgenis.client import post_form, get, post, patch, delete
 from mcmd.molgenis.principals import PrincipalType, to_role_name, \
     get_principal_type_from_args
 from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists, ResourceType
+from mcmd.molgenis.version import get_version
+
+
 # =========
 # Arguments
 # =========
-from mcmd.molgenis.version import get_version
-
 
 @arguments('give')
 def add_arguments(subparsers):
@@ -89,9 +91,17 @@ def add_arguments(subparsers):
 # Globals
 # =======
 
+class Permission(Enum):
+    """Enum of permissions (and synonyms) that map to MOLGENIS permissions."""
 
-_PERMISSION_SYNONYMS = {'view': 'read',
-                        'edit': 'write'}
+    NONE = 'none'
+    WRITEMETA = 'writemeta'
+    READMETA = 'readmeta'
+    EDIT = 'write'
+    WRITE = 'write'
+    VIEW = 'read'
+    READ = 'read'
+    COUNT = 'count'
 
 
 # =======
@@ -102,9 +112,7 @@ _PERMISSION_SYNONYMS = {'view': 'read',
 def give(args):
     _validate_args(args)
 
-    # Convert synonyms to correct permission type
-    if args.permission in _PERMISSION_SYNONYMS:
-        args.permission = _PERMISSION_SYNONYMS[args.permission]
+    permission = Permission[args.permission.upper()]
 
     principal_type = get_principal_type_from_args(args, principal_name=args.receiver)
 
@@ -113,21 +121,21 @@ def give(args):
                    principal_name=args.receiver,
                    entity_type_id=args.resource,
                    entity_id=args.entity,
-                   permission=args.permission)
+                   permission=permission)
     else:
         resource_type = _get_resource_type(args)
         _grant(principal_type=principal_type,
                principal_name=args.receiver,
                resource_type=resource_type,
                entity_type_id=args.resource,
-               permission=args.permission)
+               permission=permission)
 
 
 @version('7.0.0')
 def _validate_args(args):
     if args.entity:
         raise McmdError(
-            "Giving row level permissions is only possible in MOLGENIS 8.1.1 and up (you are using {})".format(
+            "Giving row level permissions is only possible since MOLGENIS 8.1.1 (you are using {})".format(
                 get_version()))
 
 
@@ -137,14 +145,15 @@ def _validate_args(args):
     pass
 
 
-def _grant(principal_type, principal_name, resource_type, entity_type_id, permission):
+def _grant(principal_type: PrincipalType, principal_name: str, resource_type: ResourceType, entity_type_id: str,
+           permission: Permission):
     io.start('Giving %s %s permission to %s on %s %s' % (principal_type.value,
                                                          highlight(principal_name),
-                                                         highlight(permission),
+                                                         highlight(permission.value),
                                                          resource_type.get_label().lower(),
                                                          highlight(entity_type_id)))
 
-    data = {'radio-' + entity_type_id: permission}
+    data = {'radio-' + entity_type_id: permission.value}
 
     if principal_type == PrincipalType.USER:
         data['username'] = principal_name
@@ -160,10 +169,10 @@ def _grant(principal_type, principal_name, resource_type, entity_type_id, permis
 
 
 def _grant_rls(principal_type: PrincipalType, principal_name: str, entity_type_id: str,
-               entity_id: str, permission: str):
+               entity_id: str, permission: Permission):
     io.start('Giving %s %s permission to %s on row %s of entity type %s' % (principal_type.value,
                                                                             highlight(principal_name),
-                                                                            highlight(permission),
+                                                                            highlight(permission.value),
                                                                             highlight(entity_id),
                                                                             highlight(entity_type_id)))
     get_url = urljoin(api.permissions(),
@@ -180,11 +189,11 @@ def _grant_rls(principal_type: PrincipalType, principal_name: str, entity_type_i
         raise McmdError('Unknown principal type: %s' % principal_type)
 
     url = urljoin(api.permissions(), 'entity-{}/{}'.format(entity_type_id, entity_id))
-    if permission == 'none':
+    if permission.value == 'none':
         if len(existing_permissions) != 0:
             delete(url, data=body)
     else:
-        body['permission'] = permission.upper()
+        body['permission'] = permission.value.upper()
         permissions = {'permissions': [body]}
 
         if len(existing_permissions) == 0:
