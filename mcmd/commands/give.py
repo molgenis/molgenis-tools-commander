@@ -5,8 +5,6 @@ or principal doesn't exist, the program will terminate.
 """
 import textwrap
 from argparse import RawDescriptionHelpFormatter
-from enum import Enum
-from urllib.parse import urljoin
 
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
@@ -14,11 +12,10 @@ from mcmd.core.compatibility import version
 from mcmd.core.errors import McmdError
 from mcmd.io import io
 from mcmd.io.io import highlight
-from mcmd.molgenis import api
-from mcmd.molgenis.client import post_form, get, post, patch, delete
-from mcmd.molgenis.principals import PrincipalType, to_role_name, \
-    get_principal_type_from_args
+from mcmd.molgenis.principals import PrincipalType, get_principal_type_from_args
 from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists, ResourceType
+from mcmd.molgenis.security import security
+from mcmd.molgenis.security.permission import Permission
 from mcmd.molgenis.version import get_version
 
 
@@ -88,23 +85,6 @@ def add_arguments(subparsers):
 
 
 # =======
-# Globals
-# =======
-
-class Permission(Enum):
-    """Enum of permissions (and synonyms) that map to MOLGENIS permissions."""
-
-    NONE = 'none'
-    WRITEMETA = 'writemeta'
-    READMETA = 'readmeta'
-    EDIT = 'write'
-    WRITE = 'write'
-    VIEW = 'read'
-    READ = 'read'
-    COUNT = 'count'
-
-
-# =======
 # Methods
 # =======
 
@@ -153,19 +133,7 @@ def _grant(principal_type: PrincipalType, principal_name: str, resource_type: Re
                                                          resource_type.get_label().lower(),
                                                          highlight(entity_type_id)))
 
-    data = {'radio-' + entity_type_id: permission.value}
-
-    if principal_type == PrincipalType.USER:
-        data['username'] = principal_name
-    elif principal_type == PrincipalType.ROLE:
-        principal_name = to_role_name(principal_name)
-        data['rolename'] = principal_name
-    else:
-        raise McmdError('Unknown principal type: %s' % principal_type)
-
-    url = urljoin(api.permission_manager_permissions(),
-                  '{}/{}'.format(resource_type.get_resource_name(), principal_type.value))
-    post_form(url, data)
+    security.grant_permission(principal_type, principal_name, resource_type, entity_type_id, permission)
 
 
 def _grant_rls(principal_type: PrincipalType, principal_name: str, entity_type_id: str,
@@ -175,31 +143,8 @@ def _grant_rls(principal_type: PrincipalType, principal_name: str, entity_type_i
                                                                             highlight(permission.value),
                                                                             highlight(entity_id),
                                                                             highlight(entity_type_id)))
-    get_url = urljoin(api.permissions(),
-                      'entity-{}/{}?q={}=={}'.format(entity_type_id, entity_id, principal_type.value, principal_name))
-    existing_permissions = get(get_url).json()['data']['permissions']
 
-    body = dict()
-    if principal_type == PrincipalType.USER:
-        body['user'] = principal_name
-    elif principal_type == PrincipalType.ROLE:
-        principal_name = to_role_name(principal_name)
-        body['role'] = principal_name
-    else:
-        raise McmdError('Unknown principal type: %s' % principal_type)
-
-    url = urljoin(api.permissions(), 'entity-{}/{}'.format(entity_type_id, entity_id))
-    if permission.value == 'none':
-        if len(existing_permissions) != 0:
-            delete(url, data=body)
-    else:
-        body['permission'] = permission.value.upper()
-        permissions = {'permissions': [body]}
-
-        if len(existing_permissions) == 0:
-            post(url, data=permissions)
-        else:
-            patch(url, data=permissions)
+    security.grant_row_permission(principal_type, principal_name, entity_type_id, entity_id, permission)
 
 
 def _get_resource_type(args):
