@@ -35,3 +35,13 @@ def grant_row_permission(principal_type: PrincipalType,
                          entity_id: str,
                          permission: Permission):
     permissions_api.grant_row_permission(principal_type, principal_name, entity_type_id, entity_id, permission)
+
+
+@version('7.0.0')
+def enable_row_level_security(entity_type_id: str):
+    permission_manager.enable_row_level_security(entity_type_id)
+
+
+@version('7.0.0')
+def disable_row_level_security(entity_type_id: str):
+    permission_manager.disable_row_level_security(entity_type_id)

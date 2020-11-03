@@ -4,8 +4,9 @@ from mcmd.io import ask
 from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
-from mcmd.molgenis.client import post, put
+from mcmd.molgenis.client import put
 from mcmd.molgenis.resources import ensure_resource_exists, ResourceType
+from mcmd.molgenis.security import security
 
 
 # =========
@@ -50,8 +51,7 @@ def disable_rls(args):
     io.start('Disabling row level security on entity type %s' % highlight(args.entity))
 
     ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
-    post(api.permission_manager_rls(), data={'id': args.entity,
-                          'rlsEnabled': False})
+    security.disable_row_level_security(args.entity)
 
 
 @command

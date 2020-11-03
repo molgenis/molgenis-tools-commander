@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Permission(Enum):
-    """Enum of security (and synonyms) that map to MOLGENIS security."""
+    """Enum of security (and synonyms) that map to MOLGENIS permissions."""
 
     NONE = 'none'
     WRITEMETA = 'writemeta'
