@@ -14,6 +14,8 @@ def grant_row_permission(principal_type: PrincipalType,
                          entity_type_id: str,
                          entity_id: str,
                          permission: Permission):
+    """Grants a permission on one row to one principal."""
+
     existing_permissions = _get_existing_permissions(entity_type_id, entity_id, principal_type, principal_name)
 
     if permission == Permission.NONE:

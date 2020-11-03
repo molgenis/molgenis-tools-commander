@@ -1,3 +1,8 @@
+"""
+Entry point for security related actions. Delegates to permission_manager.py or permissions_api.py depending on the
+MOLGENIS version being used and the action being performed.
+"""
+
 from mcmd.core.compatibility import version
 from mcmd.core.errors import McmdError
 from mcmd.molgenis.principals import PrincipalType
@@ -13,6 +18,8 @@ def grant_permission(principal_type: PrincipalType,
                      resource_type: ResourceType,
                      entity_type_id: str,
                      permission: Permission):
+    """Grants permission on one (non-row) resource to one principal."""
+
     permission_manager.grant_permission(principal_type, principal_name, resource_type, entity_type_id, permission)
 
 
@@ -34,14 +41,20 @@ def grant_row_permission(principal_type: PrincipalType,
                          entity_type_id: str,
                          entity_id: str,
                          permission: Permission):
+    """Grants permission on one row to one principal."""
+
     permissions_api.grant_row_permission(principal_type, principal_name, entity_type_id, entity_id, permission)
 
 
 @version('7.0.0')
 def enable_row_level_security(entity_type_id: str):
+    """Enables row level security on an entity type."""
+
     permission_manager.enable_row_level_security(entity_type_id)
 
 
 @version('7.0.0')
 def disable_row_level_security(entity_type_id: str):
+    """Disables row level security on an entity type."""
+
     permission_manager.disable_row_level_security(entity_type_id)

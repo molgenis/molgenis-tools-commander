@@ -15,6 +15,8 @@ def grant_permission(principal_type: PrincipalType,
                      resource_type: ResourceType,
                      entity_type_id: str,
                      permission: Permission):
+    """Grants permission on one (non-row) resource to one principal."""
+
     data = {'radio-' + entity_type_id: permission.value}
 
     if principal_type == PrincipalType.USER:
@@ -31,10 +33,14 @@ def grant_permission(principal_type: PrincipalType,
 
 
 def enable_row_level_security(entity_type_id: str):
+    """Enables row level security on an entity type."""
+
     post(api.permission_manager_rls(), data={'id': entity_type_id,
                                              'rlsEnabled': True})
 
 
 def disable_row_level_security(entity_type_id: str):
+    """Disables row level security on an entity type."""
+
     post(api.permission_manager_rls(), data={'id': entity_type_id,
                                              'rlsEnabled': False})
