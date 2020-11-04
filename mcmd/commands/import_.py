@@ -62,8 +62,8 @@ def add_arguments(subparsers):
     _p_import.add_argument('--with-action', '-a',
                            dest='import_action',
                            type=str,
-                           metavar='ACTION_TYPE',
-                           help='choose the import action from [add, add_update_existing, update]')
+                           choices=['add', 'add_update_existing', 'update'],
+                           help='strategy to use when importing')
     return _p_import
 
 
