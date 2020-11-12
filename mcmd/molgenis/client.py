@@ -1,13 +1,14 @@
 import json
 
 import requests
+from requests import Response
 
 from mcmd.molgenis import auth
 from mcmd.molgenis.request_handler import request
 
 
 @request
-def get(url, params=None):
+def get(url, params=None) -> Response:
     return requests.get(url,
                         params=params,
                         headers=_get_default_headers())

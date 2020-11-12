@@ -45,7 +45,10 @@ def _handle_json_error(response_json):
 
 
 def _handle_problem(response_json):
-    raise McmdError(response_json['detail'])
+    if 'detail' in response_json:
+        raise McmdError(response_json['detail'])
+    else:
+        raise McmdError(response_json['title'])
 
 
 def _is_json(response):
