@@ -113,16 +113,42 @@ def test_give_permission_synonyms(entity_type, user):
 
 @pytest.mark.integration
 def test_give_user_entity(rls_entity_type, user):
-    run_commander('give {} write {} --entity {}'.format(user, rls_entity_type, 1))
+    run_commander('give {} write {} --entity 1'.format(user, rls_entity_type))
 
     permission = get_user_entity_permission(rls_entity_type, 1, user)
     assert permission == Permission.WRITE
 
 
 @pytest.mark.integration
+def test_give_user_entity_encoding(rls_entity_type, user):
+    run_commander('give {} write {} --entity person?2'.format(user, rls_entity_type))
+
+    permission = get_user_entity_permission(rls_entity_type, 'person?2', user)
+    assert permission == Permission.WRITE
+
+
+@pytest.mark.skip(
+    reason='molgenis does not decode the / properly (see: https://github.com/molgenis/molgenis/issues/4117)')
+@pytest.mark.integration
+def test_give_user_entity_encoding_slash(rls_entity_type, user):
+    run_commander('give {} write {} --entity person/1'.format(user, rls_entity_type))
+
+    permission = get_user_entity_permission(rls_entity_type, 'person/1', user)
+    assert permission == Permission.WRITE
+
+
+@pytest.mark.integration
+def test_give_user_entity_encoding_japanese(rls_entity_type, user):
+    run_commander('give {} write {} --entity モルゲニス'.format(user, rls_entity_type))
+
+    permission = get_user_entity_permission(rls_entity_type, 'モルゲニス', user)
+    assert permission == Permission.WRITE
+
+
+@pytest.mark.integration
 def test_give_role_entity(rls_entity_type, group):
     role_name = group + '_EDITOR'
-    run_commander('give {} write {} --entity {}'.format(role_name, rls_entity_type, 1))
+    run_commander('give {} write {} --entity 1'.format(role_name, rls_entity_type))
 
     permission = get_role_entity_permission(rls_entity_type, 1, role_name)
     assert permission == Permission.WRITE
@@ -131,7 +157,7 @@ def test_give_role_entity(rls_entity_type, group):
 @pytest.mark.integration
 def test_give_role_entity_explicit(rls_entity_type, group):
     role_name = group + '_EDITOR'
-    run_commander('give --role {} write --entity-type {} --entity {}'.format(role_name, rls_entity_type, 1))
+    run_commander('give --role {} write --entity-type {} --entity 1'.format(role_name, rls_entity_type))
 
     permission = get_role_entity_permission(rls_entity_type, 1, role_name)
     assert permission == Permission.WRITE
@@ -139,8 +165,8 @@ def test_give_role_entity_explicit(rls_entity_type, group):
 
 @pytest.mark.integration
 def test_give_user_entity_overwrite(rls_entity_type, user):
-    run_commander('give {} write {} --entity {}'.format(user, rls_entity_type, 1))
-    run_commander('give {} read {} --entity {}'.format(user, rls_entity_type, 1))
+    run_commander('give {} write {} --entity 1'.format(user, rls_entity_type))
+    run_commander('give {} read {} --entity 1'.format(user, rls_entity_type))
 
     permission = get_user_entity_permission(rls_entity_type, 1, user)
     assert permission == Permission.READ
@@ -148,8 +174,8 @@ def test_give_user_entity_overwrite(rls_entity_type, user):
 
 @pytest.mark.integration
 def test_give_user_entity_none(rls_entity_type, user):
-    run_commander('give {} write {} --entity {}'.format(user, rls_entity_type, 1))
-    run_commander('give {} none {} --entity {}'.format(user, rls_entity_type, 1))
+    run_commander('give {} write {} --entity 1'.format(user, rls_entity_type))
+    run_commander('give {} none {} --entity 1'.format(user, rls_entity_type))
 
     permission = get_user_entity_permission(rls_entity_type, 1, user)
     assert permission is Permission.NONE
@@ -157,4 +183,4 @@ def test_give_user_entity_none(rls_entity_type, user):
 
 @pytest.mark.integration
 def test_give_user_entity_illegal_permission(rls_entity_type, user):
-    run_commander_fail('give {} readmeta {} --entity {}'.format(user, rls_entity_type, 1))
+    run_commander_fail('give {} readmeta {} --entity 1'.format(user, rls_entity_type))

@@ -1,5 +1,5 @@
 """Client for the Permission API of MOLGENIS 8.1.1 and up."""
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 
 from mcmd.core.errors import McmdError
 from mcmd.molgenis import api
@@ -15,7 +15,10 @@ def grant_row_permission(principal_type: PrincipalType,
                          permission: Permission):
     """Grants a permission on one row to one principal."""
 
-    existing_permissions = _get_existing_permissions(entity_type_id, entity_id, principal_type, principal_name)
+    existing_permissions = _get_existing_permissions('entity-' + entity_type_id,
+                                                     entity_id,
+                                                     principal_type,
+                                                     principal_name)
 
     if permission == Permission.NONE:
         if len(existing_permissions) != 0:
@@ -57,12 +60,12 @@ def get_role_package_permission(package: str, role: str) -> Permission:
     return _get_permission('package', package, PrincipalType.ROLE, role)
 
 
-def get_user_entity_permission(entity_type: str, entity: str, user: str) -> Permission:
+def get_user_entity_permission(entity_type: str, entity, user: str) -> Permission:
     """Gets the permission for a user on an entity."""
     return _get_permission('entity-' + entity_type, entity, PrincipalType.USER, user)
 
 
-def get_role_entity_permission(entity_type: str, entity: str, role: str) -> Permission:
+def get_role_entity_permission(entity_type: str, entity, role: str) -> Permission:
     """Gets the permission for a role on an entity."""
     return _get_permission('entity-' + entity_type, entity, PrincipalType.ROLE, role)
 
@@ -76,11 +79,13 @@ def is_row_level_secured(entity_type_id: str) -> bool:
     return entity_type_id in entity_type_ids
 
 
-def _get_permission(type_id: str, object_id: str, principal_type: PrincipalType, principal: str) -> Permission:
-    url = urljoin(api.permissions(), '{}/{}?q={}=={}'.format(type_id,
-                                                             object_id,
-                                                             principal_type.value,
-                                                             principal))
+def _get_permission(type_id: str, object_id, principal_type: PrincipalType, principal: str) -> Permission:
+    object_id = str(object_id)
+    url = urljoin(api.permissions(), '{}/{}?q={}=={}'.format(quote(type_id, safe=''),
+                                                             quote(object_id, safe=''),
+                                                             quote(principal_type.value),
+                                                             quote(principal, safe='')))
+
     permissions = get(url).json()['data']['permissions']
     if len(permissions) == 0:
         return Permission.NONE
@@ -88,9 +93,13 @@ def _get_permission(type_id: str, object_id: str, principal_type: PrincipalType,
         return Permission[permissions[0]['permission']]
 
 
-def _get_existing_permissions(entity_type_id: str, entity_id: str, principal_type: PrincipalType, principal_name: str):
+def _get_existing_permissions(type_id: str, object_id: str, principal_type: PrincipalType, principal_name: str):
     get_url = urljoin(api.permissions(),
-                      'entity-{}/{}?q={}=={}'.format(entity_type_id, entity_id, principal_type.value, principal_name))
+                      '{}/{}?q={}=={}'.format(quote(type_id, safe=''),
+                                              quote(object_id, safe=''),
+                                              quote(principal_type.value),
+                                              quote(principal_name, safe='')))
+
     existing_permissions = get(get_url).json()['data']['permissions']
     return existing_permissions
 
@@ -126,7 +135,9 @@ def _update_permission(entity_type_id: str,
 
 
 def _get_entity_url(entity_type_id: str, entity_id: str) -> str:
-    return urljoin(api.permissions(), 'entity-{}/{}'.format(entity_type_id, entity_id))
+    return urljoin(api.permissions(),
+                   'entity-{}/{}'.format(quote(entity_type_id, safe=''),
+                                         quote(entity_id, safe='')))
 
 
 def _get_principal_body(principal_type: PrincipalType, principal_name: str) -> dict:
