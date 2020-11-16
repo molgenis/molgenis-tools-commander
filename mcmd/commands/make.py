@@ -116,7 +116,7 @@ def _get_subject_type(args) -> PrincipalType:
 @version('8.1.0')
 def _get_subject_type(args) -> PrincipalType:
     """
-    From 8.3 and up, group roles can be included with the identities API so the subject can be a user or a role.
+    From 8.1 and up, group roles can be included with the identities API so the subject can be a user or a role.
     """
     return get_principal_type_from_args(args, principal_name=args.subject)
 

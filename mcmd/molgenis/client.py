@@ -1,13 +1,14 @@
 import json
 
 import requests
+from requests import Response
 
 from mcmd.molgenis import auth
 from mcmd.molgenis.request_handler import request
 
 
 @request
-def get(url, params=None):
+def get(url, params=None) -> Response:
     return requests.get(url,
                         params=params,
                         headers=_get_default_headers())
@@ -22,6 +23,17 @@ def post(url, data=None, params=None):
         kwargs['params'] = params
 
     return requests.post(url, **kwargs)
+
+
+@request
+def patch(url, data=None, params=None):
+    kwargs = {'headers': _get_default_headers()}
+    if data:
+        kwargs['data'] = json.dumps(data)
+    if params:
+        kwargs['params'] = params
+
+    return requests.patch(url, **kwargs)
 
 
 @request
@@ -49,9 +61,12 @@ def post_form(url, data):
 
 
 @request
-def delete(url):
-    return requests.delete(url,
-                           headers=_get_default_headers())
+def delete(url, data=None):
+    kwargs = {'headers': _get_default_headers()}
+    if data:
+        kwargs['data'] = json.dumps(data)
+
+    return requests.delete(url, **kwargs)
 
 
 @request
