@@ -3,7 +3,7 @@ All interactions with preset locations on the file system should go through a Co
 in the 'base_context' module for more information, and see the 'HomeContext' class in the 'home_context' module for the
 default implementation.
 
-The current context should be retreived by using the package method in this file.
+The current context should be retrieved by using the package method in this file.
 """
 
 from mcmd.core.context import _context_holder
