@@ -70,7 +70,7 @@ def _upgrade(default_config, user_config):
 
     mcmd.io.io.newline()
     mcmd.io.io.info(
-        'The configuration file has been updated succesfully ({})'.format(
+        'The configuration file has been updated successfully ({})'.format(
             highlight(str(context().get_properties_file()))))
     exit(0)
 

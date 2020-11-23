@@ -27,7 +27,8 @@ def add_arguments(subparsers):
     p_config_set_host.add_argument('url',
                                    nargs='?',
                                    help='the URL of the host (Optional)')
-    p_config_set_import_action = p_config_set_subparsers.add_parser('import-action', help='set the default import action')
+    p_config_set_import_action = p_config_set_subparsers.add_parser('import-action',
+                                                                    help='set the default import action')
     p_config_set_import_action.set_defaults(func=config_set_import_action, write_to_history=False)
 
     p_config_add = p_config_subparsers.add_parser('add',
@@ -55,12 +56,15 @@ def config_set_host(args):
     io.start("Switching to host {}".format(highlight(url)))
     config.set_host(url)
 
+
+# noinspection PyUnusedLocal
 @command
 def config_set_import_action(args):
     options = ['add', 'add_update_existing', 'update']
     action = ask.multi_choice('Choose the default import action:', options)
     io.start("Setting import action to {}".format(highlight(action)))
     config.set_import_action(action)
+
 
 # noinspection PyUnusedLocal
 @command

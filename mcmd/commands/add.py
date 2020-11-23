@@ -2,13 +2,12 @@ import mimetypes
 import textwrap
 from argparse import RawDescriptionHelpFormatter
 from os import path as os_path
-from pathlib import Path
 from typing import List
 
 from mcmd.commands._registry import arguments
-from mcmd.core.context import context
 from mcmd.core.command import command
 from mcmd.core.compatibility import version
+from mcmd.core.context import context
 from mcmd.core.errors import McmdError
 from mcmd.io import io
 from mcmd.io.io import highlight
