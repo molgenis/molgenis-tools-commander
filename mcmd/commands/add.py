@@ -14,7 +14,7 @@ from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get, post_files
 from mcmd.molgenis.principals import to_role_name
-from mcmd.utils.file_helpers import get_file_name_from_path, scan_folders_for_files, select_path
+from mcmd.utils.file_helpers import get_file_name_from_path, select_file_from_folders
 
 # Store a reference to the parser so that we can show an error message for the custom validation rule
 p_add_theme = None
@@ -366,8 +366,7 @@ def _prepare_files_for_upload(paths, names, valid_content_types):
 
 def _get_path_from_quick_folders(file_name):
     file_name = os_path.splitext(file_name)[0]
-    file_map = scan_folders_for_files(context().get_resource_folders())
-    path = select_path(file_map, file_name)
+    path = select_file_from_folders(context().get_resource_folders(), file_name)
     return str(path)
 
 

@@ -1,13 +1,13 @@
-from collections.__init__ import defaultdict
 from os import path
 from pathlib import Path
+from typing import List
 
 import mcmd.io.ask
-from mcmd.io import io
 from mcmd.core.errors import McmdError
+from mcmd.io import io
 
 
-def get_file_name_from_path(file_path):
+def get_file_name_from_path(file_path: str):
     """
     get_file_name returns a file name from a path to the file
     :param file_path: path to the file (i.e. /Users/henk/Desktop/example.xlsx)
@@ -16,43 +16,90 @@ def get_file_name_from_path(file_path):
     return path.basename(file_path)
 
 
-def scan_folders_for_files(folders):
+def get_files(folders: List[Path]) -> List[Path]:
     """
-    scan_folders_for_files loops through specified folders to look for their files
+    loops through specified folders and appends their files to a list
     :param folders: a list of paths to folders
     :return: files: a dictionary with as key a file and as value a list of the paths that lead to the file
     """
-    files = defaultdict(list)
+    files = list()
     for folder in folders:
         if not folder.is_dir():
             io.warn("Folder %s doesn't exist" % folder)
 
         for file in list(folder.glob('*.*')):
-            files[file.stem].append(file)
+            files.append(file)
     return files
 
 
-def select_path(file_map, file_name):
+def select_path(files: List[Path], file_name: str):
     """
-    select_path selects the path to a file from a dictionary of files with paths
-    :param file_map: a dictionary with file as key and as value a list of paths l
-    :param file_name: the name of the file to get the path of
+    select_path selects the path from a list of paths, asks user's input when result is ambiguous
+    :param files: a list of files
+    :param file_name: the name of the file to get the path of, with or withou extension
     :return: the selected path
 
     :exception McmdError if selected file was not found
     """
-    if file_name in file_map:
-        paths = file_map[file_name]
-        if len(paths) > 1:
-            file_path = _choose_file(paths, file_name)
+
+    matches = list()
+    for file in files:
+        if file_name == file.stem or file_name == file.name:
+            matches.append(file)
+
+    if len(matches) > 0:
+        if len(matches) > 1:
+            file_path = _choose_file(matches, file_name)
         else:
-            file_path = paths[0]
+            file_path = matches[0]
     else:
-        raise McmdError('No file found for %s' % file_name)
+        raise McmdError('No file found for {}'.format(file_name))
     return file_path
 
 
-def _choose_file(paths, name):
+def select_file_from_folders(folders: List[Path], file_name: str):
+    """
+    Selects a file from a list of folders. File name can be supplied with or without extension. When there are multiple
+    matches, the user will be asked to choose one.
+    :param folders: a list of folders
+    :param file_name: the name of the file to get the path of, with or without extension
+    :return: the selected path
+
+    :exception McmdError if selected file was not found
+    """
+    files = get_files(folders)
+    return select_path(files, file_name)
+
+
+def read_file(file: Path) -> str:
+    """
+    read_file reads the file data into a string
+    :param file: file to read from
+    :return: file contents
+    """
+    try:
+        with file.open() as file_handle:
+            content = file_handle.read()
+    except OSError as e:
+        raise McmdError('Error reading file: {}'.format(str(e)))
+    return content
+
+
+def read_file_lines(file: Path) -> List[str]:
+    """
+    read_file reads the file data into a list of strings
+    :param file: file to read from
+    :return: list of lines
+    """
+    try:
+        with file.open() as file_handle:
+            content = file_handle.readlines()
+    except OSError as e:
+        raise McmdError('Error reading file: {}'.format(str(e)))
+    return content
+
+
+def _choose_file(paths: List[Path], name: str):
     """
     _choose_file asks the user to choose a file out of the possible file paths
     :param paths: the list of paths to the file
