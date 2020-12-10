@@ -14,12 +14,13 @@ from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import get, put
-from mcmd.utils.file_helpers import read_file, select_file_from_folders
+from mcmd.utils import files
 
 
 # =========
 # Arguments
 # =========
+
 
 @arguments('set')
 def add_arguments(subparsers):
@@ -108,11 +109,11 @@ def set_(args):
 
     if args.from_path:
         path = Path(args.value)
-        value = read_file(path)
+        value = files.read_file(path)
         value_desc = 'contents of {}'.format(highlight(args.value))
     elif args.from_resource:
-        path = select_file_from_folders(context().get_resource_folders(), args.value)
-        value = read_file(path)
+        path = files.select_file_from_folders(context().get_resource_folders(), args.value)
+        value = files.read_file(path)
         value_desc = 'contents of {}'.format(highlight(args.value))
 
     if args.for_:

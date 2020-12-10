@@ -14,15 +14,15 @@ from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get, post_files
 from mcmd.molgenis.principals import to_role_name
-from mcmd.utils.file_helpers import get_file_name_from_path, select_file_from_folders
-
-# Store a reference to the parser so that we can show an error message for the custom validation rule
-p_add_theme = None
-
+from mcmd.utils import files as file_utils
 
 # =========
 # Arguments
 # =========
+
+# Store a reference to the parser so that we can show an error message for the custom validation rule
+p_add_theme = None
+
 
 @arguments('add')
 def add_arguments(subparsers):
@@ -295,7 +295,7 @@ def add_theme(args):
     if bs4:
         paths.append(bs4)
         names.append('bootstrap4-style')
-        bs4_name = get_file_name_from_path(bs4)
+        bs4_name = file_utils.get_file_name_from_path(bs4)
         io.start(
             'Adding bootstrap 3 theme {} and bootstrap 4 theme {} to bootstrap themes'.format(
                 highlight(bs3_name),
@@ -344,7 +344,7 @@ def _prepare_files_for_upload(paths, names, valid_content_types):
     """
     files = {}
     for name, path in zip(names, paths):
-        file_name = get_file_name_from_path(path)
+        file_name = file_utils.get_file_name_from_path(path)
         content_type = mimetypes.guess_type(path)[0]
         if not os_path.exists(path):
             raise McmdError(
@@ -366,7 +366,7 @@ def _prepare_files_for_upload(paths, names, valid_content_types):
 
 def _get_path_from_quick_folders(file_name):
     file_name = os_path.splitext(file_name)[0]
-    path = select_file_from_folders(context().get_resource_folders(), file_name)
+    path = file_utils.select_file_from_folders(context().get_resource_folders(), file_name)
     return str(path)
 
 

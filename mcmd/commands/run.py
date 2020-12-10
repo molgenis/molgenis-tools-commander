@@ -12,7 +12,7 @@ from mcmd.script.model.script import Script
 from mcmd.script.options import ScriptOptions
 from mcmd.script.parser import script_parser
 from mcmd.script.parser.errors import InvalidScriptError, ScriptValidationError
-from mcmd.utils.file_helpers import read_file_lines
+from mcmd.utils import files
 
 
 @arguments('run', CommandType.META)
@@ -54,7 +54,7 @@ def add_arguments(subparsers):
 @command
 def run(args):
     script_file = _get_script(args)
-    lines = read_file_lines(script_file)
+    lines = files.read_file_lines(script_file)
 
     script = _try_parse_script(lines)
 
