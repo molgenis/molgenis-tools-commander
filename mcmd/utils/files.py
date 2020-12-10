@@ -54,7 +54,7 @@ def read_file_lines(file: Path) -> List[str]:
     """
     try:
         with file.open() as file_handle:
-            content = file_handle.readlines()
+            content = file_handle.read().splitlines()
     except OSError as e:
         raise McmdError('Error reading file: {}'.format(str(e)))
     return content
@@ -71,14 +71,14 @@ def select_file_from_folders(folders: List[Path], file_name: str) -> Path:
     :exception McmdError if selected file was not found
     """
     files = get_files(folders)
-    return select_path(files, file_name)
+    return select_file(files, file_name)
 
 
-def select_path(files: List[Path], file_name: str) -> Path:
+def select_file(files: List[Path], file_name: str) -> Path:
     """
     select_path selects the path from a list of paths, asks user's input when result is ambiguous
     :param files: a list of files
-    :param file_name: the name of the file to get the path of, with or withou extension
+    :param file_name: the name of the file to get the path of, with or without extension
     :return: the selected path
 
     :exception McmdError if selected file was not found
