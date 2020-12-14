@@ -6,7 +6,7 @@ from typing import List
 
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
-from mcmd.core.compatibility import version
+from mcmd.core.compatibility import version, deprecated
 from mcmd.core.context import context
 from mcmd.core.errors import McmdError
 from mcmd.io import io
@@ -119,7 +119,19 @@ def add_arguments(subparsers):
                              help="the token")
 
     p_add_theme = p_add_subparsers.add_parser('theme',
-                                              help='upload a bootstrap theme')
+                                              help='upload a bootstrap theme (deprecated since 8.6)',
+                                              formatter_class=RawDescriptionHelpFormatter,
+                                              description=textwrap.dedent(
+                                                  """
+                                                  Add a CSS theme. 
+
+                                                  Deprecated since 8.6. The CSS file(s) should be hosted somewhere else.
+
+                                                  Example usage:
+                                                    mcmd add theme --bootstrap3 theme3.css --bootstrap4 theme4.css
+                                                  """
+                                              )
+                                              )
     p_add_theme.set_defaults(func=add_theme,
                              write_to_history=True)
     p_add_theme.add_argument('--from-path', '-p',
@@ -279,6 +291,10 @@ def add_token(args):
 
 
 @command
+@deprecated(since='8.6.0',
+            action='Adding themes',
+            info='Themes should be hosted somewhere else. Read '
+                 'https://molgenis.gitbook.io/molgenis/configuration/guide-customize#style-theme to learn more.')
 def add_theme(args):
     """
     add_theme adds a theme to the stylesheet table
