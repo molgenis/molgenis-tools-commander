@@ -3,17 +3,19 @@ This module houses the framework responsible for ensuring compatibility over mul
 """
 
 from collections import defaultdict
-from distutils.version import StrictVersion
 from functools import wraps
 from typing import List
 
+from packaging import version as py_version
+
+from mcmd.core.errors import McmdError
 from mcmd.molgenis import version as molgenis_version
 
 MIN_VERSION = '7.0.0'
 _registry = defaultdict(dict)
 
 
-def version(version_):
+def version(version_: str):
     """
     Version decorator. Switches implementations based on the version of MOLGENIS.
 
@@ -62,13 +64,45 @@ def version(version_):
     return registrar
 
 
+def deprecated(since: str, action: str = 'This feature', info: str = None):
+    """
+    Deprecation decorator.
+    Raises a deprecation error when the MOLGENIS version is equal or higher than the given version.
+
+    Usage:
+    >>> @deprecated(since='8.1.0',
+    >>>             action='doing something',
+    >>>             info='This thing should be done in another way.')
+    >>> def do_something():
+    >>>     print('do something')
+    """
+
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            mol_version = molgenis_version.get_version_number()
+            if py_version.parse(mol_version) >= py_version.parse(since):
+                message = '{} is deprecated since MOLGENIS {}. You are using MOLGENIS {}.'.format(action.capitalize(),
+                                                                                                  since,
+                                                                                                  mol_version)
+                if info:
+                    raise McmdError(message, info=info)
+                else:
+                    raise McmdError(message)
+            else:
+                return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
 def _get_closest_version(versions: List[str]):
     mol_version = molgenis_version.get_version_number()
     if mol_version in versions:
         return mol_version
     else:
         versions.append(mol_version)
-        versions = sorted(versions, key=StrictVersion)
+        versions = sorted(versions, key=lambda v: py_version.Version(v))
         index = versions.index(mol_version)
         if index == 0:
             # Molgenis version is lower than lowest implementation available. Default to lowest version possible:
