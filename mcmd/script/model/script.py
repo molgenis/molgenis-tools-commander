@@ -21,7 +21,6 @@ class Script:
         else:
             lines_subset = {line for line in self.lines if line.number >= from_line_number}
 
-            print(self._dependencies)
             dependencies = set()
             for line in lines_subset:
                 dependencies |= self._get_deep_dependencies(line)
