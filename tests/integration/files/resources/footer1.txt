@@ -1,2 +1,1 @@
-This footer has been changed <br/>
-by MOLGENIS Commander
+This footer has been changed by MOLGENIS Commander

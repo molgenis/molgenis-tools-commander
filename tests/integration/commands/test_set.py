@@ -39,7 +39,7 @@ def test_set_from_path(session):
     run_commander('set app footer --from-path {}'.format(str(file)))
 
     settings = session.get('sys_set_app')[0]
-    assert settings['footer'] == 'This footer has been changed <br/>\nby MOLGENIS Commander'
+    assert settings['footer'] == 'This footer has been changed by MOLGENIS Commander'
     run_commander('set app footer ')
 
 
@@ -48,4 +48,4 @@ def test_set_from_resource(session):
     run_commander('set app footer --from-resource footer2.txt')
 
     settings = session.get('sys_set_app')[0]
-    assert settings['footer'] == 'This footer has been changed again <br/>\nby MOLGENIS Commander'
+    assert settings['footer'] == 'This footer has been changed again by MOLGENIS Commander'
