@@ -1,3 +1,6 @@
+import textwrap
+from argparse import RawDescriptionHelpFormatter
+
 import mcmd.config.config as config
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command, CommandType
@@ -11,49 +14,71 @@ from mcmd.io.io import highlight
 # =========
 
 @arguments('config', CommandType.META)
-def add_arguments(subparsers):
-    p_config = subparsers.add_parser('config',
-                                     help='change the configuration of MOLGENIS Commander')
-    p_config_subparsers = p_config.add_subparsers(dest='type', metavar='')
+def add_arguments(config_subparsers):
+    config_ = config_subparsers.add_parser('config',
+                                           help='change the configuration of MOLGENIS Commander',
+                                           formatter_class=RawDescriptionHelpFormatter,
+                                           description=textwrap.dedent(
+                                               """
+                                               Changes values in the configuration file.
+    
+                                               example usage:
+                                                 # Adding a host interactively or with arguments
+                                                 mcmd config add host
+                                                 mcmd config add host --url http://x --username admin --password admin
+    
+                                                 # Switching to another host interactively or with arguments
+                                                 mcmd config set host
+                                                 mcmd config set host http://localhost
+    
+                                                 # Enabling and disabling non-interactive mode
+                                                 mcmd config set non-interactive
+                                                 mcmd config set interactive
+    
+                                                 # Setting the default import action
+                                                 mcmd config set import-action add_update_existing
+                                               """
+                                           ))
+    config_subparsers = config_.add_subparsers(dest='type', metavar='')
 
-    p_config_set = p_config_subparsers.add_parser('set',
-                                                  help='set values in the configuration file')
+    set_ = config_subparsers.add_parser('set',
+                                        help='set values in the configuration file')
 
-    p_config_set_subparsers = p_config_set.add_subparsers(metavar='')
-    p_config_set_host = p_config_set_subparsers.add_parser('host',
-                                                           help='select a host')
-    p_config_set_host.set_defaults(func=config_set_host,
-                                   write_to_history=False)
-    p_config_set_host.add_argument('url',
-                                   nargs='?',
-                                   help='the URL of the host (Optional)')
+    set_subparsers = set_.add_subparsers(metavar='')
+    set_host = set_subparsers.add_parser('host',
+                                         help='select a host')
+    set_host.set_defaults(func=config_set_host,
+                          write_to_history=False)
+    set_host.add_argument('url',
+                          nargs='?',
+                          help='the URL of the host (Optional)')
 
-    p_config_set_import_action = p_config_set_subparsers.add_parser('import-action',
-                                                                    help='set the default import action')
-    p_config_set_import_action.set_defaults(func=config_set_import_action, write_to_history=False)
+    set_import_action = set_subparsers.add_parser('import-action',
+                                                  help='set the default import action')
+    set_import_action.set_defaults(func=config_set_import_action, write_to_history=False)
 
-    p_config_set_non_interactive = p_config_set_subparsers.add_parser('non-interactive',
-                                                                      help='set non-interactive mode to true')
-    p_config_set_non_interactive.set_defaults(func=config_set_non_interactive, write_to_history=False)
+    set_non_interactive = set_subparsers.add_parser('non-interactive',
+                                                    help='set non-interactive mode to true')
+    set_non_interactive.set_defaults(func=config_set_non_interactive, write_to_history=False)
 
-    p_config_set_interactive = p_config_set_subparsers.add_parser('interactive',
-                                                                  help='set non-interactive mode to false ')
-    p_config_set_interactive.set_defaults(func=config_set_interactive, write_to_history=False)
+    set_interactive = set_subparsers.add_parser('interactive',
+                                                help='set non-interactive mode to false ')
+    set_interactive.set_defaults(func=config_set_interactive, write_to_history=False)
 
-    p_config_add = p_config_subparsers.add_parser('add',
-                                                  help='add values in the configuration file')
-    p_config_add_subparsers = p_config_add.add_subparsers(metavar='')
+    add = config_subparsers.add_parser('add',
+                                       help='add values in the configuration file')
+    add_subparsers = add.add_subparsers(metavar='')
 
-    p_config_add_host = p_config_add_subparsers.add_parser('host',
-                                                           help='add a new host')
-    p_config_add_host.set_defaults(func=config_add_host,
-                                   write_to_history=False)
-    p_config_add_host.add_argument('--url',
-                                   help='the URL of the host')
-    p_config_add_host.add_argument('--username',
-                                   help='the username of the admin account')
-    p_config_add_host.add_argument('--password',
-                                   help='the password of the admin account')
+    add_host = add_subparsers.add_parser('host',
+                                         help='add a new host')
+    add_host.set_defaults(func=config_add_host,
+                          write_to_history=False)
+    add_host.add_argument('--url',
+                          help='the URL of the host')
+    add_host.add_argument('--username',
+                          help='the username of the admin account')
+    add_host.add_argument('--password',
+                          help='the password of the admin account')
 
 
 # =======
