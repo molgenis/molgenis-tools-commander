@@ -35,8 +35,9 @@ def add_arguments(config_subparsers):
                                                  mcmd config set non-interactive
                                                  mcmd config set interactive
     
-                                                 # Setting the default import action
-                                                 mcmd config set import-action add_update_existing
+                                                 # Setting the default import action interactively and with arguments
+                                                 mcmd config set import-action
+                                                 mcmd config set import-action --action add_update_existing
                                                """
                                            ))
     config_subparsers = config_.add_subparsers(dest='type', metavar='')
@@ -56,6 +57,9 @@ def add_arguments(config_subparsers):
     set_import_action = set_subparsers.add_parser('import-action',
                                                   help='set the default import action')
     set_import_action.set_defaults(func=config_set_import_action, write_to_history=False)
+    set_import_action.add_argument('--action',
+                                   help='the action to set',
+                                   choices=['add', 'add_update_existing', 'update'])
 
     set_non_interactive = set_subparsers.add_parser('non-interactive',
                                                     help='set non-interactive mode to true')
@@ -105,8 +109,12 @@ def config_set_host(args):
 # noinspection PyUnusedLocal
 @command
 def config_set_import_action(args):
-    options = ['add', 'add_update_existing', 'update']
-    action = ask.multi_choice('Choose the default import action:', options)
+    if args.action:
+        action = args.action
+    else:
+        options = ['add', 'add_update_existing', 'update']
+        action = ask.multi_choice('Choose the default import action:', options)
+
     io.start("Setting import action to {}".format(highlight(action)))
     config.set_import_action(action)
 
