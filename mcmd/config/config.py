@@ -11,7 +11,7 @@ from ruamel.yaml import YAML
 
 import mcmd.core.errors as errors
 
-_config = None
+_config = dict()
 _properties_file: Optional[Path] = None
 
 
@@ -84,6 +84,11 @@ def has_option(*args):
         return True
     except KeyError:
         return False
+
+
+def set_non_interactive(value: bool):
+    _config['settings']['non_interactive'] = value
+    _persist()
 
 
 def set_import_action(action):

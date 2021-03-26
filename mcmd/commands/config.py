@@ -27,17 +27,33 @@ def add_arguments(subparsers):
     p_config_set_host.add_argument('url',
                                    nargs='?',
                                    help='the URL of the host (Optional)')
+
     p_config_set_import_action = p_config_set_subparsers.add_parser('import-action',
                                                                     help='set the default import action')
     p_config_set_import_action.set_defaults(func=config_set_import_action, write_to_history=False)
 
+    p_config_set_non_interactive = p_config_set_subparsers.add_parser('non-interactive',
+                                                                      help='set non-interactive mode to true')
+    p_config_set_non_interactive.set_defaults(func=config_set_non_interactive, write_to_history=False)
+
+    p_config_set_interactive = p_config_set_subparsers.add_parser('interactive',
+                                                                  help='set non-interactive mode to false ')
+    p_config_set_interactive.set_defaults(func=config_set_interactive, write_to_history=False)
+
     p_config_add = p_config_subparsers.add_parser('add',
                                                   help='add values in the configuration file')
     p_config_add_subparsers = p_config_add.add_subparsers(metavar='')
+
     p_config_add_host = p_config_add_subparsers.add_parser('host',
                                                            help='add a new host')
     p_config_add_host.set_defaults(func=config_add_host,
                                    write_to_history=False)
+    p_config_add_host.add_argument('--url',
+                                   help='the URL of the host')
+    p_config_add_host.add_argument('--username',
+                                   help='the username of the admin account')
+    p_config_add_host.add_argument('--password',
+                                   help='the password of the admin account')
 
 
 # =======
@@ -54,7 +70,11 @@ def config_set_host(args):
         url = ask.multi_choice('Please select a host:', urls)
 
     io.start("Switching to host {}".format(highlight(url)))
-    config.set_host(url)
+
+    if config.host_exists(url):
+        config.set_host(url)
+    else:
+        raise McmdError("There is no host {} in the config file".format(url))
 
 
 # noinspection PyUnusedLocal
@@ -68,26 +88,47 @@ def config_set_import_action(args):
 
 # noinspection PyUnusedLocal
 @command
+def config_set_non_interactive(args):
+    io.start('Switching to non-interactive mode')
+    config.set_non_interactive(True)
+
+
+# noinspection PyUnusedLocal
+@command
+def config_set_interactive(args):
+    io.start('Switching to interactive mode')
+    config.set_non_interactive(False)
+
+
+# noinspection PyUnusedLocal
+@command
 def config_add_host(args):
-    url = _add_host()
-    _switch_to_new_host(url)
+    if args.url:
+        url = args.url
+    else:
+        url = ask.input_("URL", required=True)
 
-
-def _add_host():
-    url = ask.input_("URL", required=True)
     if config.host_exists(url):
         raise McmdError("A host with URL {} already exists.".format(url))
 
-    username = ask.input_("Username (Default: admin)")
-    password = ask.password("Password (Leave blank to use command line authentication)")
+    if args.username:
+        username = args.username
+    else:
+        username = ask.input_("Username (Default: admin)")
+        username = 'admin' if len(username) == 0 else username
 
-    username = 'admin' if len(username) == 0 else username
-    password = None if len(password) == 0 else password
+    if args.password:
+        password = args.password
+    else:
+        password = ask.password("Password (Leave blank to use command line authentication)")
+        password = None if len(password) == 0 else password
 
     io.start("Adding host {}".format(highlight(url)))
     config.add_host(url, username, password)
     io.succeed()
-    return url
+
+    if not config.get('settings', 'non_interactive'):
+        _switch_to_new_host(url)
 
 
 def _switch_to_new_host(url):
