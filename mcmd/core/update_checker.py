@@ -27,9 +27,7 @@ def check():
         if latest <= current:
             store.set_update_available(None)
         else:
-            io.warn(
-                'A new version of MOLGENIS Commander is available: {}! You are using {}.'.format(latest, current))
-            io.info("To upgrade, run 'pip install --upgrade molgenis-commander'")
+            _show_update_message(current, latest)
 
 
 def _current_version() -> Version:
@@ -46,3 +44,9 @@ def _latest_version() -> Optional[Version]:
             return Version(latest)
     except RequestException:
         return None
+
+
+def _show_update_message(current: Version, latest: Version):
+    io.warn(
+        'A new version of MOLGENIS Commander is available: {}! You are using {}.'.format(latest, current))
+    io.info("To upgrade, run 'pip install --upgrade molgenis-commander'")
