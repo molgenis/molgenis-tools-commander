@@ -5,6 +5,7 @@ from typing import Optional
 from packaging.version import Version
 
 from mcmd.core.context import context
+from mcmd.core.errors import McmdError
 
 _store = {
     'last_version_check': datetime.now(),
@@ -13,9 +14,12 @@ _store = {
 
 
 def load():
-    if context().get_storage_file().exists():
-        with context().get_storage_file().open('rb') as f:
-            _store.update(pickle.load(f))
+    try:
+        if context().get_storage_file().exists():
+            with context().get_storage_file().open('rb') as f:
+                _store.update(pickle.load(f))
+    except (pickle.PickleError, IOError) as e:
+        raise McmdError("Unable to read storage from file: {}".format(e.message))
 
 
 def get_last_version_check() -> datetime:
@@ -38,5 +42,8 @@ def set_update_available(version: Optional[Version]):
 
 
 def _persist():
-    with context().get_storage_file().open('wb') as f:
-        pickle.dump(_store, f)
+    try:
+        with context().get_storage_file().open('wb') as f:
+            pickle.dump(_store, f)
+    except (pickle.PickleError, IOError) as e:
+        raise McmdError("Unable to save storage to file: {}".format(e.message))
