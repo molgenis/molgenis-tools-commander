@@ -16,7 +16,7 @@ from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post_file, get, post
-from mcmd.utils.file_helpers import scan_folders_for_files, select_path
+from mcmd.utils import files
 
 # =========
 # Arguments
@@ -131,8 +131,8 @@ def _import_from_url(args):
 
 def _import_from_quick_folders(args):
     file_name = os_path.splitext(args.resource)[0]
-    file_map = scan_folders_for_files(context().get_git_folders() + context().get_dataset_folders())
-    path = select_path(file_map, file_name)
+    path = files.select_file_from_folders(folders=context().get_git_folders() + context().get_dataset_folders(),
+                                          file_name=file_name)
     _do_import(path, args.to_package, args.entity_type_id, args.import_action)
 
 
