@@ -5,11 +5,15 @@ interactions during the integration tests, the modules need to be replaced with 
 
 import sys
 
-from tests.integration import loader_mock, store_mock
+from tests.integration import loader_mock
 
+# Replace the config loader so the test config is loaded
 sys.modules['mcmd.config.loader'] = loader_mock
 
-sys.modules['mcmd.core.store'] = store_mock
-
-# noinspection PyProtectedMember
+# noinspection PyProtectedMember,PyUnresolvedReferences
+# Remove the possibility for the config to save itself to disk
 sys.modules['mcmd.config.config']._persist = lambda: None
+
+# noinspection PyProtectedMember,PyUnresolvedReferences
+# Remove the possibility for the store to save itself to disk
+sys.modules['mcmd.core.store']._persist = lambda: None
