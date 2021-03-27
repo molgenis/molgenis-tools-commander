@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime, timedelta
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 import pytest
 import responses
@@ -12,23 +12,23 @@ from mcmd.core.update_checker import _latest_version, check
 
 
 @pytest.mark.unit
-@patch('mcmd.core.store._persist')
+@patch('mcmd.core.store._persist', Mock())
 class ErrorsTest(unittest.TestCase):
 
     @responses.activate
-    def test_latest_version(self, persist):
+    def test_latest_version(self):
         responses.add(responses.GET, 'http://pypi.org/simple/molgenis-commander/', status=200, body=pypi_version_page)
 
         assert _latest_version() == Version('1.9.0')
 
     @responses.activate
-    def test_latest_version_error(self, persist):
+    def test_latest_version_error(self):
         responses.add(responses.GET, 'http://pypi.org/simple/molgenis-commander/', status=500)
 
         assert _latest_version() is None
 
     @patch('mcmd.core.update_checker._show_update_message')
-    def test_already_checked_today(self, message, persist):
+    def test_already_checked_today(self, message):
         now = datetime.now()
         store.set_last_version_check(now)
         store.set_update_available(None)
@@ -42,7 +42,7 @@ class ErrorsTest(unittest.TestCase):
     @patch('mcmd.core.update_checker._latest_version')
     @patch('mcmd.core.update_checker._current_version')
     @patch('mcmd.core.update_checker._show_update_message')
-    def test_update_available(self, message, current_version, latest_version, persist):
+    def test_update_available(self, message, current_version, latest_version):
         current_version.return_value = Version('1.8.0')
         latest_version.return_value = Version('1.9.0')
         two_days_ago = datetime.now() - timedelta(days=2)
@@ -58,7 +58,7 @@ class ErrorsTest(unittest.TestCase):
     @patch('mcmd.core.update_checker._latest_version')
     @patch('mcmd.core.update_checker._current_version')
     @patch('mcmd.core.update_checker._show_update_message')
-    def test_no_update_available(self, message, current_version, latest_version, persist):
+    def test_no_update_available(self, message, current_version, latest_version):
         current_version.return_value = Version('1.8.0')
         latest_version.return_value = Version('1.8.0')
         two_days_ago = datetime.now() - timedelta(days=2)
@@ -74,9 +74,9 @@ class ErrorsTest(unittest.TestCase):
     @patch('mcmd.core.update_checker._latest_version')
     @patch('mcmd.core.update_checker._current_version')
     @patch('mcmd.core.update_checker._show_update_message')
-    def test_update_found_previously_and_already_checked_today(self, message, current_version, latest_version, persist):
+    def test_update_found_previously_and_already_checked_today(self, message, current_version, latest_version):
         current_version.return_value = Version('1.8.0')
-        latest_version.return_value = Version('1.9.0')
+        latest_version.return_value = Version('1.10.0')
         now = datetime.now()
         store.set_last_version_check(now)
         store.set_update_available(Version('1.9.0'))
@@ -90,7 +90,7 @@ class ErrorsTest(unittest.TestCase):
     @patch('mcmd.core.update_checker._latest_version')
     @patch('mcmd.core.update_checker._current_version')
     @patch('mcmd.core.update_checker._show_update_message')
-    def test_update_found_previously(self, message, current_version, latest_version, persist):
+    def test_update_found_previously(self, message, current_version, latest_version):
         current_version.return_value = Version('1.8.0')
         latest_version.return_value = Version('1.9.0')
         two_days_ago = datetime.now() - timedelta(days=2)
@@ -106,7 +106,7 @@ class ErrorsTest(unittest.TestCase):
     @patch('mcmd.core.update_checker._latest_version')
     @patch('mcmd.core.update_checker._current_version')
     @patch('mcmd.core.update_checker._show_update_message')
-    def test_update_found_previously_and_update_available(self, message, current_version, latest_version, persist):
+    def test_update_found_previously_and_update_available(self, message, current_version, latest_version):
         current_version.return_value = Version('1.8.0')
         latest_version.return_value = Version('1.10.0')
         two_days_ago = datetime.now() - timedelta(days=2)
