@@ -2,34 +2,41 @@ import pickle
 from datetime import datetime
 from typing import Optional
 
-import attr
 from packaging.version import Version
 
 from mcmd.core.context import context
 
-
-@attr.s(auto_attribs=True)
-class _Storage:
-    last_version_check: datetime = datetime.now()
-    update_available: Optional[Version] = None
-
-    @classmethod
-    def save(cls):
-        with context().get_storage_file().open('wb') as f:
-            pickle.dump(_store, f)
+_store = {
+    'last_version_check': datetime.now(),
+    'update_available': None
+}
 
 
-_store: Optional[_Storage] = None
-
-
-def load_storage():
-    global _store
+def load():
     if context().get_storage_file().exists():
         with context().get_storage_file().open('rb') as f:
-            _store = pickle.load(f)
-    else:
-        _store = _Storage()
+            _store.update(pickle.load(f))
 
 
-def storage() -> _Storage:
-    return _store
+def get_last_version_check() -> datetime:
+    return _store['last_version_check']
+
+
+def set_last_version_check(last_check: datetime):
+    _store['last_version_check'] = last_check
+    _persist()
+
+
+def get_update_available() -> Optional[Version]:
+    return _store['update_available']
+
+
+# noinspection PyTypeChecker
+def set_update_available(version: Optional[Version]):
+    _store['update_available'] = version
+    _persist()
+
+
+def _persist():
+    with context().get_storage_file().open('wb') as f:
+        pickle.dump(_store, f)

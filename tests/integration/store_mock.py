@@ -10,10 +10,6 @@ class _Storage:
     last_version_check: datetime = datetime.now()
     update_available: Optional[Version] = None
 
-    @classmethod
-    def save(cls):
-        pass
-
 
 _store = _Storage()
 
@@ -22,5 +18,12 @@ def load_storage():
     pass
 
 
+def save_storage():
+    pass
+
+
 def storage():
     return _store
+
+def hoi():
+    return hoi
