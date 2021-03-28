@@ -17,7 +17,7 @@ class ErrorsTest(unittest.TestCase):
 
     @responses.activate
     def test_latest_version(self):
-        responses.add(responses.GET, 'http://pypi.org/simple/molgenis-commander/', status=200, body=pypi_version_page)
+        responses.add(responses.GET, 'https://pypi.org/simple/molgenis-commander/', status=200, body=pypi_version_page)
 
         assert _latest_version() == Version('1.9.0')
 

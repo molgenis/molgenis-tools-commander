@@ -36,7 +36,7 @@ def _current_version() -> Version:
 
 def _latest_version() -> Optional[Version]:
     try:
-        response = requests.get('http://pypi.org/simple/molgenis-commander/')
+        response = requests.get('https://pypi.org/simple/molgenis-commander/')
 
         if response.status_code == 200:
             versions = re.findall(r'molgenis-commander-(\d+\.\d+\.\d+)', response.text)
