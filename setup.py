@@ -16,7 +16,7 @@ setup(
         ]
     },
     install_requires=['requests==2.21.0', 'rainbow_logging_handler==2.2.2', 'halo==0.0.31',
-                      'polling==0.3.0', 'PyGithub==1.43.3', 'colorama==0.4.4', 'ruamel.yaml==0.16.12',
+                      'polling==0.3.1', 'PyGithub==1.43.3', 'colorama==0.4.4', 'ruamel.yaml==0.16.12',
                       'questionary==1.3.0', 'parsy==1.3.0', 'Jinja2==2.11.3', 'attrs==19.3.0'],
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'testfixtures', 'molgenis-py-client==1.0.0']
