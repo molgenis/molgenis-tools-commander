@@ -15,9 +15,23 @@ setup(
             'mcmd = mcmd.__main__:main'
         ]
     },
-    install_requires=['requests==2.21.0', 'rainbow_logging_handler==2.2.2', 'halo==0.0.31',
-                      'polling==0.3.1', 'PyGithub==1.43.3', 'colorama==0.4.4', 'ruamel.yaml==0.16.12',
-                      'questionary==1.3.0', 'parsy==1.3.0', 'Jinja2==2.11.3', 'attrs==19.3.0'],
+    install_requires=[
+        'attrs==19.3.0',
+        'colorama==0.4.4',
+        'halo==0.0.31',
+        'Jinja2==2.11.3',
+        'parsy==1.3.0',
+        'polling==0.3.1',
+        'PyGithub==1.43.3',
+        'questionary==1.3.0',
+        'rainbow_logging_handler==2.2.2',
+        'requests==2.21.0',
+        'ruamel.yaml==0.16.12'
+    ],
     setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'testfixtures', 'molgenis-py-client==1.0.0']
+    tests_require=[
+        'molgenis-py-client==1.0.0',
+        'pytest',
+        'testfixtures',
+    ]
 )
