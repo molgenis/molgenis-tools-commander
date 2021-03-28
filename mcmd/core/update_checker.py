@@ -25,6 +25,7 @@ def check():
     latest = store.get_update_available()
     if latest:
         if latest <= current:
+            # an update has just been done
             store.set_update_available(None)
         else:
             _show_update_message(current, latest)

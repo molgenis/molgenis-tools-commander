@@ -119,6 +119,22 @@ class ErrorsTest(unittest.TestCase):
         assert store.get_update_available() == Version('1.10.0')
         assert message.called
 
+    @patch('mcmd.core.update_checker._latest_version')
+    @patch('mcmd.core.update_checker._current_version')
+    @patch('mcmd.core.update_checker._show_update_message')
+    def test_update_found_previously_and_just_updated(self, message, current_version, latest_version):
+        current_version.return_value = Version('1.9.0')
+        latest_version.return_value = Version('1.9.0')
+        now = datetime.now()
+        store.set_last_version_check(now)
+        store.set_update_available(Version('1.9.0'))
+
+        check()
+
+        assert store.get_last_version_check() == now
+        assert store.get_update_available() is None
+        assert not message.called
+
 
 pypi_version_page = """
 <!DOCTYPE html> <html> <head> <meta name="pypi:repository-version" content="1.0"> <title>Links for 
