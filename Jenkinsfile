@@ -20,6 +20,8 @@ pipeline {
                 }
                 container('python') {
                     script {
+                        sh "python -m venv venv"
+                        sh ". venv/bin/activate"
                         sh "pip install bumpversion"
                         sh "pip install twine"
                     }
