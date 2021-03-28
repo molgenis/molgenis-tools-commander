@@ -22,7 +22,7 @@ setup(
         'Jinja2==2.11.3',
         'parsy==1.3.0',
         'polling==0.3.1',
-        'PyGithub==1.43.3',
+        'PyGithub==1.54.1',
         'questionary==1.3.0',
         'rainbow_logging_handler==2.2.2',
         'requests==2.21.0',
