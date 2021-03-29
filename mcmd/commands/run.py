@@ -12,6 +12,7 @@ from mcmd.script.model.script import Script
 from mcmd.script.options import ScriptOptions
 from mcmd.script.parser import script_parser
 from mcmd.script.parser.errors import InvalidScriptError, ScriptValidationError
+from mcmd.utils import files
 
 
 @arguments('run', CommandType.META)
@@ -53,7 +54,7 @@ def add_arguments(subparsers):
 @command
 def run(args):
     script_file = _get_script(args)
-    lines = _read_script(script_file)
+    lines = files.read_file_lines(script_file)
 
     script = _try_parse_script(lines)
 
@@ -93,12 +94,3 @@ def _get_script(args):
     if not script.exists():
         raise McmdError("The script {} doesn't exist".format(script))
     return script
-
-
-def _read_script(script):
-    try:
-        with open(script) as file:
-            lines = [line.rstrip('\n') for line in file]
-    except OSError as e:
-        raise McmdError('Error reading script: {}'.format(str(e)))
-    return lines

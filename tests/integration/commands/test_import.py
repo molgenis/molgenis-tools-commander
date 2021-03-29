@@ -26,11 +26,24 @@ def test_import_emx(session):
 
 
 @pytest.mark.integration
+def test_import_emx_with_import_action(session):
+    run_commander('import it_emx_test --with-action add')
+    # Test should fail when same file is imported with import action add
+    run_commander_fail('import it_emx_test --with-action add')
+
+    # cleanup
+    session.delete('sys_md_Package', 'it')
+
+
+@pytest.mark.integration
 def test_import_ontology(session):
+    result = session.get('sys_ont_Ontology', q=_ontologies_by_name_query('uo'))
+    num_ontologies = len(result)
+
     run_commander('import uo.owl.zip')
 
     result = session.get('sys_ont_Ontology', q=_ontologies_by_name_query('uo'))
-    assert len(result) == 1
+    assert len(result) == num_ontologies + 1
 
     # cleanup
     # TODO re-enable when molgenis #7862 is fixed (https://github.com/molgenis/molgenis/issues/7862)

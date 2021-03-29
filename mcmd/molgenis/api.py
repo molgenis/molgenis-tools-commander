@@ -67,13 +67,18 @@ def import_by_url():
 
 
 @endpoint
-def permissions():
+def permission_manager_permissions():
     return 'menu/admin/permissionmanager/update/'
 
 
 @endpoint
-def rls():
+def permission_manager_rls():
     return 'menu/admin/permissionmanager/update/entityclass/rls'
+
+
+@endpoint
+def permissions():
+    return 'api/permissions/'
 
 
 @endpoint

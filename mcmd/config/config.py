@@ -5,13 +5,14 @@ Provides access to the configuration.
 import operator
 from functools import reduce
 from pathlib import Path
+from typing import Optional
 
 from ruamel.yaml import YAML
 
 import mcmd.core.errors as errors
 
 _config = None
-_properties_file: Path = None
+_properties_file: Optional[Path] = None
 
 
 def set_config(config, properties_file):
@@ -83,6 +84,11 @@ def has_option(*args):
         return True
     except KeyError:
         return False
+
+
+def set_import_action(action):
+    _config['settings']['import_action'] = action
+    _persist()
 
 
 def set_host(url_):

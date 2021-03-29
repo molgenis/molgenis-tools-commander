@@ -6,7 +6,7 @@ from mcmd.core.context.base_context import Context
 
 
 class HomeContext(Context):
-    """Default context: stores locations to files/folders in the usere's home directory: ~/.mcmd"""
+    """Default context: stores locations to files/folders in the user's home directory: ~/.mcmd"""
 
     _MCMD_FOLDER = '.mcmd'
     _SCRIPT_FOLDER = 'scripts'

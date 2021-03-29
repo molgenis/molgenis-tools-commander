@@ -1,11 +1,16 @@
+import textwrap
+from argparse import RawDescriptionHelpFormatter
+
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
+from mcmd.core.compatibility import deprecated
 from mcmd.core.errors import McmdError
 from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, put
 from mcmd.molgenis.resources import one_resource_exists, ensure_resource_exists, ResourceType
+from mcmd.molgenis.security import security
 
 
 # =========
@@ -28,8 +33,21 @@ def add_arguments(subparsers):
                               help="the entity type to secure")
 
     p_enable_theme = p_enable_subparsers.add_parser('theme',
-                                                    help='enables the bootstrap theme which changes the styling of your'
-                                                         ' MOLGENIS')
+                                                    help='enables a bootstrap theme (deprecated since 8.6)',
+                                                    formatter_class=RawDescriptionHelpFormatter,
+                                                    description=textwrap.dedent(
+                                                        """
+                                                        Enable a CSS theme. 
+
+                                                        Deprecated since 8.6. The themes can now be configured in the 
+                                                        Application settings. Read https://molgenis.gitbook.io/molgenis/configuration/guide-customize#style-theme
+                                                        to learn more. 
+
+                                                        Example usage:
+                                                          mcmd enable theme theme3.css
+                                                        """
+                                                    )
+                                                    )
     p_enable_theme.set_defaults(func=enable_theme,
                                 write_to_history=True)
     p_enable_theme.add_argument('theme',
@@ -55,11 +73,15 @@ def enable_rls(args):
     io.start('Enabling row level security on entity type %s' % highlight(args.entity))
 
     ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
-    post(api.rls(), data={'id': args.entity,
-                          'rlsEnabled': True})
+    security.enable_row_level_security(args.entity)
 
 
 @command
+@deprecated(since='8.6.0',
+            action='Enabling themes',
+            info="Themes can be activated in the app settings now. Use the 'set' command to set the 'legacy_theme_url' "
+                 "and 'theme_url'. Read https://molgenis.gitbook.io/molgenis/configuration/guide-customize#style-theme"
+                 " to learn more.")
 def enable_theme(args):
     """
     enable_theme enables a bootstrap theme

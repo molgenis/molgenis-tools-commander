@@ -29,7 +29,7 @@ def parse(str_lines: List[str]) -> Script:
     if len(state.errors) > 0:
         raise InvalidScriptError(state.errors)
     else:
-        return Script(lines=state.lines)
+        return Script(lines=state.lines, dependencies=state.dependencies)
 
 
 def _parse_lines(state: _ParseState):
@@ -39,4 +39,4 @@ def _parse_lines(state: _ParseState):
         except ScriptSyntaxError as e:
             state.errors.append(e)
         else:
-            state.lines.append(ParsedLine(raw_string=line.string, number=line.number, statement=statement))
+            state.lines.append(ParsedLine(raw=line.string, number=line.number, statement=statement))

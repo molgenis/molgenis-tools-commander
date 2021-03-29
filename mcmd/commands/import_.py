@@ -16,7 +16,7 @@ from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post_file, get, post
-from mcmd.utils.file_helpers import scan_folders_for_files, select_path
+from mcmd.utils import files
 
 # =========
 # Arguments
@@ -59,6 +59,11 @@ def add_arguments(subparsers):
                            type=str,
                            metavar='ENTITY_TYPE_ID',
                            help='the id of the entity type (only used when importing VCF files)')
+    _p_import.add_argument('--with-action', '-a',
+                           dest='import_action',
+                           type=str,
+                           choices=['add', 'add_update_existing', 'update'],
+                           help='strategy to use when importing')
     return _p_import
 
 
@@ -104,7 +109,12 @@ def _import_from_url(args):
     file_name = file_url.split("/")[-1]
     io.start('Importing from URL %s' % highlight(file_url))
 
-    params = {'action': _get_import_action(file_name),
+    if args.import_action:
+        action = args.import_action
+    else:
+        action = _get_import_action(file_name)
+
+    params = {'action': action,
               'metadataAction': 'upsert'}
 
     if args.to_package:
@@ -121,23 +131,23 @@ def _import_from_url(args):
 
 def _import_from_quick_folders(args):
     file_name = os_path.splitext(args.resource)[0]
-    file_map = scan_folders_for_files(context().get_git_folders() + context().get_dataset_folders())
-    path = select_path(file_map, file_name)
-    _do_import(path, args.to_package, args.entity_type_id)
+    path = files.select_file_from_folders(folders=context().get_git_folders() + context().get_dataset_folders(),
+                                          file_name=file_name)
+    _do_import(path, args.to_package, args.entity_type_id, args.import_action)
 
 
 def _import_from_issue(args):
     issue_num = args.from_issue
     attachment = _select_attachment(issue_num, args.resource)
     file_path = _download_attachment(attachment, issue_num)
-    _do_import(file_path, args.to_package, args.entity_type_id)
+    _do_import(file_path, args.to_package, args.entity_type_id, args.import_action)
 
 
 def _import_from_path(args):
     file = Path(args.resource)
     if not file.is_file():
         raise McmdError("File %s doesn't exist" % str(file.resolve()))
-    _do_import(file, args.to_package, args.entity_type_id)
+    _do_import(file, args.to_package, args.entity_type_id, args.import_action)
 
 
 def _select_attachment(issue_num, wanted_attachment):
@@ -209,10 +219,15 @@ def _download_attachment(attachment, issue_num):
     return file_path
 
 
-def _do_import(file_path, package, entity_type_id):
+def _do_import(file_path, package, entity_type_id, import_action):
     io.start('Importing %s' % (highlight(file_path.name)))
 
-    params = {'action': _get_import_action(file_path.name),
+    if import_action:
+        action = import_action
+    else:
+        action = _get_import_action(file_path.name)
+
+    params = {'action': action,
               'metadataAction': 'upsert'}
 
     if package:

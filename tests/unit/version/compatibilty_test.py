@@ -3,7 +3,8 @@ from unittest.mock import patch
 
 import pytest
 
-from mcmd.core.compatibility import version
+from mcmd.core.compatibility import version, deprecated
+from mcmd.core.errors import McmdError
 
 
 @version('2.0.0')
@@ -19,6 +20,12 @@ def get_impl():
 @version('2.2.2')
 def get_impl():
     return '2.2.2'
+
+
+@deprecated(since='2.0.0',
+            action='doing something')
+def do_something():
+    return 'doing something'
 
 
 @pytest.mark.unit
@@ -50,3 +57,20 @@ class CompatibilityTest(unittest.TestCase):
             @version('2.0.0')
             def get_impl():
                 return 'not allowed'
+
+    @patch('mcmd.molgenis.version.get_version_number')
+    def test_deprecated_lower(self, version_number):
+        version_number.return_value = '1.0.0'
+        assert do_something() == 'doing something'
+
+    @patch('mcmd.molgenis.version.get_version_number')
+    def test_deprecated_equal(self, version_number):
+        version_number.return_value = '2.0.0'
+        with self.assertRaises(McmdError):
+            do_something()
+
+    @patch('mcmd.molgenis.version.get_version_number')
+    def test_deprecated_higher(self, version_number):
+        version_number.return_value = '2.0.1'
+        with self.assertRaises(McmdError):
+            do_something()

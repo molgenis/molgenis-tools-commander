@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='molgenis-commander',
-    version='1.8.0',
+    version='1.9.0',
     packages=find_packages(),
     description='A command line interface for Molgenis',
     url='https://github.com/molgenis/molgenis-tools-commander',
@@ -28,5 +28,8 @@ setup(
         'parsy==1.3.0',
         'Jinja2==2.11.2'],
     setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'testfixtures']
+    tests_require=[
+        'molgenis-py-client>=2.3.0'
+        'pytest',
+        'testfixtures']
 )
