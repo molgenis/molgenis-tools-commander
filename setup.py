@@ -16,20 +16,22 @@ setup(
         ]
     },
     install_requires=[
-        'molgenis-py-client==2.3.0',
-        'requests==2.21.0',
-        'rainbow_logging_handler==2.2.2',
-        'halo==0.0.28',
-        'polling==0.3.0',
-        'PyGithub==1.43.3',
-        'colorama==0.3.9',
-        'ruamel.yaml==0.15.81',
-        'questionary==1.3.0',
+        'attrs==20.3.0',
+        'colorama==0.4.4',
+        'halo==0.0.31',
+        'Jinja2==2.11.3',
         'parsy==1.3.0',
-        'Jinja2==2.11.2'],
+        'polling==0.3.1',
+        'PyGithub==1.54.1',
+        'questionary==1.9.0',
+        'rainbow_logging_handler==2.2.2',
+        'requests==2.21.0',
+        'ruamel.yaml==0.17.2'
+    ],
     setup_requires=['pytest-runner'],
     tests_require=[
         'molgenis-py-client>=2.3.0'
         'pytest',
-        'testfixtures']
+        'testfixtures'
+    ]
 )
