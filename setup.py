@@ -26,7 +26,7 @@ setup(
         'questionary==1.3.0',
         'rainbow_logging_handler==2.2.2',
         'requests==2.21.0',
-        'ruamel.yaml==0.16.12'
+        'ruamel.yaml==0.17.2'
     ],
     setup_requires=['pytest-runner'],
     tests_require=[
