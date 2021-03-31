@@ -1,3 +1,7 @@
+"""
+On-disk memory. Used to store data between separate commander runs.
+"""
+
 import pickle
 from datetime import datetime
 from typing import Optional

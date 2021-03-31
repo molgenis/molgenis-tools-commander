@@ -12,9 +12,13 @@ from mcmd.io import io
 
 
 def check():
+    """
+    Checks if a new version is available. Checks once every 8 hours at most. If a new version is available, a message
+    will be shown for every executed command until the update has been installed.
+    """
     current = _current_version()
 
-    if datetime.now() - timedelta(hours=24) > store.get_last_version_check():
+    if datetime.now() - timedelta(hours=8) > store.get_last_version_check():
         latest = _latest_version()
 
         if latest and latest > current:
@@ -25,7 +29,7 @@ def check():
     latest = store.get_update_available()
     if latest:
         if latest <= current:
-            # an update has just been done
+            # an upgrade has just been done
             store.set_update_available(None)
         else:
             _show_update_message(current, latest)
@@ -36,6 +40,9 @@ def _current_version() -> Version:
 
 
 def _latest_version() -> Optional[Version]:
+    """
+    Gets the latest version from PyPi. Because there is no API for this, we regex it from the 'simple' page.
+    """
     try:
         response = requests.get('https://pypi.org/simple/molgenis-commander/')
 
