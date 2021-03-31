@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from unittest.mock import patch, Mock
 
 import pytest
-import responses
 from packaging.version import Version
 
 from mcmd.core import store
@@ -11,20 +10,31 @@ from mcmd.core import store
 from mcmd.core.update_checker import _latest_version, check
 
 
+class MockResponse:
+    def __init__(self, text, status_code):
+        self.text = text
+        self.status_code = status_code
+
+
+# noinspection PyUnusedLocal
 @pytest.mark.unit
 @patch('mcmd.core.store._persist', Mock())
 class ErrorsTest(unittest.TestCase):
 
-    @responses.activate
-    def test_latest_version(self):
-        responses.add(responses.GET, 'https://pypi.org/simple/molgenis-commander/', status=200, body=pypi_version_page)
+    # noinspection PyMethodMayBeStatic
+    def mocked_get_versions(*args):
+        return MockResponse(pypi_version_page, 200)
 
+    # noinspection PyMethodMayBeStatic
+    def mocked_get_versions_error(*args):
+        return MockResponse(None, 500)
+
+    @patch('requests.get', side_effect=mocked_get_versions)
+    def test_latest_version(self, mock_get):
         assert _latest_version() == Version('1.9.0')
 
-    @responses.activate
-    def test_latest_version_error(self):
-        responses.add(responses.GET, 'http://pypi.org/simple/molgenis-commander/', status=500)
-
+    @patch('requests.get', side_effect=mocked_get_versions_error)
+    def test_latest_version_error(self, mock_get):
         assert _latest_version() is None
 
     @patch('mcmd.core.update_checker._show_update_message')
