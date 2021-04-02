@@ -14,6 +14,7 @@ if sys.version_info < MIN_PYTHON:
 import logging
 import signal
 
+from mcmd.core import update_checker, store
 from mcmd.core.context.base_context import Context
 from mcmd.args.errors import ArgumentSyntaxError
 from mcmd.core.context.home_context import HomeContext
@@ -34,6 +35,8 @@ def start(argv, context: Context):
         signal.signal(signal.SIGINT, interrupt_handler)
 
         load_config()
+        store.load()
+        update_checker.check()
 
         args = _parse_args(argv)
 

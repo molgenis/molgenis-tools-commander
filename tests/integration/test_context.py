@@ -47,3 +47,6 @@ class IntegrationTestContext(Context):
 
     def get_git_folders(self) -> List[Path]:
         return [get_files_folder().joinpath('git')]
+
+    def get_storage_file(self):
+        self._raise_exception("The storage file is not available from within tests")

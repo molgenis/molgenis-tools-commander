@@ -14,6 +14,7 @@ class HomeContext(Context):
     _ISSUE_FOLDER = 'issues'
     _PROPERTIES_FILE = 'mcmd.yaml'
     _HISTORY_FILE = 'history.log'
+    _STORAGE_FILE = '.storage.pkl'
 
     def _get_mcmd_home(self) -> Path:
         mcmd_home = Path().home().joinpath(self._MCMD_FOLDER)
@@ -45,6 +46,9 @@ class HomeContext(Context):
 
     def get_properties_file(self) -> Path:
         return self._get_mcmd_home().joinpath(self._PROPERTIES_FILE)
+
+    def get_storage_file(self) -> Path:
+        return self._get_mcmd_home().joinpath(self._STORAGE_FILE)
 
     @staticmethod
     def _mkdir_if_not_exists(path) -> Path:

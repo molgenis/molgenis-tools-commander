@@ -50,6 +50,10 @@ class Context(ABC):
     def get_properties_file(self) -> Path:
         pass
 
+    @abstractmethod
+    def get_storage_file(self) -> Path:
+        pass
+
     def __enter__(self):
         """Replace the previous context (if any) with this context."""
         self.previous_context = context_holder.get_context()
