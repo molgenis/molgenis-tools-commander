@@ -6,14 +6,6 @@ from tests.integration.loader_mock import get_dataset_folder
 from tests.integration.utils import run_commander, run_commander_fail, random_name, get_test_context
 
 
-def _ontologies_by_name_query(name):
-    return [{
-        "field": "ontologyName",
-        "operator": "EQUALS",
-        "value": name
-    }]
-
-
 @pytest.mark.integration
 def test_import_emx(session):
     run_commander('import it_emx_autoid')
@@ -37,12 +29,12 @@ def test_import_emx_with_import_action(session):
 
 @pytest.mark.integration
 def test_import_ontology(session):
-    result = session.get('sys_ont_Ontology', q=_ontologies_by_name_query('uo'))
+    result = session.get('sys_ont_Ontology', q='ontologyName==uo')
     num_ontologies = len(result)
 
     run_commander('import uo.owl.zip')
 
-    result = session.get('sys_ont_Ontology', q=_ontologies_by_name_query('uo'))
+    result = session.get('sys_ont_Ontology', q='ontologyName==uo')
     assert len(result) == num_ontologies + 1
 
     # cleanup

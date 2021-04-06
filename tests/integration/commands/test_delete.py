@@ -2,7 +2,6 @@ from unittest.mock import patch
 
 import pytest
 
-from tests.integration.commands.test_add_group import group_by_name_query
 from tests.integration.utils import run_commander, entity_type_exists, entity_is_empty, package_exists, random_name
 
 
@@ -66,7 +65,7 @@ def test_delete_package_contents(session, entity_type):
 def test_delete_group(session, group):
     run_commander('delete --force --group {}'.format(group))
 
-    groups = session.get('sys_sec_Group', q=group_by_name_query(group))
+    groups = session.get('sys_sec_Group', q='name=={}'.format(group))
     assert len(groups) == 0
 
 

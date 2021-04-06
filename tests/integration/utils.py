@@ -2,6 +2,7 @@ import random
 import string
 
 import pytest
+from molgenis.client import MolgenisRequestError
 from requests import HTTPError
 
 from mcmd.__main__ import start
@@ -44,7 +45,7 @@ def setup_entity():
 def entity_type_exists(session, id_):
     try:
         session.get_entity_meta_data(id_)
-    except HTTPError:
+    except (HTTPError, MolgenisRequestError):
         return False
     return True
 
@@ -52,7 +53,7 @@ def entity_type_exists(session, id_):
 def package_exists(session, id_):
     try:
         session.get_by_id('sys_md_Package', id_)
-    except HTTPError:
+    except (HTTPError, MolgenisRequestError):
         return False
     return True
 
