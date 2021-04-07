@@ -6,11 +6,7 @@ from tests.integration.utils import run_commander, random_name
 
 
 def _get_user_id(username, session):
-    return session.get('sys_sec_User', q=[{
-        'field': 'username',
-        'operator': 'EQUALS',
-        'value': username
-    }])[0]['id']
+    return session.get('sys_sec_User', q='username=={}'.format(username))[0]['id']
 
 
 def _get_role_id(rolename, session):
@@ -19,39 +15,22 @@ def _get_role_id(rolename, session):
 
 def _get_role_by_name(rolename, session):
     return session.get('sys_sec_Role',
-                       q=[{
-                           'field': 'name',
-                           'operator': 'EQUALS',
-                           'value': rolename
-                       }],
-                       expand=['includes'])[0]
+                       q='name=={}'.format(rolename),
+                       expand='includes')[0]
 
 
 def _get_memberships_by_username(username, session):
     memberships = session.get('sys_sec_RoleMembership',
-                              q=[{
-                                  'field': 'user',
-                                  'operator': 'EQUALS',
-                                  'value': _get_user_id(username, session)
-                              }],
-                              expand=['user', 'role'])
+                              q='user=={}'.format(_get_user_id(username, session)),
+                              expand='user,role')
     return memberships
 
 
 def _get_memberships_by_user_and_role(username, rolename, session):
     memberships = session.get('sys_sec_RoleMembership',
-                              q=[{
-                                  'field': 'user',
-                                  'operator': 'EQUALS',
-                                  'value': _get_user_id(username, session)
-                              }, {
-                                  'operator': 'AND'
-                              }, {
-                                  'field': 'role',
-                                  'operator': 'EQUALS',
-                                  'value': _get_role_id(rolename, session)
-                              }],
-                              expand=['user', 'role'])
+                              q='user=={}&&role=={}'.format(_get_user_id(username, session),
+                                                            _get_role_id(rolename, session)),
+                              expand='user,role')
     return memberships
 
 
@@ -152,7 +131,7 @@ def test_include_group_role(session, group):
     run_commander('make {} {}'.format(role_name, group_role_name))
 
     role = _get_role_by_name(role_name, session)
-    assert role['includes']['items'][0]['name'] == group_role_name
+    assert role['includes'][0]['name'] == group_role_name
 
 
 @pytest.mark.integration
@@ -163,4 +142,4 @@ def test_include_group_role_explicit(session, group):
     run_commander('make --role {} {}'.format(role_name, group_role_name))
 
     role = _get_role_by_name(role_name, session)
-    assert role['includes']['items'][0]['name'] == group_role_name
+    assert role['includes'][0]['name'] == group_role_name

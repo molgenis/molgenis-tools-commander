@@ -19,5 +19,5 @@ def test_add_package_in_package(session):
     run_commander('add package {}'.format(name1))
     run_commander('add package {} --in {}'.format(name2, name1))
 
-    package = session.get_by_id('sys_md_Package', name2, expand=['parent'])
+    package = session.get_by_id('sys_md_Package', name2, expand='parent')
     assert package['parent']['id'] == name1

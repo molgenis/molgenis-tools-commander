@@ -2,25 +2,20 @@ from urllib.parse import urljoin
 
 import molgenis.client
 import pytest
-from requests import HTTPError
 
 from tests.integration.loader_mock import get_host
 from tests.integration.utils import run_commander, random_name
 
 
 def _user_by_name_query(name):
-    return [{
-        "field": "username",
-        "operator": "EQUALS",
-        "value": name
-    }]
+    return 'username=={}'.format(name)
 
 
 def _user_can_login(username, password):
     session = molgenis.client.Session(urljoin(get_host()['url'], '/api/'))
     try:
         session.login(username, password)
-    except HTTPError:
+    except molgenis.client.MolgenisRequestError:
         return False
     else:
         return True

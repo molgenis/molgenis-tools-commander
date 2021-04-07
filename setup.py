@@ -31,8 +31,8 @@ setup(
     ],
     setup_requires=['pytest-runner'],
     tests_require=[
-        'molgenis-py-client==1.0.0',
+        'molgenis-py-client>=2.3.0',
         'pytest',
-        'testfixtures',
+        'testfixtures'
     ]
 )
