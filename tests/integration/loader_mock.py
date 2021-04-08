@@ -21,6 +21,7 @@ host:
     password: {password}
 settings:
   import_action: add_update_existing
+  non_interactive: false
 """
 
 _url: str = None

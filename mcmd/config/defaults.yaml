@@ -22,6 +22,9 @@ settings:
   # The default import action to use when importing a dataset.
   # Choose from: [add, add_update_existing, update]
   import_action: add_update_existing
+  # Set non-interactive mode to true when in pipelines or other automation. This will make a command fail
+  # if user input is needed instead of waiting endlessly.
+  non_interactive: false
 # Server configuration.
 host:
   # The server to interact with. Use `mcmd config set host` to change this field.
