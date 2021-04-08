@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='molgenis-commander',
-    version='1.9.0',
+    version='1.10.0',
     packages=find_packages(),
     description='A command line interface for Molgenis',
     url='https://github.com/molgenis/molgenis-tools-commander',
@@ -24,7 +24,7 @@ setup(
         'parsy==1.3.0',
         'polling==0.3.1',
         'PyGithub==1.54.1',
-        'questionary==1.9.0',
+        'questionary==1.10.0',
         'rainbow_logging_handler==2.2.2',
         'requests==2.21.0',
         'ruamel.yaml==0.17.2'
