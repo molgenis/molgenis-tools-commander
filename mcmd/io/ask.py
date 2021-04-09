@@ -76,7 +76,7 @@ def _validate_empty_input(answer):
 
 
 def raise_if_non_interactive(message: str):
-    if config.get('settings', 'non_interactive'):
+    if config.is_loaded() and config.get('settings', 'non_interactive'):
         raise McmdError('User input required but running in non-interactive mode. Message: {}'.format(message),
                         info="Please specify your command more precisely or switch to interactive mode with 'mcmd "
                              "config set interactive'")

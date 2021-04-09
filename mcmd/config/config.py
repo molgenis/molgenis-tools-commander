@@ -11,7 +11,7 @@ from ruamel.yaml import YAML
 
 import mcmd.core.errors as errors
 
-_config = dict()
+_config = None
 _properties_file: Optional[Path] = None
 
 
@@ -136,6 +136,10 @@ def set_token(token_):
     else:
         _get_selected_host_auth()['token'] = token_
     _persist()
+
+
+def is_loaded():
+    return _config is not None
 
 
 def _key_error_string(error):
