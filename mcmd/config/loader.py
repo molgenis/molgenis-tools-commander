@@ -98,6 +98,7 @@ def _install(default_config):
 
 def _install_non_interactive(default_config):
     config.set_config(default_config, context().get_properties_file())
+    config.set_non_interactive(True)
     mcmd.io.io.info(
         'The configuration file has been created at {}'.format(highlight(str(context().get_properties_file()))))
 
