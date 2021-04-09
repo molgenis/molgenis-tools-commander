@@ -7,6 +7,7 @@ input can define a custom configurer in this module that will help the user on t
 the property file directly.
 """
 
+import os
 from collections import OrderedDict
 from pathlib import Path
 
@@ -36,7 +37,11 @@ def load_config():
     default_config = _try_load_yaml(yaml, _DEFAULT_PROPERTIES)
 
     if _is_install_required():
-        _install(default_config)
+        if os.getenv('MCMD_INSTALL_NON_INTERACTIVE', 'False').lower() == 'true':
+            _install_non_interactive(default_config)
+        else:
+            _install(default_config)
+        exit(0)
 
     user_config = _try_load_yaml(yaml, context().get_properties_file())
 
@@ -89,7 +94,13 @@ def _install(default_config):
     mcmd.io.io.newline()
     mcmd.io.io.info(
         'The configuration file has been created at {}'.format(highlight(str(context().get_properties_file()))))
-    exit(0)
+
+
+def _install_non_interactive(default_config):
+    config.set_config(default_config, context().get_properties_file())
+    config.set_non_interactive(True)
+    mcmd.io.io.info(
+        'The configuration file has been created at {}'.format(highlight(str(context().get_properties_file()))))
 
 
 def _configure_git_root(config_):
