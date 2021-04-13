@@ -22,6 +22,8 @@ def load():
         if context().get_storage_file().exists():
             with context().get_storage_file().open('rb') as f:
                 _store.update(pickle.load(f))
+        else:
+            _persist()
     except (pickle.PickleError, IOError) as e:
         raise McmdError("Unable to read storage from file: {}".format(e.message))
 
