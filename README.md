@@ -42,7 +42,7 @@ It's possible to collect multiple commands in a script. Please read the [Scripts
 Want to help out? Fork and clone this repository, go to the root of the project and create a virtual environment:
 
 ```
-python -m virtualenv env
+python -m venv env
 ```
 
 Now activate the environment. How to do this depends on your operating system, read 
