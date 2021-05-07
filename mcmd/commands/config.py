@@ -16,43 +16,43 @@ from mcmd.io.io import highlight
 
 
 @arguments('config', CommandType.META)
-def add_arguments(config_subparsers):
-    config_ = config_subparsers.add_parser('config',
-                                           help='change the configuration of MOLGENIS Commander',
-                                           formatter_class=RawDescriptionHelpFormatter,
-                                           description=textwrap.dedent(
-                                               """
-                                               Changes values in the configuration file.
-                                               
-                                               More information about the configuration file can be found on
-                                               https://github.com/molgenis/molgenis-tools-commander/wiki/Getting-started 
-    
-                                               example usage:
-                                                 # Adding a host interactively or with arguments
-                                                 mcmd config add host
-                                                 mcmd config add host --url http://x --username admin --password admin
-    
-                                                 # Switching to another host interactively or with arguments
-                                                 mcmd config set host
-                                                 mcmd config set host http://localhost
-                                                 
-                                                 # Adding dataset and resource folders
-                                                 mcmd config add dataset-folder /my/dataset/folder
-                                                 mcmd config add resource-folder /my/resource/folder
-    
-                                                 # Enabling and disabling non-interactive mode
-                                                 mcmd config set non-interactive
-                                                 mcmd config set interactive
-    
-                                                 # Setting the default import action interactively and with arguments
-                                                 mcmd config set import-action
-                                                 mcmd config set import-action --action add_update_existing
-                                               """
-                                           ))
-    config_subparsers = config_.add_subparsers(dest='type', metavar='')
+def add_arguments(subparsers):
+    config_ = subparsers.add_parser('config',
+                                    help='change the configuration of MOLGENIS Commander',
+                                    formatter_class=RawDescriptionHelpFormatter,
+                                    description=textwrap.dedent(
+                                        """
+                                        Changes values in the configuration file.
+                                        
+                                        More information about the configuration file can be found on
+                                        https://github.com/molgenis/molgenis-tools-commander/wiki/Getting-started 
 
-    set_ = config_subparsers.add_parser('set',
-                                        help='set values in the configuration file')
+                                        example usage:
+                                          # Adding a host interactively or with arguments
+                                          mcmd config add host
+                                          mcmd config add host --url http://x --username admin --password admin --switch
+
+                                          # Switching to another host interactively or with arguments
+                                          mcmd config set host
+                                          mcmd config set host http://localhost 
+                                          
+                                          # Adding dataset and resource folders
+                                          mcmd config add dataset-folder /my/dataset/folder
+                                          mcmd config add resource-folder /my/resource/folder
+
+                                          # Enabling and disabling non-interactive mode
+                                          mcmd config set non-interactive
+                                          mcmd config set interactive
+
+                                          # Setting the default import action interactively and with arguments
+                                          mcmd config set import-action
+                                          mcmd config set import-action --action add_update_existing
+                                        """
+                                    ))
+    subparsers = config_.add_subparsers(dest='type', metavar='')
+
+    set_ = subparsers.add_parser('set',
+                                 help='set values in the configuration file')
 
     set_subparsers = set_.add_subparsers(metavar='')
     set_host = set_subparsers.add_parser('host',
@@ -78,8 +78,8 @@ def add_arguments(config_subparsers):
                                                 help='set non-interactive mode to false ')
     set_interactive.set_defaults(func=config_set_interactive, write_to_history=False)
 
-    add = config_subparsers.add_parser('add',
-                                       help='add values in the configuration file')
+    add = subparsers.add_parser('add',
+                                help='add values in the configuration file')
     add_subparsers = add.add_subparsers(metavar='')
 
     add_host = add_subparsers.add_parser('host',
@@ -92,6 +92,9 @@ def add_arguments(config_subparsers):
                           help='the username of the admin account')
     add_host.add_argument('--password',
                           help='the password of the admin account')
+    add_host.add_argument('--switch',
+                          action='store_true',
+                          help='switch to this new host')
 
     add_dataset_folder = add_subparsers.add_parser('dataset-folder',
                                                    help='add a dataset folder (datasets are files importable by the '
@@ -185,8 +188,11 @@ def config_add_host(args):
     config.add_host(url, username, password)
     io.succeed()
 
-    if not config.get('settings', 'non_interactive'):
+    if args.switch:
         _switch_to_new_host(url)
+    elif not config.get('settings', 'non_interactive'):
+        if ask.confirm("Do you want to switch to the new host?"):
+            _switch_to_new_host(url)
 
 
 @command
@@ -206,6 +212,6 @@ def config_add_resource_folder(args):
 
 
 def _switch_to_new_host(url):
-    if ask.confirm("Do you want to switch to the new host?"):
-        io.start("Switching to host {}".format(highlight(url)))
-        config.set_host(url)
+    io.start("Switching to host {}".format(highlight(url)))
+    config.set_host(url)
+    io.succeed()
