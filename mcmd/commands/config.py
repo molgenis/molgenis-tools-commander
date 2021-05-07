@@ -1,5 +1,6 @@
 import textwrap
 from argparse import RawDescriptionHelpFormatter
+from pathlib import Path
 
 import mcmd.config.config as config
 from mcmd.commands._registry import arguments
@@ -13,6 +14,7 @@ from mcmd.io.io import highlight
 # Arguments
 # =========
 
+
 @arguments('config', CommandType.META)
 def add_arguments(config_subparsers):
     config_ = config_subparsers.add_parser('config',
@@ -21,6 +23,9 @@ def add_arguments(config_subparsers):
                                            description=textwrap.dedent(
                                                """
                                                Changes values in the configuration file.
+                                               
+                                               More information about the configuration file can be found on
+                                               https://github.com/molgenis/molgenis-tools-commander/wiki/Getting-started 
     
                                                example usage:
                                                  # Adding a host interactively or with arguments
@@ -30,6 +35,10 @@ def add_arguments(config_subparsers):
                                                  # Switching to another host interactively or with arguments
                                                  mcmd config set host
                                                  mcmd config set host http://localhost
+                                                 
+                                                 # Adding dataset and resource folders
+                                                 mcmd config add dataset-folder /my/dataset/folder
+                                                 mcmd config add resource-folder /my/resource/folder
     
                                                  # Enabling and disabling non-interactive mode
                                                  mcmd config set non-interactive
@@ -83,6 +92,22 @@ def add_arguments(config_subparsers):
                           help='the username of the admin account')
     add_host.add_argument('--password',
                           help='the password of the admin account')
+
+    add_dataset_folder = add_subparsers.add_parser('dataset-folder',
+                                                   help='add a dataset folder (datasets are files importable by the '
+                                                        'MOLGENIS importer')
+    add_dataset_folder.set_defaults(func=config_add_dataset_folder,
+                                    write_to_history=False)
+    add_dataset_folder.add_argument('folder',
+                                    help='the dataset folder to add')
+
+    add_resource_folder = add_subparsers.add_parser('resource-folder',
+                                                    help='add a resource folder (resources are files other than '
+                                                         'datasets)')
+    add_resource_folder.set_defaults(func=config_add_resource_folder,
+                                     write_to_history=False)
+    add_resource_folder.add_argument('folder',
+                                     help='the resource folder to add')
 
 
 # =======
@@ -162,6 +187,22 @@ def config_add_host(args):
 
     if not config.get('settings', 'non_interactive'):
         _switch_to_new_host(url)
+
+
+@command
+def config_add_dataset_folder(args):
+    io.start('Adding resource folder {}'.format(highlight(args.folder)))
+    if not Path(args.folder).is_dir():
+        raise McmdError('Folder does not exist: {}'.format(args.folder))
+    config.add_dataset_folder(args.folder)
+
+
+@command
+def config_add_resource_folder(args):
+    io.start('Adding resource folder {}'.format(highlight(args.folder)))
+    if not Path(args.folder).is_dir():
+        raise McmdError('Folder does not exist: {}'.format(args.folder))
+    config.add_resource_folder(args.folder)
 
 
 def _switch_to_new_host(url):

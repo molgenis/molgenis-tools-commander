@@ -116,6 +116,18 @@ def add_host(url_, name, pw=None):
     _persist()
 
 
+def add_dataset_folder(path: str):
+    if path not in _config['resources']['dataset_folders']:
+        _config['resources']['dataset_folders'].append(path)
+    _persist()
+
+
+def add_resource_folder(path: str):
+    if path not in _config['resources']['resource_folders']:
+        _config['resources']['resource_folders'].append(path)
+    _persist()
+
+
 def host_exists(url_):
     return url_ in [auth['url'] for auth in _config['host']['auth']]
 
