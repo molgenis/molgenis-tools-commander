@@ -190,9 +190,8 @@ def config_add_host(args):
 
     if args.switch:
         _switch_to_new_host(url)
-    elif not config.get('settings', 'non_interactive'):
-        if ask.confirm("Do you want to switch to the new host?"):
-            _switch_to_new_host(url)
+    elif not config.get('settings', 'non_interactive') and ask.confirm("Do you want to switch to the new host?"):
+        _switch_to_new_host(url)
 
 
 @command
