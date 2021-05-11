@@ -58,19 +58,25 @@ class CompatibilityTest(unittest.TestCase):
             def get_impl():
                 return 'not allowed'
 
+    @patch('mcmd.molgenis.version.get_version')
     @patch('mcmd.molgenis.version.get_version_number')
-    def test_deprecated_lower(self, version_number):
+    def test_deprecated_lower(self, version_number, get_version):
         version_number.return_value = '1.0.0'
+        get_version.return_value = '1.0.0'
         assert do_something() == 'doing something'
 
+    @patch('mcmd.molgenis.version.get_version')
     @patch('mcmd.molgenis.version.get_version_number')
-    def test_deprecated_equal(self, version_number):
+    def test_deprecated_equal(self, version_number, get_version):
         version_number.return_value = '2.0.0'
+        get_version.return_value = '2.0.0'
         with self.assertRaises(McmdError):
             do_something()
 
+    @patch('mcmd.molgenis.version.get_version')
     @patch('mcmd.molgenis.version.get_version_number')
-    def test_deprecated_higher(self, version_number):
+    def test_deprecated_higher(self, version_number, get_version):
         version_number.return_value = '2.0.1'
+        get_version.return_value = '2.0.1-SNAPSHOT'
         with self.assertRaises(McmdError):
             do_something()
