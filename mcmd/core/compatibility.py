@@ -81,13 +81,11 @@ def deprecated(since: str, action: str = 'This feature', info: str = None):
         def wrapper(*args, **kwargs):
             mol_version = molgenis_version.get_version_number()
             if py_version.parse(mol_version) >= py_version.parse(since):
-                message = '{} is deprecated since MOLGENIS {}. You are using MOLGENIS {}.'.format(action.capitalize(),
-                                                                                                  since,
-                                                                                                  mol_version)
-                if info:
-                    raise McmdError(message, info=info)
-                else:
-                    raise McmdError(message)
+                message = '{} is deprecated since MOLGENIS {}. ' \
+                          'You are using MOLGENIS {}.'.format(action.capitalize(),
+                                                              since,
+                                                              molgenis_version.get_version())
+                raise McmdError(message, info=info)
             else:
                 return func(*args, **kwargs)
 
