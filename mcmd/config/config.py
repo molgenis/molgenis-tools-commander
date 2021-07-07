@@ -117,12 +117,16 @@ def add_host(url_, name, pw=None):
 
 
 def add_dataset_folder(path: str):
+    if _config['resources']['dataset_folders'] == None:
+        _config['resources']['dataset_folders'] = []
     if path not in _config['resources']['dataset_folders']:
         _config['resources']['dataset_folders'].append(path)
     _persist()
 
 
 def add_resource_folder(path: str):
+    if _config['resources']['resource_folders'] == None:
+        _config['resources']['resource_folders'] = []
     if path not in _config['resources']['resource_folders']:
         _config['resources']['resource_folders'].append(path)
     _persist()
