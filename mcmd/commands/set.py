@@ -47,7 +47,8 @@ def add_arguments(subparsers):
 
     p_set.add_argument('type',
                        type=str,
-                       help="either 1) a simple name of a settings entity (app, mail, opencpu, auth or dataexplorer), "
+                       help="either 1) a simple name of a settings entity (app, mail, opencpu, auth, dataexplorer or "
+                            "audit), "
                             "or 2) the ID of any entity type")
 
     p_set.add_argument('attribute',
@@ -83,12 +84,14 @@ def add_arguments(subparsers):
 # =======
 
 
-_SETTING_SYNONYMS = {'mail': 'sys_set_MailSettings',
-                     'opencpu': 'sys_set_OpenCpuSettings',
-                     'app': 'sys_set_app',
-                     'auth': 'sys_set_auth',
-                     'dataexplorer': 'sys_set_dataexplorer'
-                     }
+_SETTING_SYNONYMS = {
+    'mail': 'sys_set_MailSettings',
+    'opencpu': 'sys_set_OpenCpuSettings',
+    'app': 'sys_set_app',
+    'auth': 'sys_set_auth',
+    'dataexplorer': 'sys_set_dataexplorer',
+    'audit': 'sys_set_aud'
+}
 
 
 # =======
