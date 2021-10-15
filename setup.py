@@ -24,7 +24,7 @@ setup(
         'parsy==1.3.0',
         'polling==0.3.2',
         'PyGithub==1.55',
-        'questionary==1.9.0',
+        'questionary==1.10.0',
         'rainbow_logging_handler==2.2.2',
         'requests==2.21.0',
         'ruamel.yaml==0.17.16'
