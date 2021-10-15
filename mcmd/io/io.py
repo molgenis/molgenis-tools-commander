@@ -1,3 +1,5 @@
+from typing import Optional
+
 from colorama import Fore, Style
 from halo import Halo
 
@@ -8,13 +10,16 @@ from mcmd.io.logging import get_logger
 log = get_logger()
 
 _debug_mode = False
-spinner = None
+spinner: Optional[Halo] = None
 
 
 def start(message):
     global spinner
-    spinner = _new_spinner()
-    spinner.start(message)
+    if config.has_option('settings', 'non_interactive') and config.get('settings', 'non_interactive') is True:
+        print(message)
+    else:
+        spinner = _new_spinner()
+        spinner.start(message)
 
 
 def succeed():
