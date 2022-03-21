@@ -1,7 +1,10 @@
 pipeline {
     agent {
         kubernetes {
-            label 'python-stretch'
+            // the shared pod template defined on the Jenkins server config
+            inheritFrom 'shared'
+            // pod template defined in molgenis/molgenis-jenkins-pipeline repository
+            yaml libraryResource("pod-templates/python.yaml")
         }
     }
     stages {
