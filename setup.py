@@ -19,7 +19,7 @@ setup(
         'attrs==21.2.0',
         'colorama==0.4.4',
         'halo==0.0.31',
-        'Jinja2==2.11.3',
+        'Jinja2==3.0.3',
         'packaging==20.9',
         'parsy==1.3.0',
         'polling==0.3.2',
