@@ -93,7 +93,7 @@ pipeline {
 
                     sh "python setup.py sdist bdist_wheel"
 
-                    sh "twine upload --repository-url https://upload.pypi.org/legacy/ -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} dist/*"
+                    sh "twine upload -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} dist/*"
 
                     sh "git push --tags origin master"
                     hubotSend(message: "Molgenis Commander ${MCMD_VERSION} has been successfully released! :tada: https://pypi.org/project/molgenis-commander/", status:'SUCCESS')
