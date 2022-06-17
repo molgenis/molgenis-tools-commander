@@ -11,7 +11,7 @@ from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.context import context
 from mcmd.core.errors import McmdError
-from mcmd.github import client as github
+# from mcmd.github import client as github
 from mcmd.io import io
 from mcmd.io.io import highlight
 from mcmd.molgenis import api
@@ -152,7 +152,8 @@ def _import_from_path(args):
 
 def _select_attachment(issue_num, wanted_attachment):
     """Gets attachments from a GitHub issue. If wanted_attachment is specified it will try to select that attachment."""
-    attachments = github.get_attachments(issue_num)
+    # attachments = github.get_attachments(issue_num)
+    attachments = []
     if len(attachments) == 0:
         raise McmdError("Issue #%s doesn't contain any files" % issue_num)
 
