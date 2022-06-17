@@ -5,7 +5,7 @@ from mcmd.args.errors import ArgumentSyntaxError
 from mcmd.config import config
 from mcmd.core import history
 from mcmd.core.errors import McmdError, ScriptError
-from mcmd.io import io
+from mcmd.in_out import in_out
 from mcmd.molgenis import auth
 
 
@@ -54,7 +54,7 @@ def command(func):
             else:
                 _handle_error(error)
         else:
-            io.succeed()
+            in_out.succeed()
         finally:
             if args.write_to_history:
                 history.write(args.arg_string, success=success)
@@ -74,12 +74,12 @@ def _set_authentication(args):
 
 
 def _handle_error(error):
-    io.error(error.message)
+    in_out.error(error.message)
     if error.info:
-        io.info(error.info)
+        in_out.info(error.info)
 
     if isinstance(error, ScriptError):
-        io.info('Script failed at line {}'.format(io.highlight(str(error.line))))
+        in_out.info('Script failed at line {}'.format(in_out.highlight(str(error.line))))
 
     exit(1)
 

@@ -14,9 +14,9 @@ class ScriptRunnerTest(unittest.TestCase):
 
     @staticmethod
     @log_capture()
-    @patch('mcmd.io.ask.input_')
-    @patch('mcmd.io.ask.confirm')
-    @patch('mcmd.io.ask.password')
+    @patch('mcmd.in_out.ask.input_')
+    @patch('mcmd.in_out.ask.confirm')
+    @patch('mcmd.in_out.ask.password')
     def test_script_runner(input_text, confirm_input, password_input, capture):
         input_text.return_value = 'text'
         confirm_input.return_value = 'true'
@@ -60,7 +60,7 @@ class ScriptRunnerTest(unittest.TestCase):
 
     @staticmethod
     @log_capture()
-    @patch('mcmd.io.ask.input_')
+    @patch('mcmd.in_out.ask.input_')
     def test_line_dependencies(input_surname, capture):
         input_surname.return_value = 'achternaam'
         script_lines = ["$value name = 'henk'",

@@ -8,7 +8,7 @@ from packaging.version import Version
 from requests import RequestException
 
 from mcmd.core import store
-from mcmd.io import io
+from mcmd.in_out import in_out
 
 
 def check():
@@ -55,6 +55,6 @@ def _latest_version() -> Optional[Version]:
 
 
 def _show_update_message(current: Version, latest: Version):
-    io.warn(
+    in_out.warn(
         'A new version of MOLGENIS Commander is available: {}! You are using {}.'.format(latest, current))
-    io.info("To upgrade, run 'pip install --upgrade molgenis-commander'")
+    in_out.info("To upgrade, run 'pip install --upgrade molgenis-commander'")

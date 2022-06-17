@@ -15,11 +15,11 @@ import pkg_resources
 from ruamel.yaml import YAML, YAMLError
 
 import mcmd.config.config as config
-import mcmd.io.ask
-import mcmd.io.io
+import mcmd.in_out.ask
+import mcmd.in_out.in_out
 from mcmd.core.context import context
-from mcmd.io import io
-from mcmd.io.io import highlight
+from mcmd.in_out import in_out
+from mcmd.in_out.in_out import highlight
 
 _DEFAULT_PROPERTIES = pkg_resources.resource_stream('mcmd.config', 'defaults.yaml')
 
@@ -59,13 +59,13 @@ def _try_load_yaml(yaml: YAML, path: Path):
     try:
         return yaml.load(path)
     except YAMLError as e:
-        io.error("There's an error in the configuration file: {}".format(e))
+        in_out.error("There's an error in the configuration file: {}".format(e))
         exit(1)
 
 
 def _upgrade(default_config, user_config):
-    mcmd.io.io.info("Some properties haven't been configured yet. Let's take a moment to fix that.")
-    mcmd.io.io.newline()
+    mcmd.in_out.in_out.info("Some properties haven't been configured yet. Let's take a moment to fix that.")
+    mcmd.in_out.in_out.newline()
 
     for prop, configurer in property_configurers().items():
         if prop not in user_config:
@@ -73,38 +73,38 @@ def _upgrade(default_config, user_config):
 
     config.set_config(default_config, context().get_properties_file())
 
-    mcmd.io.io.newline()
-    mcmd.io.io.info(
+    mcmd.in_out.in_out.newline()
+    mcmd.in_out.in_out.info(
         'The configuration file has been updated successfully ({})'.format(
             highlight(str(context().get_properties_file()))))
     exit(0)
 
 
 def _install(default_config):
-    mcmd.io.io.info("Looks like this is your first time running {}!\n  "
+    mcmd.in_out.in_out.info("Looks like this is your first time running {}!\n  "
                     "Let's take a moment to set things up. It's OK to leave some fields empty, you can always change "
                     "them later.".format(highlight("Molgenis Commander")))
-    mcmd.io.io.newline()
+    mcmd.in_out.in_out.newline()
 
     for configurer in property_configurers().values():
         configurer(default_config)
 
     config.set_config(default_config, context().get_properties_file())
 
-    mcmd.io.io.newline()
-    mcmd.io.io.info(
+    mcmd.in_out.in_out.newline()
+    mcmd.in_out.in_out.info(
         'The configuration file has been created at {}'.format(highlight(str(context().get_properties_file()))))
 
 
 def _install_non_interactive(default_config):
     config.set_config(default_config, context().get_properties_file())
     config.set_non_interactive(True)
-    mcmd.io.io.info(
+    mcmd.in_out.in_out.info(
         'The configuration file has been created at {}'.format(highlight(str(context().get_properties_file()))))
 
 
 def _configure_git_root(config_):
-    git_root = mcmd.io.ask.input_(
+    git_root = mcmd.in_out.ask.input_(
         'Enter the absolute path to your Molgenis git folder (e.g. /Users/me/git/molgenis/)')
     if len(git_root) > 0:
         config_['git']['root'] = git_root
@@ -117,20 +117,20 @@ def _configure_host(values):
 
 
 def _configure_url(values):
-    host = mcmd.io.ask.input_('Enter the host name of your Molgenis (Default: http://localhost/)')
+    host = mcmd.in_out.ask.input_('Enter the host name of your Molgenis (Default: http://localhost/)')
     if len(host) > 0:
         values['host']['selected'] = host
         values['host']['auth'][0]['url'] = host
 
 
 def _configure_username(values):
-    username = mcmd.io.ask.input_('Enter the username of the super user (Default: admin)')
+    username = mcmd.in_out.ask.input_('Enter the username of the super user (Default: admin)')
     if len(username) > 0:
         values['host']['auth'][0]['username'] = username
 
 
 def _configure_password(values):
-    password = mcmd.io.ask.password(
+    password = mcmd.in_out.ask.password(
         'Enter the password of the super user (Leave blank to use command line authentication)')
     if len(password) > 0:
         values['host']['auth'][0]['password'] = password

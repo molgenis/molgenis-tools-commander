@@ -10,8 +10,8 @@ from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.context import context
 from mcmd.core.errors import McmdError
-from mcmd.io import io
-from mcmd.io.io import highlight
+from mcmd.in_out import in_out
+from mcmd.in_out.in_out import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import get, put
 from mcmd.utils import files
@@ -122,12 +122,12 @@ def set_(args):
     if args.for_:
         entity = args.type
         row = args.for_
-        io.start(
+        in_out.start(
             'Updating {} of {} for id {} to {}'.format(highlight(args.attribute), highlight(args.type),
                                                        highlight(args.for_), value_desc))
     else:
         entity = _get_settings_entity(args.type)
-        io.start(
+        in_out.start(
             'Updating {} of {} settings to {}'.format(highlight(args.attribute), highlight(args.type),
                                                       value_desc))
         row = _get_first_row_id(entity)
