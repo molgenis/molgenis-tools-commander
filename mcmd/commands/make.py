@@ -19,8 +19,8 @@ from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.compatibility import version
 from mcmd.core.errors import McmdError
-from mcmd.io import io, ask
-from mcmd.io.io import highlight
+from mcmd.in_out import in_out, ask
+from mcmd.in_out.in_out import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get, put
 from mcmd.molgenis.principals import to_role_name, get_principal_type_from_args, PrincipalType
@@ -126,7 +126,7 @@ def _make_member_of_group_role(user: User, role: Role):
     membership = _get_group_membership(user, group)
     if membership:
         if membership.role.name == role.name:
-            io.info('User {} is already {} of group {}'.format(highlight(user.username),
+            in_out.info('User {} is already {} of group {}'.format(highlight(user.username),
                                                                highlight(role.label),
                                                                highlight(group.name)))
         else:
@@ -143,19 +143,19 @@ def _make_member_of_group_role(user: User, role: Role):
 
 def _make_member_of_role(role, user):
     if _is_member(user, role):
-        io.info('User {} is already a member of role {}'.format(highlight(user.username), highlight(role.name)))
+        in_out.info('User {} is already a member of role {}'.format(highlight(user.username), highlight(role.name)))
     else:
         _add_role_membership(user, role)
 
 
 def _add_group_role_membership(user: User, group: Group, role: Role):
-    io.start('Making user {} a member of role {}'.format(highlight(user.username), highlight(role.name)))
+    in_out.start('Making user {} a member of role {}'.format(highlight(user.username), highlight(role.name)))
     url = api.member(group.name)
     post(url, data={'username': user.username, 'roleName': role.name})
 
 
 def _update_group_role_membership(user: User, group: Group, role: Role):
-    io.start('Making user {} a member of role {}'.format(highlight(user.username), highlight(role.name)))
+    in_out.start('Making user {} a member of role {}'.format(highlight(user.username), highlight(role.name)))
     url = urljoin(api.member(group.name), user.username)
     put(url, data=json.dumps({'roleName': role.name}))
 
@@ -164,7 +164,7 @@ def _add_role_membership(user: User, role: Role):
     """
     Adds a membership manually because the identities API can't add memberships to non-group roles.
     """
-    io.start('Making user {} a member of role {}'.format(highlight(user.username), highlight(role.name)))
+    in_out.start('Making user {} a member of role {}'.format(highlight(user.username), highlight(role.name)))
     membership = {'user': user.id,
                   'role': role.id,
                   'from': timestamp()}
@@ -179,7 +179,7 @@ def _include_group_role(subject: Role, target_role: Role):
     if subject.name == target_role.name:
         raise McmdError("A role can't include itself")
 
-    io.start('Including role {} in role {}'.format(highlight(target_role.name), highlight(subject.name)))
+    in_out.start('Including role {} in role {}'.format(highlight(target_role.name), highlight(subject.name)))
     include = {'role': target_role.name}
     put(api.role(target_role.group.name, subject.name), data=json.dumps(include))
 

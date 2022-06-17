@@ -1,13 +1,13 @@
-import mcmd.io.ask
+import mcmd.in_out.ask
 from mcmd.commands._registry import arguments
 from mcmd.core.context import context
 from mcmd.core import history
 from mcmd.core.command import command, CommandType
 from mcmd.core.errors import McmdError
-from mcmd.io import io
-from mcmd.io.ask import confirm
-from mcmd.io.io import highlight
-from mcmd.io.logging import get_logger
+from mcmd.in_out import in_out
+from mcmd.in_out.ask import confirm
+from mcmd.in_out.in_out import highlight
+from mcmd.in_out.logging import get_logger
 
 
 # =========
@@ -71,7 +71,7 @@ def _remove_script(script_name):
     path = context().get_scripts_folder().joinpath(script_name)
     _check_script_exists(path)
     try:
-        io.start('Removing script %s' % highlight(script_name))
+        in_out.start('Removing script %s' % highlight(script_name))
         path.unlink()
     except OSError as e:
         raise McmdError('Error removing script: %s' % str(e))
@@ -101,7 +101,7 @@ def _create_script(args):
         return
 
     options = [line[1] for line in lines]
-    commands = mcmd.io.ask.checkbox('Pick the lines that will form the script:', options)
+    commands = mcmd.in_out.ask.checkbox('Pick the lines that will form the script:', options)
     file_name = _input_script_name()
     try:
         with open(str(context().get_scripts_folder().joinpath(file_name)), 'w') as script_file:
@@ -119,7 +119,7 @@ def _check_script_exists(path):
 def _input_script_name():
     file_name = ''
     while not file_name:
-        name = mcmd.io.ask.input_('Supply the name of the script:')
+        name = mcmd.in_out.ask.input_('Supply the name of the script:')
         if context().get_scripts_folder().joinpath(name).exists():
             overwrite = confirm('%s already exists. Overwrite?' % name)
             if overwrite:

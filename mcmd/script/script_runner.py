@@ -7,9 +7,9 @@ import attr
 from mcmd.args import parser as arg_parser
 from mcmd.args.errors import ArgumentSyntaxError
 from mcmd.core.errors import McmdError, ScriptError
-from mcmd.io import io, ask
-from mcmd.io.io import bold, dim
-from mcmd.io.logging import get_logger
+from mcmd.in_out import in_out, ask
+from mcmd.in_out.in_out import bold, dim
+from mcmd.in_out.logging import get_logger
 from mcmd.script.model.lines import ParsedLine
 from mcmd.script.model.script import Script
 from mcmd.script.model.statements import Value, Input, Wait, VisibleComment, Command, InvisibleComment, \
@@ -80,7 +80,7 @@ def _process_line(line: ParsedLine, state: _ScriptExecutionState):
 def _log_comment(comment: VisibleComment, state: _ScriptExecutionState):
     if state.options.log_comments:
         if len(comment.text.string) == 0:
-            io.newline()
+            in_out.newline()
         else:
             log.info(comment.text.render(state.values))
 
@@ -117,9 +117,9 @@ def _wait(wait: Wait, state: _ScriptExecutionState):
     text = '{}: {} {}'.format(bold('Waiting for user'),
                               wait.message.render(state.values),
                               dim('(Press enter to continue)'))
-    io.start(text)
-    io.wait_for_enter()
-    io.succeed()
+    in_out.start(text)
+    in_out.wait_for_enter()
+    in_out.succeed()
 
 
 def _handle_error(error: McmdError, line_number: int, state: _ScriptExecutionState):
@@ -127,9 +127,9 @@ def _handle_error(error: McmdError, line_number: int, state: _ScriptExecutionSta
         raise ScriptError.from_error(error, line_number)
     else:
         sys.stderr.write('Error on line {}: '.format(str(line_number)))
-        io.error(error.message)
+        in_out.error(error.message)
         if error.info:
-            io.info(error.info)
+            in_out.info(error.info)
 
 
 def _run_command(command: Command, state: _ScriptExecutionState):

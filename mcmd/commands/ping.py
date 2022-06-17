@@ -4,7 +4,7 @@ import mcmd.config.config as config
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.errors import McmdError
-from mcmd.io.io import highlight
+from mcmd.in_out.in_out import highlight
 from mcmd.molgenis import version as molgenis_version
 
 

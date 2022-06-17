@@ -10,8 +10,8 @@ from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.compatibility import version
 from mcmd.core.errors import McmdError
-from mcmd.io import io
-from mcmd.io.io import highlight
+from mcmd.in_out import in_out
+from mcmd.in_out.in_out import highlight
 from mcmd.molgenis.principals import PrincipalType, get_principal_type_from_args
 from mcmd.molgenis.resources import detect_resource_type, ensure_resource_exists, ResourceType
 from mcmd.molgenis.security import security
@@ -127,7 +127,7 @@ def _validate_args(args):
 
 def _grant(principal_type: PrincipalType, principal_name: str, resource_type: ResourceType, entity_type_id: str,
            permission: Permission):
-    io.start('Giving %s %s permission to %s on %s %s' % (principal_type.value,
+    in_out.start('Giving %s %s permission to %s on %s %s' % (principal_type.value,
                                                          highlight(principal_name),
                                                          highlight(permission.value),
                                                          resource_type.get_label().lower(),
@@ -138,7 +138,7 @@ def _grant(principal_type: PrincipalType, principal_name: str, resource_type: Re
 
 def _grant_rls(principal_type: PrincipalType, principal_name: str, entity_type_id: str,
                entity_id: str, permission: Permission):
-    io.start('Giving %s %s permission to %s on row %s of entity type %s' % (principal_type.value,
+    in_out.start('Giving %s %s permission to %s on row %s of entity type %s' % (principal_type.value,
                                                                             highlight(principal_name),
                                                                             highlight(permission.value),
                                                                             highlight(entity_id),

@@ -6,7 +6,7 @@ from mcmd.commands._registry import arguments
 from mcmd.core.command import command, CommandType
 from mcmd.core.context import context
 from mcmd.core.errors import McmdError
-from mcmd.io import io
+from mcmd.in_out import in_out
 from mcmd.script import script_runner
 from mcmd.script.model.script import Script
 from mcmd.script.options import ScriptOptions
@@ -74,14 +74,14 @@ def _try_parse_script(lines: List[str]) -> Script:
 
 
 def _print_errors_and_exit(errors: List[ScriptValidationError]):
-    io.error('The script contains errors')
-    io.newline()
+    in_out.error('The script contains errors')
+    in_out.newline()
 
     errors.sort(key=lambda e: e.line_number)
 
     for error in errors:
         print(error.message)
-        io.newline()
+        in_out.newline()
 
     exit(1)
 

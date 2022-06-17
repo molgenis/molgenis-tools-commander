@@ -80,7 +80,7 @@ class FileUtilsTest(unittest.TestCase):
 
             assert selected_file == path1
 
-    @patch('mcmd.io.ask.multi_choice')
+    @patch('mcmd.in_out.ask.multi_choice')
     def test_select_path_clash(self, multi_choice):
         with TemporaryDirectory() as temp_dir:
             path1 = Path(temp_dir).joinpath('tempfile.txt')

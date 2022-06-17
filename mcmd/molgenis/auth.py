@@ -8,10 +8,10 @@ import json
 import requests
 from requests import HTTPError
 
-import mcmd.io.ask
+import mcmd.in_out.ask
 from mcmd.config import config
 from mcmd.core.errors import McmdError, MolgenisOfflineError
-from mcmd.io import io
+from mcmd.in_out import in_out
 from mcmd.molgenis import api
 
 _username = None
@@ -64,7 +64,7 @@ def _login():
         _password = _ask_password()
 
     try:
-        io.debug('Logging in as user {}'.format(_username))
+        in_out.debug('Logging in as user {}'.format(_username))
         response = requests.post(api.login(),
                                  headers={'Content-Type': 'application/json'},
                                  data=json.dumps({"username": _username, "password": _password}))
@@ -81,7 +81,7 @@ def _login():
 
 
 def _ask_password():
-    io.pause()
-    password = mcmd.io.ask.password('Please enter the password for user {} on {}'.format(_username, config.url()))
-    io.unpause()
+    in_out.pause()
+    password = mcmd.in_out.ask.password('Please enter the password for user {} on {}'.format(_username, config.url()))
+    in_out.unpause()
     return password

@@ -58,7 +58,7 @@ def test_make_group_member_explicit(session, user, group):
 
 # noinspection DuplicatedCode
 @pytest.mark.integration
-@patch('mcmd.io.ask.confirm')
+@patch('mcmd.in_out.ask.confirm')
 def test_make_group_member_update_cancel(update_yes_no, session, user, group):
     update_yes_no.return_value = False
     original_role_name = '{}_VIEWER'.format(group)
@@ -74,7 +74,7 @@ def test_make_group_member_update_cancel(update_yes_no, session, user, group):
 
 # noinspection DuplicatedCode
 @pytest.mark.integration
-@patch('mcmd.io.ask.confirm')
+@patch('mcmd.in_out.ask.confirm')
 def test_make_group_member_update(update_yes_no, session, user, group):
     update_yes_no.return_value = True
     original_role_name = '{}_VIEWER'.format(group)
