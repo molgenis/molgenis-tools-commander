@@ -14,8 +14,10 @@ import mcmd.core.errors as errors
 _config = None
 _properties_file: Optional[Path] = None
 
+# TODO make Config an object similar to Context so you can have multiple types:
+# TODO PersistedConfig / TestConfig / ApiConfig
 
-def set_config(config, properties_file):
+def set_config(config: dict, properties_file):
     """The config module must not have dependencies on other modules in the config package so the necessary information
     should be passed here."""
     global _config
@@ -33,7 +35,8 @@ def set_config(config, properties_file):
 
 def _persist():
     """Writes the config to disk."""
-    YAML().dump(_config, _properties_file)
+    if _properties_file:
+        YAML().dump(_config, _properties_file)
 
 
 def get(*args):

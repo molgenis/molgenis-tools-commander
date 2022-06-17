@@ -1,6 +1,10 @@
 from mcmd.config import config
 
 
+class ApiError(Exception):
+    pass
+
+
 class McmdError(Exception):
     def __init__(self, message, info: str = None):
         """

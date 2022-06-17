@@ -9,7 +9,12 @@ _INDICATOR_FAILURE = 'x'
 
 def write(arg_string, success):
     try:
-        history = open(str(context().get_history_file()), 'a')
+        # TODO handle in command.py
+        file = context().get_history_file()
+        if not file:
+            return
+
+        history = open(str(file), 'a')
 
         indicator = _INDICATOR_SUCCESS
         if not success:
