@@ -6,14 +6,14 @@ import polling
 import requests
 
 import mcmd.config.config as config
-import mcmd.io.ask
+import mcmd.in_out.ask
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.context import context
 from mcmd.core.errors import McmdError
 from mcmd.github import client as github
-from mcmd.io import io
-from mcmd.io.io import highlight
+from mcmd.in_out import in_out
+from mcmd.in_out.in_out import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post_file, get, post
 from mcmd.utils import files
@@ -107,7 +107,7 @@ def _choose_import_method(args):
 def _import_from_url(args):
     file_url = args.resource
     file_name = file_url.split("/")[-1]
-    io.start('Importing from URL %s' % highlight(file_url))
+    in_out.start('Importing from URL %s' % highlight(file_url))
 
     if args.import_action:
         action = args.import_action
@@ -193,7 +193,7 @@ def _choose_attachment(attachments):
     attachment_map = _create_attachment_map(attachments)
     choices = list(attachment_map.keys())
 
-    answer = mcmd.io.ask.multi_choice('Multiple attachments found. Choose which one to import:', choices)
+    answer = mcmd.in_out.ask.multi_choice('Multiple attachments found. Choose which one to import:', choices)
     return attachment_map[answer]
 
 
@@ -203,11 +203,11 @@ def _download_attachment(attachment, issue_num):
     file_path = issue_folder.joinpath(attachment.name)
 
     if file_path.exists():
-        overwrite = mcmd.io.ask.confirm('File %s already exists. Re-download?' % file_path.name)
+        overwrite = mcmd.in_out.ask.confirm('File %s already exists. Re-download?' % file_path.name)
         if not overwrite:
             return file_path
 
-    io.start('Downloading %s from GitHub issue %s' % (highlight(attachment.name), highlight('#' + issue_num)))
+    in_out.start('Downloading %s from GitHub issue %s' % (highlight(attachment.name), highlight('#' + issue_num)))
     try:
         r = requests.get(attachment.url)
         r.raise_for_status()
@@ -215,12 +215,12 @@ def _download_attachment(attachment, issue_num):
             f.write(r.content)
     except (OSError, requests.RequestException, requests.HTTPError) as e:
         raise McmdError('Error downloading GitHub attachment: %s' % str(e))
-    io.succeed()
+    in_out.succeed()
     return file_path
 
 
 def _do_import(file_path, package, entity_type_id, import_action):
-    io.start('Importing %s' % (highlight(file_path.name)))
+    in_out.start('Importing %s' % (highlight(file_path.name)))
 
     if import_action:
         action = import_action

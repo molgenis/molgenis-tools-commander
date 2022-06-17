@@ -20,9 +20,9 @@ from mcmd.args.errors import ArgumentSyntaxError
 from mcmd.core.context.home_context import HomeContext
 from mcmd.args.parser import parse_args
 from mcmd.config.loader import load_config
-from mcmd.io import io
-from mcmd.io.io import set_debug
-from mcmd.io.logging import set_level
+from mcmd.in_out import in_out
+from mcmd.in_out.in_out import set_debug
+from mcmd.in_out.logging import set_level
 
 
 def main():
@@ -69,7 +69,7 @@ def set_log_level(args):
 
 # noinspection PyUnusedLocal
 def interrupt_handler(sig, frame):
-    io.warn('Interrupted by user.')
+    in_out.warn('Interrupted by user.')
     sys.exit(0)
 
 

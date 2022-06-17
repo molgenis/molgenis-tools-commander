@@ -9,8 +9,8 @@ from mcmd.core.command import command
 from mcmd.core.compatibility import version, deprecated
 from mcmd.core.context import context
 from mcmd.core.errors import McmdError
-from mcmd.io import io
-from mcmd.io.io import highlight
+from mcmd.in_out import in_out
+from mcmd.in_out.in_out import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, get, post_files
 from mcmd.molgenis.principals import to_role_name
@@ -169,7 +169,7 @@ def add_arguments(subparsers):
 
 @command
 def add_user(args):
-    io.start('Adding user %s' % highlight(args.username))
+    in_out.start('Adding user %s' % highlight(args.username))
 
     password = args.set_password if args.set_password else args.username
     email = args.with_email if args.with_email else args.username + '@molgenis.org'
@@ -190,7 +190,7 @@ def add_user(args):
 @command
 def add_role(args):
     role_name = to_role_name(args.rolename)
-    io.start('Adding role {}'.format(highlight(role_name)))
+    in_out.start('Adding role {}'.format(highlight(role_name)))
 
     role = {'name': role_name,
             'label': role_name}
@@ -241,7 +241,7 @@ def _get_role_ids(role_names) -> List[str]:
 @command
 def add_group(args):
     group_name = _to_group_name(args.name)
-    io.start('Adding group %s' % highlight(group_name))
+    in_out.start('Adding group %s' % highlight(group_name))
     post(api.group(), data={'name': group_name, 'label': args.name})
 
 
@@ -259,7 +259,7 @@ def _to_group_name(group_input: str):
 
 @command
 def add_package(args):
-    io.start('Adding package %s' % highlight(args.id))
+    in_out.start('Adding package %s' % highlight(args.id))
 
     data = {'id': args.id,
             'label': args.id}
@@ -272,7 +272,7 @@ def add_package(args):
 
 @command
 def add_token(args):
-    io.start('Adding token %s for user %s' % (highlight(args.token), highlight(args.user)))
+    in_out.start('Adding token %s for user %s' % (highlight(args.token), highlight(args.user)))
 
     user = get(api.rest2('sys_sec_User'),
                params={
@@ -312,12 +312,12 @@ def add_theme(args):
         paths.append(bs4)
         names.append('bootstrap4-style')
         bs4_name = file_utils.get_file_name_from_path(bs4)
-        io.start(
+        in_out.start(
             'Adding bootstrap 3 theme {} and bootstrap 4 theme {} to bootstrap themes'.format(
                 highlight(bs3_name),
                 highlight(bs4_name)))
     else:
-        io.start(
+        in_out.start(
             'Adding bootstrap 3 theme {} to bootstrap themes'.format(
                 highlight(bs3_name)))
     if not args.from_path:
@@ -337,10 +337,10 @@ def add_logo(args):
     valid_types = {'image/jpeg', 'image/png', 'image/gif'}
     logo = [args.logo]
     if not args.from_path:
-        io.start('Adding logo from path {}'.format(highlight(args.logo)))
+        in_out.start('Adding logo from path {}'.format(highlight(args.logo)))
         logo = [_get_path_from_quick_folders(args.logo)]
     else:
-        io.start('Adding logo {}'.format(highlight(args.logo)))
+        in_out.start('Adding logo {}'.format(highlight(args.logo)))
     files = _prepare_files_for_upload(logo, ['logo'], valid_types)
     post_files(files, api_)
 

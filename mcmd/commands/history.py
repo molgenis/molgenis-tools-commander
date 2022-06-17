@@ -1,8 +1,8 @@
 from mcmd.commands._registry import arguments
 from mcmd.core import history as hist
 from mcmd.core.command import command, CommandType
-from mcmd.io import io
-from mcmd.io.logging import get_logger
+from mcmd.in_out import in_out
+from mcmd.in_out.logging import get_logger
 
 
 # =========
@@ -38,15 +38,15 @@ log = get_logger()
 @command
 def history(args):
     if args.clear:
-        io.start('Clearing history')
+        in_out.start('Clearing history')
         hist.clear()
     else:
         lines = hist.read(args.number, include_fails=True)
         if len(lines) == 0:
             log.info('History is empty.')
         for line in lines:
-            io.start(line[1])
+            in_out.start(line[1])
             if line[0]:
-                io.succeed()
+                in_out.succeed()
             else:
-                io.error(None)
+                in_out.error(None)

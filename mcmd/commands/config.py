@@ -6,8 +6,8 @@ import mcmd.config.config as config
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command, CommandType
 from mcmd.core.errors import McmdError
-from mcmd.io import io, ask
-from mcmd.io.io import highlight
+from mcmd.in_out import in_out, ask
+from mcmd.in_out.in_out import highlight
 
 
 # =========
@@ -126,7 +126,7 @@ def config_set_host(args):
         urls = [auth['url'] for auth in auths]
         url = ask.multi_choice('Please select a host:', urls)
 
-    io.start("Switching to host {}".format(highlight(url)))
+    in_out.start("Switching to host {}".format(highlight(url)))
 
     if config.host_exists(url):
         config.set_host(url)
@@ -143,21 +143,21 @@ def config_set_import_action(args):
         options = ['add', 'add_update_existing', 'update']
         action = ask.multi_choice('Choose the default import action:', options)
 
-    io.start("Setting import action to {}".format(highlight(action)))
+    in_out.start("Setting import action to {}".format(highlight(action)))
     config.set_import_action(action)
 
 
 # noinspection PyUnusedLocal
 @command
 def config_set_non_interactive(args):
-    io.start('Switching to non-interactive mode')
+    in_out.start('Switching to non-interactive mode')
     config.set_non_interactive(True)
 
 
 # noinspection PyUnusedLocal
 @command
 def config_set_interactive(args):
-    io.start('Switching to interactive mode')
+    in_out.start('Switching to interactive mode')
     config.set_non_interactive(False)
 
 
@@ -184,9 +184,9 @@ def config_add_host(args):
         password = ask.password("Password (Leave blank to use command line authentication)")
         password = None if len(password) == 0 else password
 
-    io.start("Adding host {}".format(highlight(url)))
+    in_out.start("Adding host {}".format(highlight(url)))
     config.add_host(url, username, password)
-    io.succeed()
+    in_out.succeed()
 
     if args.switch:
         _switch_to_new_host(url)
@@ -196,7 +196,7 @@ def config_add_host(args):
 
 @command
 def config_add_dataset_folder(args):
-    io.start('Adding resource folder {}'.format(highlight(args.folder)))
+    in_out.start('Adding resource folder {}'.format(highlight(args.folder)))
     if not Path(args.folder).is_dir():
         raise McmdError('Folder does not exist: {}'.format(args.folder))
     config.add_dataset_folder(args.folder)
@@ -204,7 +204,7 @@ def config_add_dataset_folder(args):
 
 @command
 def config_add_resource_folder(args):
-    io.start('Adding resource folder {}'.format(highlight(args.folder)))
+    in_out.start('Adding resource folder {}'.format(highlight(args.folder)))
     if not Path(args.folder).is_dir():
         raise McmdError('Folder does not exist: {}'.format(args.folder))
     config.add_resource_folder(args.folder)

@@ -1,8 +1,8 @@
 from mcmd.commands._registry import arguments
 from mcmd.core.command import command
-from mcmd.io import ask
-from mcmd.io import io
-from mcmd.io.io import highlight
+from mcmd.in_out import ask
+from mcmd.in_out import in_out
+from mcmd.in_out.in_out import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import put
 from mcmd.molgenis.resources import ensure_resource_exists, ResourceType
@@ -48,7 +48,7 @@ def disable_rls(args):
     if not ask.confirm('Are you sure you want to disable row level security on %s?' % args.entity):
         return
 
-    io.start('Disabling row level security on entity type %s' % highlight(args.entity))
+    in_out.start('Disabling row level security on entity type %s' % highlight(args.entity))
 
     ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
     security.disable_row_level_security(args.entity)
@@ -56,6 +56,6 @@ def disable_rls(args):
 
 @command
 def disable_language(args):
-    io.start('Disabling language {}'.format(highlight(args.language)))
+    in_out.start('Disabling language {}'.format(highlight(args.language)))
     url = api.rest1('sys_Language/{}/active'.format(args.language))
     put(url, 'false')

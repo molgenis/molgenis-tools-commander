@@ -2,7 +2,7 @@ import questionary
 
 from mcmd.config import config
 from mcmd.core.errors import McmdError
-from mcmd.io import io
+from mcmd.in_out import in_out
 
 
 def multi_choice(message, choices):
@@ -61,7 +61,7 @@ def _ask(question, validation=None):
     elif validation:
         result = validation(answer)
         if result is not True:
-            io.error(result)
+            in_out.error(result)
             return _ask(question, validation)
 
     return answer

@@ -2,9 +2,9 @@ from os import path
 from pathlib import Path
 from typing import List
 
-import mcmd.io.ask
+import mcmd.in_out.ask
 from mcmd.core.errors import McmdError
-from mcmd.io import io
+from mcmd.in_out import in_out
 
 
 def get_file_name_from_path(file_path: str) -> str:
@@ -25,7 +25,7 @@ def get_files(folders: List[Path]) -> List[Path]:
     files = list()
     for folder in folders:
         if not folder.is_dir():
-            io.warn("Folder %s doesn't exist" % folder)
+            in_out.warn("Folder %s doesn't exist" % folder)
 
         for file in list(folder.glob('*.*')):
             files.append(file)
@@ -107,5 +107,5 @@ def _choose_file(paths: List[Path], name: str):
     :return: the selected path
     """
     choices = [str(file_path) for file_path in paths]
-    answer = mcmd.io.ask.multi_choice('Multiple files found for %s. Pick one:' % name, choices)
+    answer = mcmd.in_out.ask.multi_choice('Multiple files found for %s. Pick one:' % name, choices)
     return Path(answer)

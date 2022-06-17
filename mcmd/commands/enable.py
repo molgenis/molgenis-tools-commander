@@ -5,8 +5,8 @@ from mcmd.commands._registry import arguments
 from mcmd.core.command import command
 from mcmd.core.compatibility import deprecated
 from mcmd.core.errors import McmdError
-from mcmd.io import io
-from mcmd.io.io import highlight
+from mcmd.in_out import in_out
+from mcmd.in_out.in_out import highlight
 from mcmd.molgenis import api
 from mcmd.molgenis.client import post, put
 from mcmd.molgenis.resources import one_resource_exists, ensure_resource_exists, ResourceType
@@ -70,7 +70,7 @@ def add_arguments(subparsers):
 
 @command
 def enable_rls(args):
-    io.start('Enabling row level security on entity type %s' % highlight(args.entity))
+    in_out.start('Enabling row level security on entity type %s' % highlight(args.entity))
 
     ensure_resource_exists(args.entity, ResourceType.ENTITY_TYPE)
     security.enable_row_level_security(args.entity)
@@ -90,7 +90,7 @@ def enable_theme(args):
     :return None
     """
     theme = args.theme.replace('.css', '').replace('.min', '')
-    io.start('Applying theme {}'.format(highlight(theme)))
+    in_out.start('Applying theme {}'.format(highlight(theme)))
     # Resource can be bootstrap-name.min.css (if molgenis theme), or name.min.css (if uploaded .min.css), or
     # name.css (if uploaded as .css).
     if one_resource_exists([theme + '.min.css', theme + '.css', 'bootstrap-' + theme + '.min.css'], ResourceType.THEME):
@@ -106,6 +106,6 @@ def enable_theme(args):
 
 @command
 def enable_language(args):
-    io.start('Enabling language {}'.format(highlight(args.language)))
+    in_out.start('Enabling language {}'.format(highlight(args.language)))
     url = api.rest1('sys_Language/{}/active'.format(args.language))
     put(url, 'true')
