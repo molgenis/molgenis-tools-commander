@@ -30,6 +30,10 @@ def command(func):
         :return: a decorated function
         """
 
+        # TODO   detect when running via Api and:
+        # TODO   - don't write history
+        # TODO   - don't catch the McmdErrors and just let them be raised
+
         success = True
         try:
             _set_authentication(args)
@@ -60,6 +64,7 @@ def command(func):
 
 def _set_authentication(args):
     if args.as_user:
+        # TODO create a temporary alternative molgenis.client.Session
         if args.with_password:
             auth.set_(username=args.as_user, password=args.with_password, as_user=True)
         else:

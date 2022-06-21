@@ -48,6 +48,14 @@ def start(argv, context: Context):
         return 0
 
 
+def start_detached(argv, context: Context):
+    with context:
+        args = _parse_args(argv)
+        setattr(args, 'arg_string', ' '.join(argv[1:]))
+        args.func(args)
+        return 0
+
+
 def _parse_args(argv):
     try:
         return parse_args(argv[1:])

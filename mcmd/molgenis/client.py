@@ -6,6 +6,7 @@ from requests import Response
 from mcmd.molgenis import auth
 from mcmd.molgenis.request_handler import request
 
+# TODO use a molgenis.client.Session
 
 @request
 def get(url, params=None) -> Response:
