@@ -211,6 +211,6 @@ def config_add_resource_folder(args):
 
 
 def _switch_to_new_host(url):
-    io.start("Switching to host {}".format(highlight(url)))
+    in_out.start("Switching to host {}".format(highlight(url)))
     config.set_host(url)
-    io.succeed()
+    in_out.succeed()

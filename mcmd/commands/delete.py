@@ -145,7 +145,7 @@ def _delete_packages_in_package(package_id):
 def _delete_group(args):
     if args.force or (not args.force and mcmd.in_out.ask.confirm(
             'Are you sure you want to delete group {}?'.format(args.resource))):
-        io.start('Deleting group {}'.format(highlight(args.resource)))
+        in_out.start('Deleting group {}'.format(highlight(args.resource)))
         client.delete(urljoin(api.group(), args.resource))
 
 
