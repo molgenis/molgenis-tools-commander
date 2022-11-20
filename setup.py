@@ -17,7 +17,7 @@ setup(
     },
     install_requires=[
         'attrs==21.2.0',
-        'colorama==0.4.4',
+        'colorama==0.4.6',
         'halo==0.0.31',
         'Jinja2==3.0.3',
         'packaging==20.9',
