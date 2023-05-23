@@ -26,7 +26,7 @@ setup(
         'PyGithub==1.55',
         'questionary==1.10.0',
         'rainbow_logging_handler==2.2.2',
-        'requests==2.27.1',
+        'requests==2.31.0',
         'ruamel.yaml==0.17.16'
     ],
     setup_requires=['pytest-runner'],
