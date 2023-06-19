@@ -21,7 +21,7 @@ setup(
         'halo==0.0.31',
         'Jinja2==3.0.3',
         'packaging==20.9',
-        'parsy==1.3.0',
+        'parsy==1.4.0',
         'polling==0.3.2',
         'PyGithub==1.55',
         'questionary==1.10.0',
