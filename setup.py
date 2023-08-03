@@ -23,7 +23,7 @@ setup(
         'packaging==20.9',
         'parsy==1.3.0',
         'polling==0.3.2',
-        'PyGithub==1.55',
+        'PyGithub==1.59.1',
         'questionary==1.10.0',
         'rainbow_logging_handler==2.2.2',
         'requests==2.27.1',
