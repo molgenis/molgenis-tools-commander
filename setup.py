@@ -20,7 +20,7 @@ setup(
         'colorama==0.4.4',
         'halo==0.0.31',
         'Jinja2==3.0.3',
-        'packaging==20.9',
+        'packaging==23.2',
         'parsy==1.3.0',
         'polling==0.3.2',
         'PyGithub==1.55',
